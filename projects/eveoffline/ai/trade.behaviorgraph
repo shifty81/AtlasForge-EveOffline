@@ -2,7 +2,7 @@
     "schema": "atlas.behaviorgraph.v1",
     "nodes": [
         {
-            "id": "market_assess",
+            "id": "market_risk",
             "type": "ThreatAssessment",
             "position": [100, 200],
             "params": {}
@@ -24,7 +24,7 @@
         }
     ],
     "links": [
-        { "from": "market_assess.threat", "to": "profit_score.threat" },
+        { "from": "market_risk.threat", "to": "profit_score.threat" },
         { "from": "profit_score.utility", "to": "action.score_a" }
     ],
     "outputs": {

@@ -138,6 +138,6 @@ All game data is loaded by Atlas Engine via the project manifest.
 Run the project validation test to verify structure completeness:
 
 ```bash
-g++ -std=c++17 Tests/test_project_structure.cpp -o test_project_structure
+g++ -std=c++17 Tests/test_project_structure.cpp -o test_project_structure -lstdc++fs
 ./test_project_structure .
 ```
