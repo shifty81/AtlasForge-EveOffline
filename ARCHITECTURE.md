@@ -18,12 +18,16 @@ Atlas/
 │   ├── assets/       # Asset registry, binary format, hot reload
 │   ├── net/          # Networking (client-server, P2P, lockstep/rollback)
 │   ├── sim/          # Tick scheduler, deterministic simulation
-│   ├── world/        # Procedural world generation (terrain, galaxy, noise)
+│   ├── world/        # Procedural world generation, WorldGraph, heightfield meshing
 │   ├── project/      # Project loading and validation (.atlas files)
-│   └── command/      # Undo/redo command system
+│   ├── command/      # Undo/redo command system
+│   ├── interaction/  # Unified intent/utterance system (voice, AI, console)
+│   ├── voice/        # Voice command registry and matching
+│   └── plugin/       # Plugin validation, registry, and sandboxing
 │
 ├── editor/           # Atlas Editor (authoring tool)
-│   ├── panels/       # Inspector panels (ECS, console, network)
+│   ├── panels/       # Inspector panels (ECS, console, network, project picker,
+│   │                 #   world graph editor, voice commands, interaction debugger)
 │   ├── ui/           # Dock layout, panel framework
 │   ├── tools/        # Game packager, asset tools
 │   └── ai/           # AI assistant aggregator
@@ -32,8 +36,14 @@ Atlas/
 │
 ├── atlas_tests/      # Engine unit tests
 │
-├── schemas/          # Versioned project schemas
-│   └── atlas.project.v1.json
+├── schemas/          # Versioned schemas
+│   ├── atlas.project.v1.json
+│   ├── atlas.worldgraph.v1.json
+│   └── atlas.strategygraph.v1.json
+│
+├── projects/         # External game projects (loaded via .atlas files)
+│   ├── eveoffline/   # EVEOFFLINE game project
+│   └── atlas-sample/ # Minimal sample project
 │
 ├── cpp_client/       # EVEOFFLINE game client (links AtlasEngine)
 ├── cpp_server/       # EVEOFFLINE game server (links AtlasEngine)
@@ -81,6 +91,12 @@ Atlas/
 - Terrain mesh generation with normals
 - World streaming with disk cache
 - Galaxy generation (star systems, regions, star classes)
+- **WorldGraph**: DAG-based world generation graph with compile/execute pipeline
+  - Typed value system (Float, HeightField, Seed, Mask, etc.)
+  - Topological sort compilation with cycle detection
+  - Deterministic per-chunk execution
+  - Concrete nodes: Seed, Noise (FBM), Blend, Clamp, Constant
+- **HeightfieldMesher**: Heightfield → mesh pipeline with LOD support
 
 ### Project System (`engine/project/`)
 - Load and validate `.atlas` project files
@@ -92,6 +108,27 @@ Atlas/
 - Abstract `Command` base with Execute/Undo
 - `CommandHistory` for undo/redo stacks
 - Foundation for editor mutations and multiplayer sync
+
+### Interaction System (`engine/interaction/`)
+- **Utterance**: Raw text with speaker/listener context
+- **Intent**: Resolved action with parameters and confidence score
+- **IntentResolver**: Abstract resolver interface (rule-based, ML, hybrid)
+- **PatternIntentResolver**: Case-insensitive phrase matching
+- **IntentRegistry**: Central dispatch for intent handlers
+- Unified pipeline: Voice → Text → AI → Intent → Command → System
+
+### Voice Commands (`engine/voice/`)
+- **VoiceCommandRegistry**: Register and match voice phrases to intents
+- Context-aware filtering (game, editor, or both)
+- Longest-match phrase resolution
+- Bridge between voice input and the intent system
+
+### Plugin System (`engine/plugin/`)
+- **PluginDescriptor**: Name, version, compatibility, determinism flag
+- **PluginValidator**: Validates descriptor, version compatibility, determinism
+- **PluginRegistry**: Register, find, filter plugins by type
+- Enforcement: plugins must be deterministic, version-compatible
+- Plugin types: graph-extension, editor-panel, asset-importer
 
 ## Runtime Modes
 
@@ -117,6 +154,51 @@ Rules:
 
 Projects are defined by a single `project.atlas` JSON file conforming to
 `schemas/atlas.project.v1.json`. See the schema file for the full specification.
+
+### Graph Schemas
+
+- **WorldGraph** files (`.worldgraph`) conform to `schemas/atlas.worldgraph.v1.json`
+- **StrategyGraph** files (`.strategygraph`) conform to `schemas/atlas.strategygraph.v1.json`
+
+### Project Directory
+
+External game projects live under `projects/` and are loaded via their `.atlas` manifest:
+
+```
+projects/
+├── eveoffline/           # EVEOFFLINE reference implementation
+│   ├── eveoffline.atlas
+│   ├── worlds/
+│   ├── strategy/
+│   └── data/
+└── atlas-sample/         # Minimal sample project
+    ├── sample.atlas
+    └── worlds/
+```
+
+See [Project Guidelines](docs/PROJECT_GUIDELINES.md) for complete rules.
+
+## Editor Flow
+
+1. Atlas Editor launches
+2. **Project Picker** modal appears — user selects a `.atlas` file
+3. Project is mounted and validated
+4. Declared modules are initialized (WorldGraphs, StrategyGraphs, AI)
+5. Editor enters Project Context — tools unlock
+6. User can press ▶ Play to launch runtime for live testing
+
+### Editor Panels
+
+| Panel | Purpose |
+|-------|---------|
+| ECS Inspector | Entity and component exploration |
+| Console | Command execution and logging |
+| Network Inspector | Network state debugging |
+| **Project Picker** | Project selection and recent projects |
+| **World Graph Editor** | Visual WorldGraph authoring and preview |
+| **Voice Commands** | Voice command testing and monitoring |
+| **Interaction Debugger** | AI interaction logging and analysis |
+| Game Packager | Build configuration and packaging |
 
 ## Build System
 
