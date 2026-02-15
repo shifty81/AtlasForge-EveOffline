@@ -37,6 +37,8 @@ add_library(AtlasEngine STATIC
     ai/BehaviorNodes.cpp
     character/CharacterGraph.cpp
     character/CharacterNodes.cpp
+    animation/AnimationGraph.cpp
+    animation/AnimationNodes.cpp
 )
 
 target_include_directories(AtlasEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

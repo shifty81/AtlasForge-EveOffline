@@ -242,6 +242,16 @@ void test_behaviorgraph_compile_chain();
 void test_behaviorgraph_execute();
 void test_behaviorgraph_deterministic();
 
+// AnimationGraph tests
+void test_animationgraph_add_nodes();
+void test_animationgraph_remove_node();
+void test_animationgraph_compile_empty();
+void test_animationgraph_compile_single_node();
+void test_animationgraph_compile_chain();
+void test_animationgraph_execute();
+void test_animationgraph_modifier();
+void test_animationgraph_deterministic();
+
 // Graph Serialization tests
 void test_json_builder_object();
 void test_json_builder_array();
@@ -524,6 +534,17 @@ int main() {
     test_behaviorgraph_compile_chain();
     test_behaviorgraph_execute();
     test_behaviorgraph_deterministic();
+
+    // Animation Graph
+    std::cout << "\n--- Animation Graph ---" << std::endl;
+    test_animationgraph_add_nodes();
+    test_animationgraph_remove_node();
+    test_animationgraph_compile_empty();
+    test_animationgraph_compile_single_node();
+    test_animationgraph_compile_chain();
+    test_animationgraph_execute();
+    test_animationgraph_modifier();
+    test_animationgraph_deterministic();
 
     // Graph Serialization
     std::cout << "\n--- Graph Serialization ---" << std::endl;
