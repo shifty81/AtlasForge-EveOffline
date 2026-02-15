@@ -6,8 +6,8 @@ namespace atlas::ai {
 uint64_t RelationshipModel::MakeKey(uint64_t a, uint64_t b) {
     uint64_t lo = std::min(a, b);
     uint64_t hi = std::max(a, b);
-    // Combine using Szudzik's pairing (fits in 64 bits for 32-bit entity IDs)
-    return (hi << 32) | lo;
+    // Pack two 32-bit entity IDs into one 64-bit key (assumes IDs fit in 32 bits)
+    return (hi << 32) | (lo & 0xFFFFFFFF);
 }
 
 void RelationshipModel::Set(uint64_t entityA, uint64_t entityB, float value) {

@@ -11,7 +11,6 @@ struct MemoryEntry {
     float strength = 1.0f;
     float decayRate = 0.0f;  // Strength lost per tick (0 = permanent)
     uint64_t createdTick = 0;
-    uint64_t lastAccessedTick = 0;
 };
 
 class AIMemory {

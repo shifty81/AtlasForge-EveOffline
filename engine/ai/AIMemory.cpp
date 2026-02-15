@@ -11,7 +11,6 @@ void AIMemory::Store(const std::string& key, const std::string& value,
     entry.strength = strength;
     entry.decayRate = decayRate;
     entry.createdTick = tick;
-    entry.lastAccessedTick = tick;
     m_memories[key] = entry;
 }
 
