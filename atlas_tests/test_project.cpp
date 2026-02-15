@@ -147,3 +147,96 @@ void test_project_schema_validation() {
 
     std::cout << "[PASS] test_project_schema_validation" << std::endl;
 }
+
+void test_project_load_full_modules() {
+    std::string path = "test_project_full_modules.atlas";
+    WriteTestProject(path, R"({
+        "schema": "atlas.project.v1",
+        "name": "FullModules",
+        "version": "0.12.0",
+        "modules": {
+            "worldGraph": "worlds/galaxy.worldgraph",
+            "tileGraphs": "worlds/",
+            "strategyGraphs": "strategy/",
+            "conversationGraphs": "conversations/",
+            "behaviorGraphs": "ai/",
+            "ai": true,
+            "content": "data/"
+        },
+        "runtime": {
+            "entryWorld": "worlds/galaxy.worldgraph",
+            "tickRate": 30,
+            "maxPlayers": 20
+        },
+        "assets": {
+            "root": "assets"
+        },
+        "config": "config/runtime.json"
+    })");
+
+    ProjectManager mgr;
+    assert(mgr.Load(path));
+    assert(mgr.IsLoaded());
+    assert(mgr.Descriptor().modules.worldGraph == "worlds/galaxy.worldgraph");
+    assert(mgr.Descriptor().modules.tileGraphs == "worlds/");
+    assert(mgr.Descriptor().modules.strategyGraphs == "strategy/");
+    assert(mgr.Descriptor().modules.conversationGraphs == "conversations/");
+    assert(mgr.Descriptor().modules.behaviorGraphs == "ai/");
+    assert(mgr.Descriptor().modules.ai == true);
+    assert(mgr.Descriptor().modules.content == "data/");
+    assert(mgr.Descriptor().config == "config/runtime.json");
+
+    std::filesystem::remove(path);
+    std::cout << "[PASS] test_project_load_full_modules" << std::endl;
+}
+
+void test_project_resolve_module_path() {
+    std::string dir = "test_resolve_dir";
+    std::filesystem::create_directories(dir);
+    std::string path = dir + "/test.atlas";
+    WriteTestProject(path, R"({
+        "schema": "atlas.project.v1",
+        "name": "ResolveTest",
+        "version": "1.0.0",
+        "modules": {
+            "worldGraph": "worlds/galaxy.worldgraph"
+        }
+    })");
+
+    ProjectManager mgr;
+    assert(mgr.Load(path));
+
+    std::string resolved = mgr.ResolveModulePath("worlds/galaxy.worldgraph");
+    // Should resolve to dir/worlds/galaxy.worldgraph
+    assert(resolved.find("test_resolve_dir") != std::string::npos);
+    assert(resolved.find("worlds/galaxy.worldgraph") != std::string::npos
+        || resolved.find("worlds\\galaxy.worldgraph") != std::string::npos);
+
+    // Empty path should return empty
+    assert(mgr.ResolveModulePath("").empty());
+
+    std::filesystem::remove(path);
+    std::filesystem::remove_all(dir);
+    std::cout << "[PASS] test_project_resolve_module_path" << std::endl;
+}
+
+void test_project_unload() {
+    std::string path = "test_project_unload.atlas";
+    WriteTestProject(path, R"({
+        "schema": "atlas.project.v1",
+        "name": "UnloadTest",
+        "version": "1.0.0"
+    })");
+
+    ProjectManager mgr;
+    assert(mgr.Load(path));
+    assert(mgr.IsLoaded());
+
+    mgr.Unload();
+    assert(!mgr.IsLoaded());
+    assert(mgr.Descriptor().name.empty());
+    assert(mgr.ProjectRoot().empty());
+
+    std::filesystem::remove(path);
+    std::cout << "[PASS] test_project_unload" << std::endl;
+}

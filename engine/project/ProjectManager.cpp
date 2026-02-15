@@ -101,7 +101,10 @@ bool ProjectManager::Load(const std::string& path) {
 
     // Parse modules
     m_descriptor.modules.worldGraph = ExtractStringValue(json, "worldGraph");
+    m_descriptor.modules.tileGraphs = ExtractStringValue(json, "tileGraphs");
     m_descriptor.modules.strategyGraphs = ExtractStringValue(json, "strategyGraphs");
+    m_descriptor.modules.conversationGraphs = ExtractStringValue(json, "conversationGraphs");
+    m_descriptor.modules.behaviorGraphs = ExtractStringValue(json, "behaviorGraphs");
     m_descriptor.modules.ai = ExtractBoolValue(json, "ai", false);
     m_descriptor.modules.content = ExtractStringValue(json, "content");
 
@@ -117,6 +120,9 @@ bool ProjectManager::Load(const std::string& path) {
     if (!assetRoot.empty()) {
         m_descriptor.assets.root = assetRoot;
     }
+
+    // Parse config
+    m_descriptor.config = ExtractStringValue(json, "config");
 
     // Store project root directory
     std::filesystem::path p(path);
@@ -188,6 +194,12 @@ bool ProjectManager::Validate() const {
     }
 
     return true;
+}
+
+std::string ProjectManager::ResolveModulePath(const std::string& relativePath) const {
+    if (relativePath.empty()) return "";
+    std::filesystem::path resolved = std::filesystem::path(m_projectRoot) / relativePath;
+    return resolved.lexically_normal().string();
 }
 
 bool ProjectManager::ValidateSchema(const std::string& schemaField) {

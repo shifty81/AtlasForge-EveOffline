@@ -8,6 +8,7 @@ directory with a `.atlas` manifest file that defines its structure.
 | Project | Description |
 |---------|-------------|
 | `eveoffline/` | PVE space simulator — the reference implementation |
+| `arena2d/` | Minimal 2D arena — scalability reference |
 | `atlas-sample/` | Minimal sample project for learning |
 
 ## Creating a New Project

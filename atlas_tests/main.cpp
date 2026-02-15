@@ -105,6 +105,9 @@ void test_project_missing_name();
 void test_project_missing_name_field();
 void test_project_invalid_version();
 void test_project_schema_validation();
+void test_project_load_full_modules();
+void test_project_resolve_module_path();
+void test_project_unload();
 
 // Command tests
 void test_command_execute();
@@ -598,6 +601,9 @@ int main() {
     test_project_missing_name_field();
     test_project_invalid_version();
     test_project_schema_validation();
+    test_project_load_full_modules();
+    test_project_resolve_module_path();
+    test_project_unload();
 
     // Command
     std::cout << "\n--- Command System ---" << std::endl;

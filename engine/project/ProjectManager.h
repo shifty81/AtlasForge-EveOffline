@@ -6,7 +6,10 @@ namespace atlas::project {
 
 struct ModulesConfig {
     std::string worldGraph;
+    std::string tileGraphs;
     std::string strategyGraphs;
+    std::string conversationGraphs;
+    std::string behaviorGraphs;
     bool ai = false;
     std::string content;
 };
@@ -26,6 +29,7 @@ struct ProjectDescriptor {
     std::string name;
     std::string version;
     std::string description;
+    std::string config;
     ModulesConfig modules;
     RuntimeConfig runtime;
     AssetsConfig assets;
@@ -43,6 +47,8 @@ public:
     const std::string& ProjectRoot() const;
 
     bool Validate() const;
+
+    std::string ResolveModulePath(const std::string& relativePath) const;
 
     static bool ValidateSchema(const std::string& schemaField);
 

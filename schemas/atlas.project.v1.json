@@ -33,9 +33,21 @@
           "type": "string",
           "description": "Path to the entry WorldGraph file"
         },
+        "tileGraphs": {
+          "type": "string",
+          "description": "Directory path for TileGraph files"
+        },
         "strategyGraphs": {
           "type": "string",
           "description": "Directory path for StrategyGraph files"
+        },
+        "conversationGraphs": {
+          "type": "string",
+          "description": "Directory path for ConversationGraph files"
+        },
+        "behaviorGraphs": {
+          "type": "string",
+          "description": "Directory path for BehaviorGraph files"
         },
         "ai": {
           "type": "boolean",
@@ -84,6 +96,10 @@
         }
       },
       "additionalProperties": false
+    },
+    "config": {
+      "type": "string",
+      "description": "Path to the runtime configuration file"
     }
   },
   "additionalProperties": false
