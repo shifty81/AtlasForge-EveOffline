@@ -31,6 +31,8 @@ add_library(AtlasEngine STATIC
     ai/RelationshipModel.cpp
     tile/TileGraph.cpp
     tile/TileNodes.cpp
+    sound/SoundGraph.cpp
+    sound/SoundNodes.cpp
 )
 
 target_include_directories(AtlasEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

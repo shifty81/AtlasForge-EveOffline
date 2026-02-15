@@ -206,6 +206,15 @@ void test_relationship_has();
 void test_relationship_remove();
 void test_relationship_clear();
 
+// SoundGraph tests
+void test_soundgraph_add_nodes();
+void test_soundgraph_remove_node();
+void test_soundgraph_compile_empty();
+void test_soundgraph_compile_single_node();
+void test_soundgraph_compile_chain();
+void test_soundgraph_execute();
+void test_soundgraph_deterministic();
+
 // TileGraph tests
 void test_tilegraph_add_nodes();
 void test_tilegraph_remove_node();
@@ -457,6 +466,16 @@ int main() {
     test_heightfield_at();
     test_heightfield_mesh_generation();
     test_heightfield_mesh_lod();
+
+    // Sound Graph
+    std::cout << "\n--- Sound Graph ---" << std::endl;
+    test_soundgraph_add_nodes();
+    test_soundgraph_remove_node();
+    test_soundgraph_compile_empty();
+    test_soundgraph_compile_single_node();
+    test_soundgraph_compile_chain();
+    test_soundgraph_execute();
+    test_soundgraph_deterministic();
 
     // Tile Graph
     std::cout << "\n--- Tile Graph ---" << std::endl;
