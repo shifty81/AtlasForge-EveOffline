@@ -62,22 +62,29 @@ Plugins MAY:
 All randomness must come from Atlas-injected RNG:
 
 ```cpp
-DeterministicRNG& rng;
+// Atlas injects a seeded RNG into the execution context
+void MyNode::Evaluate(const StrategyContext& ctx, ...) {
+    DeterministicRNG& rng = ctx.rng;  // Provided by engine
+    float roll = rng.NextFloat();     // Deterministic, replayable
+}
 ```
 
-Any other RNG usage is forbidden.
+Any other RNG usage (e.g. `rand()`, `std::mt19937`) is forbidden.
 
 ---
 
 ## Threading Rules
 
-Plugins must use:
+Plugins must request background work through the engine:
 
 ```cpp
-Atlas::RunAsync(task);
+// Correct: use the Atlas thread pool
+Atlas::RunAsync([]() {
+    // Background computation here
+});
 ```
 
-Direct thread creation is forbidden.
+Direct thread creation (`std::thread`, `pthread_create`) is forbidden.
 
 ---
 

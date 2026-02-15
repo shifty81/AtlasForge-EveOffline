@@ -83,6 +83,7 @@ private:
     std::unordered_map<uint64_t, ConversationValue> m_outputs;
 
     bool HasCycle() const;
+    bool ValidateEdgeTypes() const;
 };
 
 }

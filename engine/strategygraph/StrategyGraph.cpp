@@ -157,7 +157,7 @@ bool StrategyGraph::Execute(const StrategyContext& ctx) {
         std::vector<StrategyValue> outputs(outputDefs.size());
         node->Evaluate(ctx, inputs, outputs);
 
-        for (StrategyPortID p = 0; p < outputs.size(); ++p) {
+        for (StrategyPortID p = 0; p < static_cast<StrategyPortID>(outputs.size()); ++p) {
             uint64_t key = (static_cast<uint64_t>(id) << 32) | p;
             m_outputs[key] = std::move(outputs[p]);
         }

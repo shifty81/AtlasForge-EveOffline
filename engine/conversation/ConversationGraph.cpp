@@ -75,11 +75,27 @@ bool ConversationGraph::HasCycle() const {
     return visited != static_cast<int>(m_nodes.size());
 }
 
+bool ConversationGraph::ValidateEdgeTypes() const {
+    for (auto& e : m_edges) {
+        auto fromIt = m_nodes.find(e.fromNode);
+        auto toIt = m_nodes.find(e.toNode);
+        if (fromIt == m_nodes.end() || toIt == m_nodes.end()) return false;
+
+        auto fromOutputs = fromIt->second->Outputs();
+        auto toInputs = toIt->second->Inputs();
+
+        if (e.fromPort >= fromOutputs.size()) return false;
+        if (e.toPort >= toInputs.size()) return false;
+    }
+    return true;
+}
+
 bool ConversationGraph::Compile() {
     m_compiled = false;
     m_executionOrder.clear();
 
     if (HasCycle()) return false;
+    if (!ValidateEdgeTypes()) return false;
 
     std::unordered_map<ConversationNodeID, int> inDegree;
     for (auto& [id, _] : m_nodes) {
@@ -138,7 +154,7 @@ bool ConversationGraph::Execute(const ConversationContext& ctx) {
         std::vector<ConversationValue> outputs(outputDefs.size());
         node->Evaluate(ctx, inputs, outputs);
 
-        for (ConversationPortID p = 0; p < outputs.size(); ++p) {
+        for (ConversationPortID p = 0; p < static_cast<ConversationPortID>(outputs.size()); ++p) {
             uint64_t key = (static_cast<uint64_t>(id) << 32) | p;
             m_outputs[key] = std::move(outputs[p]);
         }
