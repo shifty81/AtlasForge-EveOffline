@@ -97,17 +97,17 @@ Atlas/
 # Linux/macOS — install deps and build everything
 sudo apt-get install build-essential cmake libgl1-mesa-dev libglew-dev \
   libglfw3-dev libglm-dev nlohmann-json3-dev libopenal-dev libfreetype-dev
-./build_project.sh
+./scripts/build_project.sh
 
 # Build specific targets
-./build_project.sh Release engine     # Engine only
-./build_project.sh Release client     # Dev client only
-./build_project.sh Release server     # Dedicated server only
-./build_project.sh Release test       # Build and run all tests
-./build_project.sh Release validate   # Validate project structure
+./scripts/build_project.sh Release engine     # Engine only
+./scripts/build_project.sh Release client     # Dev client only
+./scripts/build_project.sh Release server     # Dedicated server only
+./scripts/build_project.sh Release test       # Build and run all tests
+./scripts/build_project.sh Release validate   # Validate project structure
 
 # Windows
-build_project.bat Release all
+scripts\build_project.bat Release all
 
 # Or use Make shortcuts
 make build          # Build everything

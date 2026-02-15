@@ -17,10 +17,10 @@ Before running any build scripts, you must install the required dependencies usi
 
 | Script | What It Does | When to Use |
 |--------|-------------|-------------|
-| **`build_vs.bat`** | Builds the **C++ client only** | **Use this one** for most development |
-| `generate_solution.bat` | Generates solution for **both client + server** | Only if you need to work on the C++ server too |
+| **`scripts\build_vs.bat`** | Builds the **C++ client only** | **Use this one** for most development |
+| `scripts\generate_solution.bat` | Generates solution for **both client + server** | Only if you need to work on the C++ server too |
 
-**Recommended**: Use `build_vs.bat` — it builds and compiles the client in one step.
+**Recommended**: Use `scripts\build_vs.bat` — it builds and compiles the client in one step.
 
 ## ⚡ Quick Commands
 
@@ -45,14 +45,14 @@ cd vcpkg
 
 # 5. Return to repository and generate Visual Studio solution
 cd C:\path\to\EVEOFFLINE
-build_vs.bat
+scripts\build_vs.bat
 ```
 
 ### Daily Development
 
 ```cmd
 # Build latest changes
-build_vs.bat
+scripts\build_vs.bat
 
 # Or open in Visual Studio to edit and build
 start cpp_client\build_vs\EVEOfflineClient.sln
@@ -62,11 +62,11 @@ start cpp_client\build_vs\EVEOfflineClient.sln
 
 | Command | Description |
 |---------|-------------|
-| `build_vs.bat` | Build C++ client in Release mode |
+| `scripts\build_vs.bat` | Build C++ client in Release mode |
 | `build_vs.bat --debug` | Build in Debug mode |
 | `build_vs.bat --clean` | Clean rebuild from scratch |
 | `build_vs.bat --open` | Open Visual Studio after build |
-| `generate_solution.bat` | Generate unified client+server solution |
+| `scripts\generate_solution.bat` | Generate unified client+server solution |
 
 ## 📂 Important Locations
 

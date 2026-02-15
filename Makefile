@@ -23,11 +23,11 @@ help: ## Show this help message
 
 .PHONY: build
 build: ## Build all targets (engine, editor, runtime, client, server, tests)
-	./build.sh Release
+	./scripts/build.sh Release
 
 .PHONY: build-debug
 build-debug: ## Build all targets in Debug mode
-	./build.sh Debug
+	./scripts/build.sh Debug
 
 .PHONY: build-client
 build-client: ## Build C++ client only
@@ -108,4 +108,4 @@ all: clean build ## Clean and build everything
 
 .PHONY: validate
 validate: ## Validate all project structures for portability
-	./validate_project.sh
+	./scripts/validate_project.sh

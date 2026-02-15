@@ -23,7 +23,8 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-cd "$SCRIPT_DIR"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+cd "$PROJECT_DIR"
 
 # ── Configuration ──────────────────────────────────────────────
 
@@ -146,7 +147,7 @@ configure_cmake() {
         exit 1
     fi
 
-    cd "$SCRIPT_DIR"
+    cd "$PROJECT_DIR"
 }
 
 # ── Build target ───────────────────────────────────────────────
@@ -170,7 +171,7 @@ build_target() {
         exit 1
     fi
 
-    cd "$SCRIPT_DIR"
+    cd "$PROJECT_DIR"
 }
 
 # ── Target dispatch ────────────────────────────────────────────
@@ -217,7 +218,7 @@ case "$TARGET" in
         if [ -f atlas_tests/AtlasTests ]; then
             ./atlas_tests/AtlasTests
         fi
-        cd "$SCRIPT_DIR"
+        cd "$PROJECT_DIR"
 
         echo ""
         echo "Running server tests..."
@@ -228,7 +229,7 @@ case "$TARGET" in
         if [ -f bin/test_systems ]; then
             ./bin/test_systems
         fi
-        cd "$SCRIPT_DIR"
+        cd "$PROJECT_DIR"
         ;;
     validate)
         banner "Validating Projects"
@@ -270,6 +271,6 @@ fi
 
 echo ""
 echo "Next steps:"
-echo "  ./build_project.sh $BUILD_TYPE validate   # Validate project structure"
-echo "  ./build_project.sh $BUILD_TYPE test        # Run all tests"
+echo "  ./scripts/build_project.sh $BUILD_TYPE validate   # Validate project structure"
+echo "  ./scripts/build_project.sh $BUILD_TYPE test        # Run all tests"
 echo ""

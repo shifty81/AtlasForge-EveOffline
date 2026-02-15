@@ -1,9 +1,9 @@
 @echo off
-REM EVE OFFLINE C++ Client - Visual Studio Build Script
-REM Generates Visual Studio solution and builds the project
+REM EVE OFFLINE - Generate Root-Level Visual Studio Solution
+REM This script creates a solution that includes both C++ client and server
 
 echo ================================================
-echo EVE OFFLINE C++ Client - Visual Studio Build
+echo EVE OFFLINE - Visual Studio Solution Generator
 echo ================================================
 echo.
 
@@ -12,41 +12,6 @@ where cmake >nul 2>&1
 if %ERRORLEVEL% NEQ 0 (
     echo ERROR: CMake not found!
     echo Please install CMake from https://cmake.org/download/
-    pause
-    exit /b 1
-)
-
-REM Check for Visual Studio (VS 2022, 2019, or 2017)
-set "VS_FOUND=0"
-
-REM Check VS 2022
-if exist "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" (set "VS_FOUND=1")
-if exist "C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvarsall.bat" (set "VS_FOUND=1")
-if exist "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" (set "VS_FOUND=1")
-
-REM Check VS 2019
-if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" (set "VS_FOUND=1")
-if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvarsall.bat" (set "VS_FOUND=1")
-if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" (set "VS_FOUND=1")
-
-REM Check VS 2017
-if exist "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" (set "VS_FOUND=1")
-if exist "C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Auxiliary\Build\vcvarsall.bat" (set "VS_FOUND=1")
-if exist "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" (set "VS_FOUND=1")
-
-REM Also check if msbuild is in PATH
-where msbuild >nul 2>&1
-if %ERRORLEVEL% EQU 0 (set "VS_FOUND=1")
-
-if %VS_FOUND% EQU 0 (
-    echo ERROR: Visual Studio not found!
-    echo Please install Visual Studio 2017/2019/2022 with C++ desktop development
-    echo.
-    echo Installation paths checked:
-    echo   - C:\Program Files\Microsoft Visual Studio\2022\
-    echo   - C:\Program Files ^(x86^)\Microsoft Visual Studio\2019\
-    echo   - C:\Program Files ^(x86^)\Microsoft Visual Studio\2017\
-    echo.
     pause
     exit /b 1
 )
@@ -69,22 +34,22 @@ goto parse_args
 echo Build Type: %BUILD_TYPE%
 echo.
 
-REM Navigate to cpp_client directory
-cd /d "%~dp0cpp_client"
-
 REM Clean build if requested
 if %CLEAN_BUILD% EQU 1 (
-    echo Cleaning previous build...
+    echo Cleaning previous builds...
     if exist build_vs rmdir /s /q build_vs
     echo.
 )
+
+REM Navigate to project root
+cd /d "%~dp0.."
 
 REM Create build directory
 if not exist build_vs mkdir build_vs
 cd build_vs
 
 REM Configure CMake for Visual Studio
-echo Configuring CMake for Visual Studio...
+echo Configuring root solution with CMake...
 echo.
 
 REM Check for vcpkg and set toolchain file if found
@@ -119,7 +84,6 @@ if %VCPKG_FOUND% EQU 0 (
 )
 
 REM Always clean CMake cache before configuring to avoid generator mismatch errors
-REM (e.g., switching between VS 2022 and VS 2019 in the same build directory)
 if exist CMakeCache.txt (
     echo Cleaning old CMake cache to avoid generator conflicts...
     del /f CMakeCache.txt
@@ -158,8 +122,12 @@ cmake .. ^
     -G "%VS_GENERATOR%" ^
     -A x64 ^
     -DCMAKE_BUILD_TYPE=%BUILD_TYPE% ^
-    -DUSE_SYSTEM_LIBS=ON ^
-    -DBUILD_TESTS=ON ^
+    -DBUILD_ATLAS_ENGINE=ON ^
+    -DBUILD_ATLAS_EDITOR=ON ^
+    -DBUILD_ATLAS_RUNTIME=ON ^
+    -DBUILD_ATLAS_TESTS=ON ^
+    -DBUILD_CLIENT=ON ^
+    -DBUILD_SERVER=ON ^
     %VCPKG_TOOLCHAIN%
 
 if %ERRORLEVEL% NEQ 0 (
@@ -189,9 +157,6 @@ if %ERRORLEVEL% NEQ 0 (
     echo.
     echo For more information, see: docs/guides/VS2022_SETUP_GUIDE.md
     echo.
-    echo CMake version:
-    cmake --version
-    echo.
     pause
     exit /b 1
 )
@@ -200,45 +165,34 @@ echo.
 echo CMake configuration successful!
 echo.
 
-REM Build the project
-echo Building project...
-echo.
-
-cmake --build . --config %BUILD_TYPE% -- /m
-
-if %ERRORLEVEL% NEQ 0 (
-    echo.
-    echo ERROR: Build failed!
-    pause
-    exit /b 1
-)
-
-echo.
-echo ================================================
-echo BUILD SUCCESSFUL
-echo ================================================
-echo.
-echo Executable location: build_vs\bin\%BUILD_TYPE%\eve_client.exe
-echo.
-
 REM Open Visual Studio if requested
 if %OPEN_VS% EQU 1 (
     echo Opening Visual Studio...
-    start EVEOfflineClient.sln
+    for %%f in (*.sln) do (
+        start "" "%%f"
+        goto :found
+    )
+    echo Warning: No solution file found
+    :found
 )
 
-REM List built executables
-echo Built files:
-dir /b bin\%BUILD_TYPE%\*.exe 2>nul
-
 echo.
-echo To open the project in Visual Studio, run:
-echo   build_vs\EVEOfflineClient.sln
+echo ================================================
+echo Solution Generated Successfully!
+echo ================================================
 echo.
-echo Or rebuild using this script with:
-echo   build_vs.bat --clean          # Clean rebuild
-echo   build_vs.bat --debug          # Debug build
-echo   build_vs.bat --open           # Open in Visual Studio after build
+echo Solution file location: build_vs\Atlas.sln
+echo.
+echo All targets included:
+echo   AtlasEngine    - Core engine library
+echo   AtlasEditor    - Editor authoring tool
+echo   AtlasRuntime   - Standalone runtime
+echo   AtlasTests     - Engine unit tests
+echo   eve_client     - EVEOFFLINE game client
+echo   eve_server     - EVEOFFLINE dedicated server
+echo.
+echo To open in Visual Studio:
+echo   start build_vs\Atlas.sln
 echo.
 
 pause
