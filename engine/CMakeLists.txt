@@ -33,6 +33,8 @@ add_library(AtlasEngine STATIC
     tile/TileNodes.cpp
     sound/SoundGraph.cpp
     sound/SoundNodes.cpp
+    ai/BehaviorGraph.cpp
+    ai/BehaviorNodes.cpp
 )
 
 target_include_directories(AtlasEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

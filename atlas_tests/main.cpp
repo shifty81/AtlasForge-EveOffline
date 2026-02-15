@@ -224,6 +224,15 @@ void test_tilegraph_compile_chain();
 void test_tilegraph_execute();
 void test_tilegraph_deterministic();
 
+// BehaviorGraph tests
+void test_behaviorgraph_add_nodes();
+void test_behaviorgraph_remove_node();
+void test_behaviorgraph_compile_empty();
+void test_behaviorgraph_compile_single_node();
+void test_behaviorgraph_compile_chain();
+void test_behaviorgraph_execute();
+void test_behaviorgraph_deterministic();
+
 // Graph Serialization tests
 void test_json_builder_object();
 void test_json_builder_array();
@@ -486,6 +495,16 @@ int main() {
     test_tilegraph_compile_chain();
     test_tilegraph_execute();
     test_tilegraph_deterministic();
+
+    // Behavior Graph
+    std::cout << "\n--- Behavior Graph ---" << std::endl;
+    test_behaviorgraph_add_nodes();
+    test_behaviorgraph_remove_node();
+    test_behaviorgraph_compile_empty();
+    test_behaviorgraph_compile_single_node();
+    test_behaviorgraph_compile_chain();
+    test_behaviorgraph_execute();
+    test_behaviorgraph_deterministic();
 
     // Graph Serialization
     std::cout << "\n--- Graph Serialization ---" << std::endl;
