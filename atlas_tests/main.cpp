@@ -532,6 +532,20 @@ void test_signal_policy_core_locked();
 void test_signal_policy_get_namespaces();
 void test_signal_policy_clear();
 
+// ECS Inspector Panel tests
+void test_ecs_inspector_empty_world();
+void test_ecs_inspector_entity_list();
+void test_ecs_inspector_component_types();
+void test_ecs_inspector_select_entity();
+void test_ecs_inspector_draw_calls_refresh();
+
+// Net Inspector Panel tests
+void test_net_inspector_standalone();
+void test_net_inspector_server_mode();
+void test_net_inspector_client_mode();
+void test_net_inspector_peer_list();
+void test_net_inspector_draw_calls_refresh();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -1128,6 +1142,22 @@ int main() {
     test_signal_policy_core_locked();
     test_signal_policy_get_namespaces();
     test_signal_policy_clear();
+
+    // ECS Inspector Panel
+    std::cout << "\n--- ECS Inspector Panel ---" << std::endl;
+    test_ecs_inspector_empty_world();
+    test_ecs_inspector_entity_list();
+    test_ecs_inspector_component_types();
+    test_ecs_inspector_select_entity();
+    test_ecs_inspector_draw_calls_refresh();
+
+    // Net Inspector Panel
+    std::cout << "\n--- Net Inspector Panel ---" << std::endl;
+    test_net_inspector_standalone();
+    test_net_inspector_server_mode();
+    test_net_inspector_client_mode();
+    test_net_inspector_peer_list();
+    test_net_inspector_draw_calls_refresh();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

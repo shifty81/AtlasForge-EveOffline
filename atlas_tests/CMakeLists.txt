@@ -62,10 +62,14 @@ add_executable(AtlasTests
     test_mod_manifest.cpp
     test_mod_overlay.cpp
     test_mod_signal_policy.cpp
+    test_ecs_inspector.cpp
+    test_net_inspector.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/NodeGraphEditorPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/AIInspectorPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/AIPromptDebugPanel.cpp
+    ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp
+    ${CMAKE_SOURCE_DIR}/editor/panels/NetInspectorPanel.cpp
 )
 
 target_link_libraries(AtlasTests AtlasEngine)
