@@ -1,11 +1,11 @@
 # Atlas Engine — Development Alignment Goals
 
 This document maps the current project state to the target architecture defined
-in the design specifications (1111.txt, 1112.md) and establishes clear goals
+in the design specifications (1111.txt, 1112.md, 1114.txt, 2222) and establishes clear goals
 for aligning the codebase with the new structure.
 
-> **Note:** A future design document (1112 series) may introduce additional
-> changes. Review incoming spec files before starting new feature work.
+> **Note:** Design documents 1114.txt and 2222 introduced extensive new systems
+> including graph modules, project restructuring, and platform-level features.
 
 ---
 
@@ -19,11 +19,14 @@ project. It currently provides:
 | Core (Engine, Logger) | ✅ Complete | `engine/core/` |
 | ECS Framework | ✅ Complete | `engine/ecs/` |
 | Graph VM + Compiler | ✅ Complete | `engine/graphvm/` |
+| Graph Serialization | ✅ Complete | `engine/graphvm/` |
+| Graph Cache | ✅ Complete | `engine/graphvm/` |
 | Asset System | ✅ Complete | `engine/assets/` |
 | Networking (CS + P2P) | ✅ Complete | `engine/net/` |
 | Tick Scheduler | ✅ Complete | `engine/sim/` |
 | World Generation | ✅ Complete | `engine/world/` |
 | WorldGraph (DAG) | ✅ Complete | `engine/world/` |
+| TileGraph (2D) | ✅ Complete | `engine/tile/` |
 | Project System | ✅ Complete | `engine/project/` |
 | Command System | ✅ Complete | `engine/command/` |
 | Interaction System | ✅ Complete | `engine/interaction/` |
@@ -35,6 +38,14 @@ project. It currently provides:
 | AI Signal Registry | ✅ Complete | `engine/ai/` |
 | AI Memory | ✅ Complete | `engine/ai/` |
 | Relationship Model | ✅ Complete | `engine/ai/` |
+| BehaviorGraph | ✅ Complete | `engine/ai/` |
+| SoundGraph | ✅ Complete | `engine/sound/` |
+| CharacterGraph | ✅ Complete | `engine/character/` |
+| AnimationGraph | ✅ Complete | `engine/animation/` |
+| WeaponGraph | ✅ Complete | `engine/weapon/` |
+| UIGraph | ✅ Complete | `engine/ui/` |
+| GameFlowGraph | ✅ Complete | `engine/flow/` |
+| Schema Validator | ✅ Complete | `engine/schema/` |
 | Camera / World Modes | 🟡 Header-only | `engine/camera/` |
 | Editor (panels, UI) | ✅ Complete | `editor/` |
 | Runtime CLI | ✅ Complete | `runtime/` |
@@ -50,9 +61,16 @@ project. It currently provides:
 | WorldGraph | World generation | ✅ Implemented |
 | StrategyGraph | AI decisions | ✅ Implemented |
 | ConversationGraph | Dialogue + memory | ✅ Implemented |
+| TileGraph | 2D world generation | ✅ Implemented |
+| BehaviorGraph | AI behavior authoring | ✅ Implemented |
+| SoundGraph | Procedural audio | ✅ Implemented |
+| CharacterGraph | Modular character generation | ✅ Implemented |
+| AnimationGraph | Animation + modifiers | ✅ Implemented |
+| WeaponGraph | Weapon construction | ✅ Implemented |
+| UIGraph | UI composition | ✅ Implemented |
+| GameFlowGraph | Game flow state machine | ✅ Implemented |
 | RenderGraph | GPU execution | 📋 Planned |
 | ShaderGraph | Materials | 📋 Planned |
-| TileGraph | 2D world generation | 📋 Planned |
 
 ### AI Architecture Required
 
@@ -103,15 +121,25 @@ These items align the project with the core architecture:
 
 Extend the graph system to cover all required types:
 
-- [ ] Graph serialization format (JSON `.worldgraph` / `.strategygraph` / `.conversation`)
+- [x] Graph serialization format (JSON builder/reader)
 - [ ] Graph diff + undo support via Command system
 - [x] ReadAISignal node for StrategyGraph
 - [x] EmitAction node for StrategyGraph
 - [x] AI Memory storage with tick-based decay
 - [x] Relationship model (entity pairs → float)
 - [x] ConversationGraph schema (atlas.conversation.v1.json)
-- [ ] TileGraph for 2D procedural generation
-- [ ] Graph execution caching + invalidation
+- [x] TileGraph for 2D procedural generation
+- [x] Graph execution caching + invalidation
+- [x] SoundGraph for procedural audio
+- [x] CharacterGraph for modular character generation
+- [x] AnimationGraph for animation + modifiers
+- [x] WeaponGraph for weapon construction
+- [x] BehaviorGraph for AI behavior authoring
+- [x] UIGraph for UI composition
+- [x] GameFlowGraph for game flow state machine
+- [x] Schema Validator for graph schema enforcement
+- [x] EVE Offline project restructure (Plugin.toml, data manifest, AI config)
+- [x] Arena2D reference project (multi-project scalability proof)
 
 ### Phase C — Editor Tooling
 
