@@ -15,6 +15,18 @@ The original Python implementation before the project migrated to C++.
 - `demos/` — Demo and showcase scripts
 - Build scripts and dependencies
 
+### `design_docs/` — Merged Design Documents
+Original brainstorming and design specification files that have been fully merged
+into the engine and codebase. Kept for historical reference.
+- `1111.txt` — Initial ChatGPT design session (Atlas purpose, architecture)
+- `1112.md` — Continuation of design session (graph types, AI, conversation system)
+- `1114.txt` — Further design session (conversation engine, NPC knowledge graphs)
+- `2222` — Extended design session (same series as 1112/1114)
+- `atlas_plans_for_future.txt` — Future plans for Atlas (warp visuals, camera, HUD)
+- `2d_implementation.txt` — 2D implementation notes (EVE warp cinematic breakdown)
+- `features1.md` — Feature list and implementation notes
+- `atlasUI.rtf` — UI specification document
+
 ### `legacy/` — Deprecated Project Files
 - `eve baseline.rtf` — Original design baseline document
 - `scopefor projectgui.rtf` — Early GUI scope document

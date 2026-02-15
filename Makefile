@@ -105,3 +105,7 @@ test-server: ## Build and run C++ server tests
 
 .PHONY: all
 all: clean build ## Clean and build everything
+
+.PHONY: validate
+validate: ## Validate all project structures for portability
+	./validate_project.sh

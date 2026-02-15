@@ -1,11 +1,12 @@
 # Atlas Engine — Development Alignment Goals
 
 This document maps the current project state to the target architecture defined
-in the design specifications (1111.txt, 1112.md, 1114.txt, 2222) and establishes clear goals
+in the design specifications (archived in `archive/design_docs/`) and establishes clear goals
 for aligning the codebase with the new structure.
 
-> **Note:** Design documents 1114.txt and 2222 introduced extensive new systems
-> including graph modules, project restructuring, and platform-level features.
+> **Note:** Original design documents (1111.txt, 1112.md, 1114.txt, 2222) have been
+> archived to `archive/design_docs/` as their content has been fully merged into
+> the engine and codebase.
 
 ---
 
