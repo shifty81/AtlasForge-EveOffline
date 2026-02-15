@@ -96,6 +96,24 @@ void test_console_net_mode();
 void test_console_help();
 void test_console_unknown_command();
 
+// Project tests
+void test_project_load_valid();
+void test_project_load_minimal();
+void test_project_load_missing_file();
+void test_project_invalid_schema();
+void test_project_missing_name();
+void test_project_invalid_version();
+void test_project_schema_validation();
+
+// Command tests
+void test_command_execute();
+void test_command_undo();
+void test_command_redo();
+void test_command_redo_cleared_on_execute();
+void test_command_clear();
+void test_command_last_executed();
+void test_command_multiple_undo_redo();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -208,6 +226,26 @@ int main() {
     test_console_net_mode();
     test_console_help();
     test_console_unknown_command();
+
+    // Project
+    std::cout << "\n--- Project System ---" << std::endl;
+    test_project_load_valid();
+    test_project_load_minimal();
+    test_project_load_missing_file();
+    test_project_invalid_schema();
+    test_project_missing_name();
+    test_project_invalid_version();
+    test_project_schema_validation();
+
+    // Command
+    std::cout << "\n--- Command System ---" << std::endl;
+    test_command_execute();
+    test_command_undo();
+    test_command_redo();
+    test_command_redo_cleared_on_execute();
+    test_command_clear();
+    test_command_last_executed();
+    test_command_multiple_undo_redo();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

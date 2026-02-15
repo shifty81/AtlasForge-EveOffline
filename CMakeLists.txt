@@ -21,6 +21,7 @@ option(BUILD_CLIENT "Build C++ OpenGL client" ON)
 option(BUILD_SERVER "Build C++ dedicated server" ON)
 option(BUILD_ATLAS_ENGINE "Build Atlas Engine library" ON)
 option(BUILD_ATLAS_EDITOR "Build Atlas Editor" OFF)
+option(BUILD_ATLAS_RUNTIME "Build Atlas Runtime" OFF)
 option(BUILD_ATLAS_TESTS "Build Atlas Engine tests" ON)
 
 # --- Atlas Engine (core library) ---
@@ -33,6 +34,12 @@ endif()
 if(BUILD_ATLAS_EDITOR AND BUILD_ATLAS_ENGINE)
     message(STATUS "Adding Atlas Editor...")
     add_subdirectory(editor)
+endif()
+
+# --- Atlas Runtime ---
+if(BUILD_ATLAS_RUNTIME AND BUILD_ATLAS_ENGINE)
+    message(STATUS "Adding Atlas Runtime...")
+    add_subdirectory(runtime)
 endif()
 
 # --- Atlas Engine Tests ---
@@ -59,6 +66,7 @@ message(STATUS "Atlas Configuration:")
 message(STATUS "  C++ Standard: ${CMAKE_CXX_STANDARD}")
 message(STATUS "  Atlas Engine:  ${BUILD_ATLAS_ENGINE}")
 message(STATUS "  Atlas Editor:  ${BUILD_ATLAS_EDITOR}")
+message(STATUS "  Atlas Runtime: ${BUILD_ATLAS_RUNTIME}")
 message(STATUS "  Atlas Tests:   ${BUILD_ATLAS_TESTS}")
 message(STATUS "  Game Client:   ${BUILD_CLIENT}")
 message(STATUS "  Game Server:   ${BUILD_SERVER}")

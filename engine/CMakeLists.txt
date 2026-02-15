@@ -14,6 +14,8 @@ add_library(AtlasEngine STATIC
     world/NoiseGenerator.cpp
     world/WorldStreamer.cpp
     world/GalaxyGenerator.cpp
+    project/ProjectManager.cpp
+    command/CommandHistory.cpp
 )
 
 target_include_directories(AtlasEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
