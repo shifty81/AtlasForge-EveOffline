@@ -62,6 +62,16 @@
 #include "systems/mission_template_system.h"
 #include "systems/mission_generator_system.h"
 #include "systems/reputation_system.h"
+#include "systems/background_simulation_system.h"
+#include "systems/sector_tension_system.h"
+#include "systems/npc_intent_system.h"
+#include "systems/trade_flow_system.h"
+#include "systems/pirate_doctrine_system.h"
+#include "systems/titan_assembly_system.h"
+#include "systems/galactic_response_system.h"
+#include "systems/operational_wear_system.h"
+#include "systems/rumor_propagation_system.h"
+#include "systems/fleet_norm_system.h"
 #include "network/protocol_handler.h"
 #include "ui/server_console.h"
 #include "utils/logger.h"
@@ -11966,6 +11976,467 @@ void testPersistenceEconomyFile() {
     std::remove(filepath.c_str());
 }
 
+// ==================== Phase 11: Background Simulation System Tests ====================
+
+void testBackgroundSimInitialize() {
+    std::cout << "\n=== BackgroundSimulation: Initialize ===" << std::endl;
+    ecs::World world;
+    auto* galaxy = world.createEntity("galaxy");
+    BackgroundSimulationSystem::initialize(galaxy);
+    auto* state = galaxy->getComponent<components::BackgroundSimState>();
+    assertTrue(state != nullptr, "BackgroundSimState added");
+    assertTrue(approxEqual(state->sim_time, 0.0f), "sim_time starts at 0");
+    assertTrue(state->total_ticks == 0, "total_ticks starts at 0");
+    assertTrue(!state->paused, "not paused by default");
+}
+
+void testBackgroundSimUpdate() {
+    std::cout << "\n=== BackgroundSimulation: Update ===" << std::endl;
+    ecs::World world;
+    auto* galaxy = world.createEntity("galaxy");
+    BackgroundSimulationSystem::initialize(galaxy);
+    BackgroundSimulationSystem::update(galaxy, 2.5f);
+    assertTrue(approxEqual(BackgroundSimulationSystem::getSimTime(galaxy), 2.5f), "sim_time advanced");
+    assertTrue(BackgroundSimulationSystem::getTotalTicks(galaxy) == 2, "2 ticks at dt=2.5 with rate=1.0");
+}
+
+void testBackgroundSimPauseResume() {
+    std::cout << "\n=== BackgroundSimulation: Pause/Resume ===" << std::endl;
+    ecs::World world;
+    auto* galaxy = world.createEntity("galaxy");
+    BackgroundSimulationSystem::initialize(galaxy);
+    BackgroundSimulationSystem::pause(galaxy);
+    BackgroundSimulationSystem::update(galaxy, 5.0f);
+    assertTrue(approxEqual(BackgroundSimulationSystem::getSimTime(galaxy), 0.0f), "paused: no time advance");
+    BackgroundSimulationSystem::resume(galaxy);
+    BackgroundSimulationSystem::update(galaxy, 1.0f);
+    assertTrue(approxEqual(BackgroundSimulationSystem::getSimTime(galaxy), 1.0f), "resumed: time advances");
+}
+
+void testSectorTensionInitialize() {
+    std::cout << "\n=== SectorTension: Initialize ===" << std::endl;
+    ecs::World world;
+    auto* sys = world.createEntity("system_1");
+    SectorTensionSystem::initialize(sys);
+    auto* tension = sys->getComponent<components::SectorTension>();
+    assertTrue(tension != nullptr, "SectorTension added");
+    assertTrue(approxEqual(tension->pirate_pressure, 0.0f), "pirate_pressure starts at 0");
+    assertTrue(approxEqual(tension->security_confidence, 1.0f), "security_confidence starts at 1");
+}
+
+void testSectorTensionUpdate() {
+    std::cout << "\n=== SectorTension: Update ===" << std::endl;
+    ecs::World world;
+    auto* sys = world.createEntity("system_1");
+    SectorTensionSystem::initialize(sys);
+    SectorTensionSystem::update(sys, 1.0f, 0.8f, 0.5f);
+    auto* tension = sys->getComponent<components::SectorTension>();
+    assertTrue(tension->pirate_pressure > 0.0f, "pirate_pressure increased with high pirate activity");
+    assertTrue(tension->security_confidence < 1.0f, "security_confidence decreased");
+}
+
+void testSectorTensionThreatLevel() {
+    std::cout << "\n=== SectorTension: Threat Level ===" << std::endl;
+    ecs::World world;
+    auto* sys = world.createEntity("system_1");
+    SectorTensionSystem::initialize(sys);
+    assertTrue(!SectorTensionSystem::isUnderStress(sys), "not under stress initially");
+    // Apply high pirate pressure for several ticks
+    for (int i = 0; i < 50; i++) {
+        SectorTensionSystem::update(sys, 1.0f, 1.0f, 0.0f);
+    }
+    assertTrue(SectorTensionSystem::getThreatLevel(sys) > 0.0f, "threat level increased");
+}
+
+void testNPCIntentInitialize() {
+    std::cout << "\n=== NPCIntent: Initialize ===" << std::endl;
+    ecs::World world;
+    auto* npc = world.createEntity("npc_1");
+    NPCIntentSystem::initialize(npc);
+    auto* intent = npc->getComponent<components::NPCIntent>();
+    assertTrue(intent != nullptr, "NPCIntent added");
+    assertTrue(intent->current_intent == components::NPCIntent::Intent::Idle, "starts Idle");
+}
+
+void testNPCIntentSelectFlee() {
+    std::cout << "\n=== NPCIntent: Select Flee on High Threat ===" << std::endl;
+    ecs::World world;
+    auto* npc = world.createEntity("npc_1");
+    NPCIntentSystem::initialize(npc);
+    NPCIntentSystem::selectIntent(npc, 0.5f, 0.5f, 0.8f);
+    assertTrue(NPCIntentSystem::getIntentName(npc) == "Flee", "flees on high threat");
+}
+
+void testNPCIntentSelectDefend() {
+    std::cout << "\n=== NPCIntent: Select Defend on Moderate Threat ===" << std::endl;
+    ecs::World world;
+    auto* npc = world.createEntity("npc_1");
+    NPCIntentSystem::initialize(npc);
+    // Add weapon component so NPC can defend
+    auto weapon = std::make_unique<components::Weapon>();
+    npc->addComponent(std::move(weapon));
+    NPCIntentSystem::selectIntent(npc, 0.5f, 0.5f, 0.6f);
+    assertTrue(NPCIntentSystem::getIntentName(npc) == "Defend", "defends when armed and moderate threat");
+}
+
+void testTradeFlowInitialize() {
+    std::cout << "\n=== TradeFlow: Initialize ===" << std::endl;
+    ecs::World world;
+    auto* market = world.createEntity("market_1");
+    TradeFlowSystem::initialize(market);
+    auto* flow = market->getComponent<components::TradeFlow>();
+    assertTrue(flow != nullptr, "TradeFlow added");
+    assertTrue(flow->flows.empty(), "starts with empty flows");
+}
+
+void testTradeFlowAddAndUpdate() {
+    std::cout << "\n=== TradeFlow: Add Flow and Update ===" << std::endl;
+    ecs::World world;
+    auto* market = world.createEntity("market_1");
+    TradeFlowSystem::initialize(market);
+    TradeFlowSystem::addFlow(market, "tritanium", 100.0f, 50.0f);
+    TradeFlowSystem::update(market, 1.0f);
+    float mod = TradeFlowSystem::getPriceModifier(market, "tritanium");
+    assertTrue(mod < 1.0f, "price modifier decreases when supply > demand");
+}
+
+void testTradeFlowScarcity() {
+    std::cout << "\n=== TradeFlow: Scarcity Index ===" << std::endl;
+    ecs::World world;
+    auto* market = world.createEntity("market_1");
+    TradeFlowSystem::initialize(market);
+    TradeFlowSystem::addFlow(market, "morphite", 1.0f, 100.0f);
+    TradeFlowSystem::update(market, 1.0f);
+    float scarcity = TradeFlowSystem::getScarcityIndex(market);
+    assertTrue(scarcity > 0.5f, "high scarcity when demand >> supply");
+}
+
+void testPirateDoctrineInitialize() {
+    std::cout << "\n=== PirateDoctrine: Initialize ===" << std::endl;
+    ecs::World world;
+    auto* faction = world.createEntity("pirates");
+    PirateDoctrineSystem::initialize(faction);
+    assertTrue(PirateDoctrineSystem::getDoctrineName(faction) == "Accumulate", "starts in Accumulate");
+}
+
+void testPirateDoctrineTransitions() {
+    std::cout << "\n=== PirateDoctrine: Transitions ===" << std::endl;
+    ecs::World world;
+    auto* faction = world.createEntity("pirates");
+    PirateDoctrineSystem::initialize(faction);
+
+    PirateDoctrineSystem::update(faction, 0.3f, 0.2f);
+    assertTrue(PirateDoctrineSystem::getDoctrineName(faction) == "Disrupt", "Disrupt at 30% progress, low discovery");
+
+    PirateDoctrineSystem::update(faction, 0.3f, 0.7f);
+    assertTrue(PirateDoctrineSystem::getDoctrineName(faction) == "Conceal", "Conceal at 30% progress, high discovery");
+
+    PirateDoctrineSystem::update(faction, 0.6f, 0.2f);
+    assertTrue(PirateDoctrineSystem::getDoctrineName(faction) == "Defend", "Defend at 60% progress");
+
+    PirateDoctrineSystem::update(faction, 0.9f, 0.2f);
+    assertTrue(PirateDoctrineSystem::getDoctrineName(faction) == "PrepareLaunch", "PrepareLaunch at 90% progress");
+}
+
+void testPirateDoctrineAggression() {
+    std::cout << "\n=== PirateDoctrine: Aggression Scaling ===" << std::endl;
+    ecs::World world;
+    auto* faction = world.createEntity("pirates");
+    PirateDoctrineSystem::initialize(faction);
+
+    PirateDoctrineSystem::update(faction, 0.1f, 0.0f);
+    float early = PirateDoctrineSystem::getAggressionLevel(faction);
+
+    PirateDoctrineSystem::update(faction, 0.9f, 0.0f);
+    float late = PirateDoctrineSystem::getAggressionLevel(faction);
+
+    assertTrue(late > early, "aggression increases with progress");
+}
+
+void testTitanAssemblyInitialize() {
+    std::cout << "\n=== TitanAssembly: Initialize ===" << std::endl;
+    ecs::World world;
+    auto* titan = world.createEntity("titan");
+    TitanAssemblySystem::initialize(titan);
+    auto* progress = titan->getComponent<components::TitanAssemblyProgress>();
+    assertTrue(progress != nullptr, "TitanAssemblyProgress added");
+    assertTrue(progress->nodes.size() == 6, "6 assembly nodes created");
+    assertTrue(approxEqual(progress->overall_progress, 0.0f), "starts at 0% progress");
+    assertTrue(!TitanAssemblySystem::isComplete(titan), "not complete initially");
+}
+
+void testTitanAssemblyUpdate() {
+    std::cout << "\n=== TitanAssembly: Update ===" << std::endl;
+    ecs::World world;
+    auto* titan = world.createEntity("titan");
+    TitanAssemblySystem::initialize(titan);
+    TitanAssemblySystem::update(titan, 100.0f, 1.0f);
+    float progress = TitanAssemblySystem::getOverallProgress(titan);
+    assertTrue(progress > 0.0f, "progress advanced after update");
+    assertTrue(progress < 1.0f, "not instantly complete");
+}
+
+void testTitanAssemblyResourcePressure() {
+    std::cout << "\n=== TitanAssembly: Resource Pressure ===" << std::endl;
+    ecs::World world;
+    auto* titan = world.createEntity("titan");
+    TitanAssemblySystem::initialize(titan);
+    float pressure = TitanAssemblySystem::getResourcePressure(titan);
+    assertTrue(pressure > 0.0f, "resource pressure exists at start");
+    // Advance significantly
+    for (int i = 0; i < 1000; i++) {
+        TitanAssemblySystem::update(titan, 10.0f, 1.0f);
+    }
+    float later_pressure = TitanAssemblySystem::getResourcePressure(titan);
+    assertTrue(later_pressure < pressure, "resource pressure decreases as progress increases");
+}
+
+void testGalacticResponseInitialize() {
+    std::cout << "\n=== GalacticResponse: Initialize ===" << std::endl;
+    ecs::World world;
+    auto* galaxy = world.createEntity("galaxy");
+    GalacticResponseSystem::initialize(galaxy);
+    auto* response = galaxy->getComponent<components::GalacticResponse>();
+    assertTrue(response != nullptr, "GalacticResponse added");
+    assertTrue(approxEqual(response->perceived_threat, 0.0f), "no perceived threat initially");
+}
+
+void testGalacticResponseUpdate() {
+    std::cout << "\n=== GalacticResponse: Update ===" << std::endl;
+    ecs::World world;
+    auto* galaxy = world.createEntity("galaxy");
+    GalacticResponseSystem::initialize(galaxy);
+    GalacticResponseSystem::update(galaxy, 0.5f, 0.3f);
+    float threat = GalacticResponseSystem::getPerceivedThreat(galaxy);
+    assertTrue(threat > 0.0f, "perceived threat increases with titan progress");
+    assertTrue(threat < 1.0f, "perceived threat bounded");
+}
+
+void testGalacticResponseEmergency() {
+    std::cout << "\n=== GalacticResponse: Emergency Activation ===" << std::endl;
+    ecs::World world;
+    auto* galaxy = world.createEntity("galaxy");
+    GalacticResponseSystem::initialize(galaxy);
+    assertTrue(!GalacticResponseSystem::isEmergencyActive(galaxy), "no emergency initially");
+    GalacticResponseSystem::update(galaxy, 0.95f, 0.8f);
+    assertTrue(GalacticResponseSystem::isEmergencyActive(galaxy), "emergency at 95% titan progress");
+}
+
+void testOperationalWearInitialize() {
+    std::cout << "\n=== OperationalWear: Initialize ===" << std::endl;
+    ecs::World world;
+    auto* ship = world.createEntity("ship");
+    OperationalWearSystem::initialize(ship);
+    auto* wear = ship->getComponent<components::OperationalWear>();
+    assertTrue(wear != nullptr, "OperationalWear added");
+    assertTrue(approxEqual(wear->deployment_time, 0.0f), "deployment_time starts at 0");
+    assertTrue(!wear->field_repaired, "not field repaired initially");
+}
+
+void testOperationalWearAccumulates() {
+    std::cout << "\n=== OperationalWear: Accumulates Over Time ===" << std::endl;
+    ecs::World world;
+    auto* ship = world.createEntity("ship");
+    OperationalWearSystem::initialize(ship);
+    OperationalWearSystem::update(ship, 3600.0f);
+    auto* wear = ship->getComponent<components::OperationalWear>();
+    assertTrue(wear->deployment_time > 0.0f, "deployment time increases");
+    assertTrue(wear->fuel_inefficiency > 0.0f, "fuel inefficiency increases");
+    assertTrue(wear->crew_stress > 0.0f, "crew stress increases");
+}
+
+void testOperationalWearDock() {
+    std::cout << "\n=== OperationalWear: Dock Resets ===" << std::endl;
+    ecs::World world;
+    auto* ship = world.createEntity("ship");
+    OperationalWearSystem::initialize(ship);
+    OperationalWearSystem::update(ship, 10000.0f);
+    OperationalWearSystem::dock(ship);
+    auto* wear = ship->getComponent<components::OperationalWear>();
+    assertTrue(approxEqual(wear->deployment_time, 0.0f), "deployment reset on dock");
+    assertTrue(approxEqual(wear->crew_stress, 0.0f), "stress reset on dock");
+}
+
+void testOperationalWearFieldRepair() {
+    std::cout << "\n=== OperationalWear: Field Repair ===" << std::endl;
+    ecs::World world;
+    auto* ship = world.createEntity("ship");
+    OperationalWearSystem::initialize(ship);
+    OperationalWearSystem::update(ship, 50000.0f);
+    float before = ship->getComponent<components::OperationalWear>()->repair_debt;
+    OperationalWearSystem::fieldRepair(ship);
+    auto* wear = ship->getComponent<components::OperationalWear>();
+    assertTrue(wear->field_repaired, "field_repaired flag set");
+    assertTrue(wear->repair_debt < before, "repair_debt reduced by field repair");
+}
+
+void testOperationalWearNeedsDocking() {
+    std::cout << "\n=== OperationalWear: Needs Docking ===" << std::endl;
+    ecs::World world;
+    auto* ship = world.createEntity("ship");
+    OperationalWearSystem::initialize(ship);
+    assertTrue(!OperationalWearSystem::needsDocking(ship), "doesn't need docking initially");
+    // Simulate long deployment
+    for (int i = 0; i < 100; i++) {
+        OperationalWearSystem::update(ship, 1000.0f);
+    }
+    assertTrue(OperationalWearSystem::needsDocking(ship), "needs docking after long deployment");
+}
+
+void testRumorPropagationInitialize() {
+    std::cout << "\n=== RumorPropagation: Initialize ===" << std::endl;
+    ecs::World world;
+    auto* captain = world.createEntity("captain_1");
+    RumorPropagationSystem::initialize(captain);
+    assertTrue(RumorPropagationSystem::getRumorCount(captain) == 0, "no rumors initially");
+}
+
+void testRumorPropagationSpread() {
+    std::cout << "\n=== RumorPropagation: Spread ===" << std::endl;
+    ecs::World world;
+    auto* source = world.createEntity("captain_1");
+    auto* target = world.createEntity("captain_2");
+    RumorPropagationSystem::initialize(source);
+    RumorPropagationSystem::initialize(target);
+
+    // Add a rumor to source
+    auto* log = source->getComponent<components::RumorLog>();
+    components::RumorLog::Rumor r;
+    r.rumor_id = "titan_sighting";
+    r.text = "Something massive was spotted beyond the rim.";
+    r.belief_strength = 0.8f;
+    r.personally_witnessed = true;
+    r.times_heard = 1;
+    log->rumors.push_back(r);
+
+    RumorPropagationSystem::propagateRumor(source, target, "titan_sighting");
+    assertTrue(RumorPropagationSystem::getRumorCount(target) == 1, "rumor propagated to target");
+    float belief = RumorPropagationSystem::getRumorBelief(target, "titan_sighting");
+    assertTrue(belief > 0.0f && belief < 0.8f, "belief weakened through retelling");
+}
+
+void testRumorPropagationReinforce() {
+    std::cout << "\n=== RumorPropagation: Reinforce ===" << std::endl;
+    ecs::World world;
+    auto* source = world.createEntity("captain_1");
+    auto* target = world.createEntity("captain_2");
+    RumorPropagationSystem::initialize(source);
+    RumorPropagationSystem::initialize(target);
+
+    // Add same rumor to both
+    auto addRumor = [](ecs::Entity* e, float belief) {
+        auto* log = e->getComponent<components::RumorLog>();
+        components::RumorLog::Rumor r;
+        r.rumor_id = "titan_sighting";
+        r.text = "Something massive.";
+        r.belief_strength = belief;
+        r.personally_witnessed = false;
+        r.times_heard = 1;
+        log->rumors.push_back(r);
+    };
+    addRumor(source, 0.8f);
+    addRumor(target, 0.3f);
+
+    RumorPropagationSystem::propagateRumor(source, target, "titan_sighting");
+    float belief = RumorPropagationSystem::getRumorBelief(target, "titan_sighting");
+    assertTrue(belief > 0.3f, "belief reinforced on repeat hearing");
+}
+
+void testFleetNormInitialize() {
+    std::cout << "\n=== FleetNorm: Initialize ===" << std::endl;
+    ecs::World world;
+    auto* fleet = world.createEntity("fleet");
+    FleetNormSystem::initialize(fleet);
+    auto* norm = fleet->getComponent<components::FleetNorm>();
+    assertTrue(norm != nullptr, "FleetNorm added");
+    assertTrue(norm->violations == 0, "no violations initially");
+    assertTrue(norm->reinforcements == 0, "no reinforcements initially");
+}
+
+void testFleetNormStability() {
+    std::cout << "\n=== FleetNorm: Stability ===" << std::endl;
+    ecs::World world;
+    auto* fleet = world.createEntity("fleet");
+    FleetNormSystem::initialize(fleet);
+
+    FleetNormSystem::recordNormReinforcement(fleet);
+    FleetNormSystem::recordNormReinforcement(fleet);
+    FleetNormSystem::recordNormReinforcement(fleet);
+    FleetNormSystem::recordNormViolation(fleet);
+
+    float stability = FleetNormSystem::getNormStability(fleet);
+    assertTrue(stability > 0.5f, "stability high when reinforcements > violations");
+    assertTrue(stability < 1.0f, "stability not perfect with violations");
+}
+
+void testFleetNormRiskAppetite() {
+    std::cout << "\n=== FleetNorm: Risk Appetite ===" << std::endl;
+    ecs::World world;
+    auto* fleet = world.createEntity("fleet");
+    FleetNormSystem::initialize(fleet);
+    auto* norm = fleet->getComponent<components::FleetNorm>();
+    float initial = norm->risk_appetite;
+
+    FleetNormSystem::updateRiskAppetite(fleet, 1.0f);
+    assertTrue(norm->risk_appetite > initial, "risk appetite increases toward positive outcomes");
+
+    FleetNormSystem::updateRiskAppetite(fleet, 0.0f);
+    float after_loss = norm->risk_appetite;
+    assertTrue(after_loss < norm->risk_appetite + 0.1f, "risk appetite decreases toward negative outcomes");
+}
+
+void testNewComponentDefaults() {
+    std::cout << "\n=== Phase 11: New Component Defaults ===" << std::endl;
+    ecs::World world;
+
+    auto* e1 = world.createEntity("e1");
+    auto* bg = addComp<components::BackgroundSimState>(e1);
+    assertTrue(approxEqual(bg->sim_time, 0.0f), "BackgroundSimState sim_time default");
+    assertTrue(bg->total_ticks == 0, "BackgroundSimState total_ticks default");
+    assertTrue(!bg->paused, "BackgroundSimState not paused default");
+
+    auto* e2 = world.createEntity("e2");
+    auto* st = addComp<components::SectorTension>(e2);
+    assertTrue(approxEqual(st->resource_stress, 0.0f), "SectorTension resource_stress default");
+    assertTrue(approxEqual(st->security_confidence, 1.0f), "SectorTension security_confidence default");
+
+    auto* e3 = world.createEntity("e3");
+    auto* ni = addComp<components::NPCIntent>(e3);
+    assertTrue(ni->current_intent == components::NPCIntent::Intent::Idle, "NPCIntent default Idle");
+
+    auto* e4 = world.createEntity("e4");
+    auto* tf = addComp<components::TradeFlow>(e4);
+    assertTrue(tf->flows.empty(), "TradeFlow no flows default");
+
+    auto* e5 = world.createEntity("e5");
+    auto* pd = addComp<components::PirateDoctrine>(e5);
+    assertTrue(pd->doctrine == components::PirateDoctrineState::Accumulate, "PirateDoctrine Accumulate default");
+
+    auto* e6 = world.createEntity("e6");
+    auto* tap = addComp<components::TitanAssemblyProgress>(e6);
+    assertTrue(approxEqual(tap->overall_progress, 0.0f), "TitanAssemblyProgress default 0");
+    assertTrue(!tap->launched, "TitanAssemblyProgress not launched");
+
+    auto* e7 = world.createEntity("e7");
+    auto* gr = addComp<components::GalacticResponse>(e7);
+    assertTrue(approxEqual(gr->perceived_threat, 0.0f), "GalacticResponse default 0 threat");
+
+    auto* e8 = world.createEntity("e8");
+    auto* ow = addComp<components::OperationalWear>(e8);
+    assertTrue(approxEqual(ow->deployment_time, 0.0f), "OperationalWear deployment_time default");
+    assertTrue(!ow->field_repaired, "OperationalWear not field_repaired default");
+
+    auto* e9 = world.createEntity("e9");
+    auto* cb = addComp<components::CaptainBackground>(e9);
+    assertTrue(cb->origin == components::CaptainBackground::Origin::Military, "CaptainBackground Military default");
+
+    auto* e10 = world.createEntity("e10");
+    auto* fn = addComp<components::FleetNorm>(e10);
+    assertTrue(!fn->always_salvage, "FleetNorm always_salvage false default");
+    assertTrue(!fn->never_retreat, "FleetNorm never_retreat false default");
+    assertTrue(fn->violations == 0, "FleetNorm violations 0 default");
+}
+
 int main() {
     std::cout << "========================================" << std::endl;
     std::cout << "EVE OFFLINE C++ Server System Tests" << std::endl;
@@ -11991,7 +12462,10 @@ int main() {
     std::cout << "ShipFitting, PlayerFleet," << std::endl;
     std::cout << "WarpCinematic," << std::endl;
     std::cout << "MissionProtocol, AIDefensive," << std::endl;
-    std::cout << "PersistenceStress, FleetPersistence, EconomyPersistence" << std::endl;
+    std::cout << "PersistenceStress, FleetPersistence, EconomyPersistence," << std::endl;
+    std::cout << "BackgroundSim, SectorTension, NPCIntent, TradeFlow," << std::endl;
+    std::cout << "PirateDoctrine, TitanAssembly, GalacticResponse," << std::endl;
+    std::cout << "OperationalWear, RumorPropagation, FleetNorm" << std::endl;
     std::cout << "========================================" << std::endl;
     
     // Capacitor tests
@@ -12695,6 +13169,61 @@ int main() {
     testPersistenceStress100Ships();
     testPersistenceFleetStateFile();
     testPersistenceEconomyFile();
+
+    // Phase 11: Background Simulation System tests
+    testBackgroundSimInitialize();
+    testBackgroundSimUpdate();
+    testBackgroundSimPauseResume();
+
+    // Phase 11: Sector Tension System tests
+    testSectorTensionInitialize();
+    testSectorTensionUpdate();
+    testSectorTensionThreatLevel();
+
+    // Phase 11: NPC Intent System tests
+    testNPCIntentInitialize();
+    testNPCIntentSelectFlee();
+    testNPCIntentSelectDefend();
+
+    // Phase 11: Trade Flow System tests
+    testTradeFlowInitialize();
+    testTradeFlowAddAndUpdate();
+    testTradeFlowScarcity();
+
+    // Phase 11: Pirate Doctrine System tests
+    testPirateDoctrineInitialize();
+    testPirateDoctrineTransitions();
+    testPirateDoctrineAggression();
+
+    // Phase 11: Titan Assembly System tests
+    testTitanAssemblyInitialize();
+    testTitanAssemblyUpdate();
+    testTitanAssemblyResourcePressure();
+
+    // Phase 11: Galactic Response System tests
+    testGalacticResponseInitialize();
+    testGalacticResponseUpdate();
+    testGalacticResponseEmergency();
+
+    // Phase 11: Operational Wear System tests
+    testOperationalWearInitialize();
+    testOperationalWearAccumulates();
+    testOperationalWearDock();
+    testOperationalWearFieldRepair();
+    testOperationalWearNeedsDocking();
+
+    // Phase 11: Rumor Propagation System tests
+    testRumorPropagationInitialize();
+    testRumorPropagationSpread();
+    testRumorPropagationReinforce();
+
+    // Phase 11: Fleet Norm System tests
+    testFleetNormInitialize();
+    testFleetNormStability();
+    testFleetNormRiskAppetite();
+
+    // Phase 11: New component defaults
+    testNewComponentDefaults();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;

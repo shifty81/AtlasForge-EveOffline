@@ -197,3 +197,66 @@ Once the split is complete, this will be replaced with a git submodule or CMake 
 - [EVEOFFLINE Roadmap](docs/ROADMAP.md)
 - [EVEOFFLINE Modding Guide](docs/MODDING_GUIDE.md)
 - [EVEOFFLINE Development Guidance](docs/DEVELOPMENT_GUIDANCE.md)
+- [Project Context](PROJECT_CONTEXT.md) — Canonical project vision and design pillars
+- [Atlas Naming Conventions](ATLAS_NAMING_CONVENTIONS.md) — Naming rules for components, systems, and files
+- [Atlas Simulation Philosophy](ATLAS_SIMULATION_PHILOSOPHY.md) — Simulation design principles and layered architecture
+
+## Phase 11: Background Simulation Layer
+
+Phase 11 adds the background simulation systems that make the universe feel alive. These systems form the foundational layer for the dynamic economy, pirate threat escalation, and galactic response mechanics.
+
+### New ECS Components (11 total)
+
+| Component | Purpose |
+|-----------|---------|
+| `BackgroundSimState` | Galaxy-level simulation time and tick tracking |
+| `SectorTension` | Per-system resource stress, pirate pressure, security |
+| `NPCIntent` | AI intent selection (Mine, Haul, Trade, Patrol, Raid, etc.) |
+| `TradeFlow` | Supply/demand flows with dynamic pricing |
+| `PirateDoctrine` | Pirate coalition behavior state machine |
+| `TitanAssemblyProgress` | Distributed titan construction with 6 assembly nodes |
+| `GalacticResponse` | Faction response curves to perceived threats |
+| `OperationalWear` | Ship deployment fatigue and logistics wear |
+| `CaptainBackground` | Captain origin (Miner, Military, Corporate, etc.) |
+| `FleetNorm` | Emergent fleet behavioral norms |
+
+### New Systems (10 total)
+
+| System | Layer | Purpose |
+|--------|-------|---------|
+| `BackgroundSimulationSystem` | 1 | Core galaxy simulation tick |
+| `SectorTensionSystem` | 1 | Per-system resource/threat tracking |
+| `TradeFlowSystem` | 1 | Economic supply/demand simulation |
+| `NPCIntentSystem` | 1 | AI actor intent selection |
+| `PirateDoctrineSystem` | 4 | Pirate coalition state machine |
+| `TitanAssemblySystem` | 4 | Distributed titan construction pressure |
+| `GalacticResponseSystem` | 4 | Faction escalation response curves |
+| `OperationalWearSystem` | 1 | Ship logistics fatigue |
+| `RumorPropagationSystem` | 3 | Rumor spreading between captains |
+| `FleetNormSystem` | 3 | Fleet behavioral norm tracking |
+
+### New Data Files
+
+| File | Purpose |
+|------|---------|
+| `data/universe/titan_assembly.json` | Titan assembly node configuration |
+| `data/universe/pirate_doctrine.json` | Pirate doctrine states and behavior rules |
+| `data/universe/sector_defaults.json` | Default sector tension by security classification |
+| `data/universe/galactic_response.json` | Faction response curves and thresholds |
+| `data/fleet/captain_backgrounds.json` | Captain origin backgrounds and modifiers |
+| `data/fleet/fleet_norms.json` | Fleet norm definitions and effects |
+
+### System Update Order
+
+The background simulation layer follows a strict update order (see [Atlas Simulation Philosophy](ATLAS_SIMULATION_PHILOSOPHY.md)):
+
+1. BackgroundSimulationSystem → Galaxy time advances
+2. SectorTensionSystem → Per-system tension updates
+3. TradeFlowSystem → Economic flow calculations
+4. PirateDoctrineSystem → Pirate behavior transitions
+5. TitanAssemblySystem → Construction pressure (if enabled)
+6. GalacticResponseSystem → Faction responses
+7. NPCIntentSystem → Individual NPC decisions
+8. OperationalWearSystem → Ship fatigue
+9. RumorPropagationSystem → Information spreading
+10. FleetNormSystem → Norm tracking
