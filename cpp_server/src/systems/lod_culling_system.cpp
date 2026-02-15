@@ -29,6 +29,10 @@ void LODCullingSystem::updatePriorities(ecs::World* world,
         if (dist >= cull_distance) {
             // Beyond culling distance — mark as culled
             lod->priority = 0.0f;
+        } else if (lod->impostor_distance <= 0.0f) {
+            // No impostor distance set — use linear falloff
+            float t = dist / cull_distance;
+            lod->priority = 2.0f * (1.0f - t);
         } else if (dist >= lod->impostor_distance) {
             // In impostor range — low priority
             float t = (dist - lod->impostor_distance) / (cull_distance - lod->impostor_distance);

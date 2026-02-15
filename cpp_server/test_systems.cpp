@@ -12614,7 +12614,7 @@ void testFleetStress150ShipsTickSimulation() {
     assertTrue(ship1 != nullptr, "Ship 1 exists after 10 ticks");
     auto* pos1 = ship1->getComponent<components::Position>();
     assertTrue(pos1 != nullptr, "Ship 1 has position");
-    // Ship 1 had vx=10, after 10 ticks of 0.1s = 1s total, should move ~10 units
+    // Ship 1 started at x=500, had vx=10, after 10 ticks of 0.1s should be at ~510
     assertTrue(pos1->x > 500.0f, "Ship 1 moved from initial position");
 
     // Verify capacitor recharged

@@ -2061,7 +2061,7 @@ std::string WorldPersistence::decompress(const std::string& input,
 
     size_t i = 0;
     while (i < input.size()) {
-        if (input[i] == '\0' && i + 2 < input.size()) {
+        if (input[i] == '\0' && i + 3 <= input.size()) {
             unsigned char count = static_cast<unsigned char>(input[i + 1]);
             char ch = input[i + 2];
             out.append(count, ch);
