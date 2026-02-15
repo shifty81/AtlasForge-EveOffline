@@ -1,12 +1,16 @@
 # Atlas - Root CMakeLists.txt
-# Unified build: Atlas Engine core + EVEOFFLINE game project (client & server)
+# Unified build: All Atlas executables in one solution
 #
 # Architecture:
 #   engine/       → AtlasEngine static library (generic, game-agnostic)
 #   editor/       → AtlasEditor executable (authoring tool)
+#   runtime/      → AtlasRuntime executable (standalone runtime)
 #   cpp_client/   → EVEOFFLINE game client (links AtlasEngine)
 #   cpp_server/   → EVEOFFLINE game server (links AtlasEngine)
 #   atlas_tests/  → Atlas engine unit tests
+#
+# By default all targets are ON so a single build produces every executable,
+# making everything debuggable at the same time from one solution/build tree.
 
 cmake_minimum_required(VERSION 3.15)
 project(Atlas VERSION 1.0.0 LANGUAGES C CXX)
@@ -16,11 +20,12 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Options
+# Options — all ON by default for unified build
 option(BUILD_CLIENT "Build C++ OpenGL client" ON)
 option(BUILD_SERVER "Build C++ dedicated server" ON)
 option(BUILD_ATLAS_ENGINE "Build Atlas Engine library" ON)
-option(BUILD_ATLAS_EDITOR "Build Atlas Editor" OFF)
+option(BUILD_ATLAS_EDITOR "Build Atlas Editor" ON)
+option(BUILD_ATLAS_RUNTIME "Build Atlas Runtime" ON)
 option(BUILD_ATLAS_TESTS "Build Atlas Engine tests" ON)
 
 # --- Atlas Engine (core library) ---
@@ -33,6 +38,12 @@ endif()
 if(BUILD_ATLAS_EDITOR AND BUILD_ATLAS_ENGINE)
     message(STATUS "Adding Atlas Editor...")
     add_subdirectory(editor)
+endif()
+
+# --- Atlas Runtime ---
+if(BUILD_ATLAS_RUNTIME AND BUILD_ATLAS_ENGINE)
+    message(STATUS "Adding Atlas Runtime...")
+    add_subdirectory(runtime)
 endif()
 
 # --- Atlas Engine Tests ---
@@ -59,6 +70,7 @@ message(STATUS "Atlas Configuration:")
 message(STATUS "  C++ Standard: ${CMAKE_CXX_STANDARD}")
 message(STATUS "  Atlas Engine:  ${BUILD_ATLAS_ENGINE}")
 message(STATUS "  Atlas Editor:  ${BUILD_ATLAS_EDITOR}")
+message(STATUS "  Atlas Runtime: ${BUILD_ATLAS_RUNTIME}")
 message(STATUS "  Atlas Tests:   ${BUILD_ATLAS_TESTS}")
 message(STATUS "  Game Client:   ${BUILD_CLIENT}")
 message(STATUS "  Game Server:   ${BUILD_SERVER}")

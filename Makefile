@@ -22,11 +22,11 @@ help: ## Show this help message
 	@echo ""
 
 .PHONY: build
-build: ## Build both client and server (Release)
+build: ## Build all targets (engine, editor, runtime, client, server, tests)
 	./build.sh Release
 
 .PHONY: build-debug
-build-debug: ## Build both client and server (Debug)
+build-debug: ## Build all targets in Debug mode
 	./build.sh Debug
 
 .PHONY: build-client
@@ -72,6 +72,11 @@ docs: ## Show documentation location
 build-engine: ## Build Atlas Engine library only
 	@mkdir -p build
 	cd build && cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_ATLAS_ENGINE=ON -DBUILD_CLIENT=OFF -DBUILD_SERVER=OFF -DBUILD_ATLAS_TESTS=OFF && cmake --build . --config Release --target AtlasEngine -j$$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
+
+.PHONY: build-runtime
+build-runtime: ## Build Atlas Runtime executable
+	@mkdir -p build
+	cd build && cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_ATLAS_ENGINE=ON -DBUILD_ATLAS_RUNTIME=ON -DBUILD_CLIENT=OFF -DBUILD_SERVER=OFF -DBUILD_ATLAS_TESTS=OFF && cmake --build . --config Release --target AtlasRuntime -j$$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
 
 .PHONY: test
 test: test-server test-engine ## Run all tests

@@ -119,6 +119,12 @@ cmake .. ^
     -G "%VS_GENERATOR%" ^
     -A x64 ^
     -DCMAKE_BUILD_TYPE=%BUILD_TYPE% ^
+    -DBUILD_ATLAS_ENGINE=ON ^
+    -DBUILD_ATLAS_EDITOR=ON ^
+    -DBUILD_ATLAS_RUNTIME=ON ^
+    -DBUILD_ATLAS_TESTS=ON ^
+    -DBUILD_CLIENT=ON ^
+    -DBUILD_SERVER=ON ^
     %VCPKG_TOOLCHAIN%
 
 if %ERRORLEVEL% NEQ 0 (
@@ -172,14 +178,18 @@ echo ================================================
 echo Solution Generated Successfully!
 echo ================================================
 echo.
-echo Solution file location: build_vs\EVEOffline.sln
+echo Solution file location: build_vs\Atlas.sln
+echo.
+echo All targets included:
+echo   AtlasEngine    - Core engine library
+echo   AtlasEditor    - Editor authoring tool
+echo   AtlasRuntime   - Standalone runtime
+echo   AtlasTests     - Engine unit tests
+echo   eve_client     - EVEOFFLINE game client
+echo   eve_server     - EVEOFFLINE dedicated server
 echo.
 echo To open in Visual Studio:
-echo   start build_vs\EVEOffline.sln
-echo.
-echo Or use individual component solutions:
-echo   cpp_client\build_vs\EVEOfflineClient.sln
-echo   cpp_server\build\EVEOfflineDedicatedServer.sln
+echo   start build_vs\Atlas.sln
 echo.
 
 pause

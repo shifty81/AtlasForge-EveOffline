@@ -14,6 +14,8 @@ add_executable(AtlasTests
     test_noise.cpp
     test_streaming.cpp
     test_galaxy.cpp
+    test_project.cpp
+    test_command.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
 )
 

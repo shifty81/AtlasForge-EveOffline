@@ -3,9 +3,9 @@
 </p>
 
 A PVE-focused space simulator for small groups (2–20 players) or solo play with AI wingmates.
-Built with **C++ / OpenGL** and the custom **Atlas UI** framework — an immediate-mode, GPU-accelerated UI system designed for sci-fi cockpit interfaces.
+Built with **C++20 / OpenGL** and the custom **Atlas Engine** — a modular, deterministic game engine with the **Atlas UI** framework for sci-fi cockpit interfaces.
 
-> **Status** — Active R&D · Builds on Linux, macOS, Windows
+> **Status** — Active R&D · Builds on Linux, macOS, Windows · Unified build produces all executables in one go
 
 ---
 
@@ -26,7 +26,7 @@ Built with **C++ / OpenGL** and the custom **Atlas UI** framework — an immedia
 ### Prerequisites
 
 - **CMake** 3.15+
-- **C++17** compiler (GCC 9+, Clang 10+, MSVC 2019+)
+- **C++20** compiler (GCC 11+, Clang 14+, MSVC 2022+)
 - **Libraries**: GLFW3 · GLM · GLEW · nlohmann-json · OpenAL (optional)
 
 ### Linux / macOS
@@ -40,9 +40,8 @@ sudo apt-get install build-essential cmake \
 # macOS
 brew install cmake glfw glm glew nlohmann-json openal-soft freetype
 
-# Build & run
+# Build everything (engine, editor, runtime, client, server, tests)
 ./build.sh
-cd build/bin && ./eve_client "YourName"
 ```
 
 ### Windows (Visual Studio)
@@ -52,16 +51,26 @@ cd build/bin && ./eve_client "YourName"
 vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows ^
               nlohmann-json:x64-windows freetype:x64-windows
 
-:: Generate & open solution
-build_vs.bat --open
+:: Generate solution with all targets & open in Visual Studio
+generate_solution.bat --open
 ```
 
 ### CMake (any platform)
 
+A single build produces **all executables** so everything is working and debuggable at the same time:
+
 ```bash
 mkdir build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release -DUSE_SYSTEM_LIBS=ON
+cmake .. -DCMAKE_BUILD_TYPE=Release
 cmake --build . --config Release
+```
+
+This builds: `AtlasEngine` (library) · `AtlasEditor` · `AtlasRuntime` · `AtlasTests` · `eve_client` · `eve_server`
+
+Individual targets can be disabled if needed:
+
+```bash
+cmake .. -DBUILD_CLIENT=OFF -DBUILD_SERVER=OFF   # engine-only build
 ```
 
 ---
@@ -77,12 +86,16 @@ Atlas/
 │   ├── assets/            #   Asset registry, binary format, hot reload
 │   ├── net/               #   Networking (CS + P2P + lockstep/rollback)
 │   ├── sim/               #   Tick scheduler, deterministic simulation
-│   └── world/             #   World layouts (cube-sphere, voxel grid)
+│   ├── world/             #   World layouts (cube-sphere, voxel grid)
+│   ├── project/           #   Project loading & validation (.atlas files)
+│   └── command/           #   Undo/redo command system
 ├── editor/                # ★ Atlas Editor — authoring tool
 │   ├── ui/                #   Docking, layout, panel system
 │   ├── panels/            #   ECS Inspector, Net Inspector, Console
 │   ├── tools/             #   Game Packager, Asset Cooker
 │   └── ai/                #   AI Aggregator for asset generation
+├── runtime/               # ★ Atlas Runtime — standalone runtime executable
+├── schemas/               # Versioned project schemas (.atlas format)
 ├── atlas_tests/           # Atlas Engine unit tests
 ├── cpp_client/            # C++ OpenGL game client
 │   ├── src/               #   Source (core, rendering, network, ui, audio)
@@ -106,9 +119,10 @@ Atlas/
 ├── tools/                 # Utilities (ship creator, JSON validator, Blender addon)
 │   └── BlenderSpaceshipGenerator/  # Blender addon for procedural ship/station generation
 ├── archive/               # Legacy code & deprecated files
+├── ARCHITECTURE.md        # ★ Baseline architecture document
 ├── ATLAS_INTEGRATION.md   # ★ Atlas Engine integration guide
-├── CMakeLists.txt         # Root build configuration
-├── build.sh / build.bat   # Build scripts
+├── CMakeLists.txt         # Root build configuration (unified build)
+├── build.sh / build.bat   # Build scripts (builds everything)
 └── Makefile               # Development task shortcuts
 ```
 
@@ -161,7 +175,7 @@ ctx.endFrame();
 
 This project includes the **Atlas Engine** — a modular, data-driven game engine core that powers both the client and server. The engine is designed to be game-agnostic and will eventually become its own standalone repository at [github.com/shifty81/Atlas](https://github.com/shifty81/Atlas).
 
-**→ [Atlas Integration Guide](ATLAS_INTEGRATION.md)**
+**→ [Architecture](ARCHITECTURE.md)** · **→ [Integration Guide](ATLAS_INTEGRATION.md)**
 
 ### Engine Components
 
@@ -173,17 +187,45 @@ This project includes the **Atlas Engine** — a modular, data-driven game engin
 | **Networking** | Client-Server + P2P, lockstep/rollback, peer management |
 | **Simulation** | Fixed-rate tick scheduler, deterministic time |
 | **World Gen** | Cube-sphere (planetary) and voxel grid layouts with LOD |
-| **Editor** | Panel docking, ECS inspector, console, game packager |
+| **Project System** | Load and validate `.atlas` project files with schema versioning |
+| **Command System** | Undo/redo history for editor mutations and multiplayer sync |
 
-### Build Atlas Engine Tests
+### Project Files
+
+Games built with Atlas are defined by a single `.atlas` project file:
+
+```json
+{
+  "schema": "atlas.project.v1",
+  "name": "MyGame",
+  "version": "1.0.0",
+  "modules": { "worldGraph": "world/galaxy.worldgraph", "ai": true },
+  "runtime": { "entryWorld": "world/galaxy.worldgraph", "tickRate": 30 }
+}
+```
+
+Schema: [`schemas/atlas.project.v1.json`](schemas/atlas.project.v1.json)
+
+### Build Targets
+
+All targets build together by default — one build gives you everything:
+
+| Target | Executable | Description |
+|--------|------------|-------------|
+| `AtlasEngine` | `libAtlasEngine.a` | Core engine static library |
+| `AtlasEditor` | `AtlasEditor` | Authoring tool with ECS/net inspectors |
+| `AtlasRuntime` | `AtlasRuntime` | Standalone runtime (`--project game.atlas`) |
+| `AtlasTests` | `AtlasTests` | Engine unit tests |
+| `eve_client` | `eve_client` | EVEOFFLINE game client |
+| `eve_server` | `eve_server` | EVEOFFLINE dedicated server |
 
 ```bash
+# Build and run tests
 make test-engine
-# or
-mkdir build && cd build
-cmake .. -DBUILD_ATLAS_ENGINE=ON -DBUILD_ATLAS_TESTS=ON -DBUILD_CLIENT=OFF -DBUILD_SERVER=OFF
-cmake --build .
-./atlas_tests/AtlasTests
+
+# Build runtime and load a project
+make build-runtime
+./build/runtime/AtlasRuntime --project my_game.atlas --validate-only
 ```
 
 ---
@@ -298,6 +340,7 @@ See the [Modding Guide](docs/MODDING_GUIDE.md) for details.
 | Category | Links |
 |----------|-------|
 | **Get Started** | [Tutorial](docs/TUTORIAL.md) · [Build Guides](docs/guides/) |
+| **Architecture** | [Architecture](ARCHITECTURE.md) · [Project Schema](schemas/atlas.project.v1.json) |
 | **Atlas Engine** | [Integration Guide](ATLAS_INTEGRATION.md) · [Atlas Repo](https://github.com/shifty81/Atlas) |
 | **Atlas UI** | [Atlas UI Docs](docs/atlas-ui/README.md) · [Widget Reference](docs/atlas-ui/WIDGETS.md) |
 | **Development** | [Roadmap](docs/ROADMAP.md) · [Contributing](docs/CONTRIBUTING.md) |
