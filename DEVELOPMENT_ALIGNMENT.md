@@ -61,6 +61,10 @@ project. It currently provides:
 | Node Graph Editor Panel | ✅ Complete | `editor/panels/` |
 | AI Inspector Panel | ✅ Complete | `editor/panels/` |
 | Runtime CLI | ✅ Complete | `runtime/` |
+| AI Graph Sandbox | ✅ Complete | `engine/ai/` |
+| Replay Capture | ✅ Complete | `engine/graphvm/` |
+| Replay Diff | ✅ Complete | `engine/graphvm/` |
+| Determinism Validator | ✅ Complete | `engine/graphvm/` |
 
 ---
 
@@ -175,15 +179,15 @@ Safe AI-assisted authoring:
 - [x] LLM request type enforcement
 - [x] Response schema validation
 - [x] Deterministic cache storage (seeded, hashed, versioned)
-- [ ] AI graph authoring sandbox (diff-only, human-approved)
+- [x] AI graph authoring sandbox (diff-only, human-approved)
 
 ### Phase E — Multiplayer & Replay
 
 Determinism enforcement at scale:
 
-- [ ] AI replay capture format
-- [ ] Replay diff tool
-- [ ] CI determinism tests (graph hash stability)
+- [x] AI replay capture format
+- [x] Replay diff tool
+- [x] CI determinism tests (graph hash stability)
 - [ ] Server-side AI execution model
 - [ ] AI replication packets
 - [ ] Client-side visualization-only AI

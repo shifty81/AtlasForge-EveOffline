@@ -58,6 +58,10 @@ add_library(AtlasEngine STATIC
     ai/LLMRequestTypes.cpp
     ai/LLMResponseValidator.cpp
     ai/LLMCache.cpp
+    ai/AIGraphSandbox.cpp
+    graphvm/ReplayCapture.cpp
+    graphvm/ReplayDiff.cpp
+    graphvm/DeterminismValidator.cpp
 )
 
 target_include_directories(AtlasEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

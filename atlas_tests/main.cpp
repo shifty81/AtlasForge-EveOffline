@@ -419,6 +419,42 @@ void test_ai_prompt_debug_response();
 void test_ai_prompt_debug_validate();
 void test_ai_prompt_debug_visibility();
 
+// AI Graph Sandbox tests
+void test_sandbox_propose();
+void test_sandbox_approve();
+void test_sandbox_reject();
+void test_sandbox_double_approve();
+void test_sandbox_get_by_status();
+void test_sandbox_get_by_graph();
+void test_sandbox_purge_resolved();
+void test_sandbox_clear();
+
+// Replay Capture tests
+void test_replay_record();
+void test_replay_get_by_graph();
+void test_replay_get_by_tick();
+void test_replay_tick_range();
+void test_replay_get_by_tick_range();
+void test_replay_deterministic_hash();
+void test_replay_clear();
+void test_replay_metadata();
+
+// Replay Diff tests
+void test_replay_diff_identical();
+void test_replay_diff_event_count_mismatch();
+void test_replay_diff_snapshot_mismatch();
+void test_replay_diff_event_type_mismatch();
+void test_replay_diff_empty();
+void test_replay_diff_hash_values();
+
+// Determinism Validator tests
+void test_determinism_register();
+void test_determinism_pass();
+void test_determinism_run_all();
+void test_determinism_not_found();
+void test_determinism_hash_snapshot();
+void test_determinism_clear();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -890,6 +926,46 @@ int main() {
     test_ai_prompt_debug_response();
     test_ai_prompt_debug_validate();
     test_ai_prompt_debug_visibility();
+
+    // AI Graph Sandbox
+    std::cout << "\n--- AI Graph Sandbox ---" << std::endl;
+    test_sandbox_propose();
+    test_sandbox_approve();
+    test_sandbox_reject();
+    test_sandbox_double_approve();
+    test_sandbox_get_by_status();
+    test_sandbox_get_by_graph();
+    test_sandbox_purge_resolved();
+    test_sandbox_clear();
+
+    // Replay Capture
+    std::cout << "\n--- Replay Capture ---" << std::endl;
+    test_replay_record();
+    test_replay_get_by_graph();
+    test_replay_get_by_tick();
+    test_replay_tick_range();
+    test_replay_get_by_tick_range();
+    test_replay_deterministic_hash();
+    test_replay_clear();
+    test_replay_metadata();
+
+    // Replay Diff
+    std::cout << "\n--- Replay Diff ---" << std::endl;
+    test_replay_diff_identical();
+    test_replay_diff_event_count_mismatch();
+    test_replay_diff_snapshot_mismatch();
+    test_replay_diff_event_type_mismatch();
+    test_replay_diff_empty();
+    test_replay_diff_hash_values();
+
+    // Determinism Validator
+    std::cout << "\n--- Determinism Validator ---" << std::endl;
+    test_determinism_register();
+    test_determinism_pass();
+    test_determinism_run_all();
+    test_determinism_not_found();
+    test_determinism_hash_snapshot();
+    test_determinism_clear();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

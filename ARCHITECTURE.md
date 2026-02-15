@@ -14,7 +14,7 @@ Atlas/
 ├── engine/           # Atlas Engine (game-agnostic static library)
 │   ├── core/         # Engine lifecycle, logging, capabilities
 │   ├── ecs/          # Entity-Component-System framework
-│   ├── graphvm/      # Deterministic bytecode graph VM, serialization, caching
+│   ├── graphvm/      # Deterministic bytecode graph VM, serialization, caching, replay, determinism
 │   ├── assets/       # Asset registry, binary format, hot reload
 │   ├── net/          # Networking (client-server, P2P, lockstep/rollback)
 │   ├── sim/          # Tick scheduler, deterministic simulation
@@ -22,7 +22,7 @@ Atlas/
 │   ├── tile/         # TileGraph — 2D tile-based procedural generation
 │   ├── strategygraph/# Strategy decision graphs (influence, threat, scoring)
 │   ├── conversation/ # Dialogue + memory graphs (ConversationGraph)
-│   ├── ai/           # AI signals, memory, relationships, BehaviorGraph
+│   ├── ai/           # AI signals, memory, relationships, BehaviorGraph, graph sandbox
 │   ├── character/    # CharacterGraph — modular character generation
 │   ├── animation/    # AnimationGraph — animation state machines + modifiers
 │   ├── weapon/       # WeaponGraph — weapon construction + wear
@@ -334,6 +334,35 @@ Atlas/
 - Cache key = FNV-1a hash(prompt, seed, schemaVersion)
 - EvictBefore(tick) removes stale entries
 - Ensures replay safety — cached responses are deterministic
+
+### AI Graph Sandbox (`engine/ai/`)
+- **AIGraphSandbox**: Safe, diff-only, human-approved AI graph editing
+- **SandboxProposal**: Proposed graph change with diff, status, and metadata
+- **SandboxProposalStatus**: Pending, Approved, Rejected
+- AI proposes changes as graph diffs — changes are staged, never applied directly
+- Humans review and approve/reject staged proposals
+- AI is never an authority — AI proposes, humans approve, commands execute
+
+### Replay Capture (`engine/graphvm/`)
+- **ReplayCapture**: Records deterministic graph events for replay
+- **ReplayEvent**: Tick, graph ID, event type, snapshot, and metadata
+- Query by graph, tick, or tick range
+- FNV-1a hash over all events for determinism verification
+- Used for AI replay debugging and regression testing
+
+### Replay Diff (`engine/graphvm/`)
+- **CompareReplays**: Compares two replay captures for determinism verification
+- **ReplayDiffResult**: Reports all ticks/graphs where captures diverge
+- **ReplayDiffEntry**: Event mismatch and/or snapshot mismatch per event
+- Fast path: identical hashes skip per-event comparison
+- Uses GraphDiff for structural snapshot comparison
+
+### Determinism Validator (`engine/graphvm/`)
+- **DeterminismValidator**: CI-oriented graph hash stability verification
+- **DeterminismTestCase**: Named test with a seed → snapshot producer function
+- Runs each producer twice with the same seed, compares output hashes
+- **HashSnapshot**: FNV-1a hash over snapshot nodes and edges
+- Foundation for CI determinism regression tests
 
 ## Runtime Modes
 

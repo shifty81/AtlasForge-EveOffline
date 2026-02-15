@@ -50,6 +50,10 @@ add_executable(AtlasTests
     test_llm_response_validator.cpp
     test_llm_cache.cpp
     test_ai_prompt_debug.cpp
+    test_ai_graph_sandbox.cpp
+    test_replay_capture.cpp
+    test_replay_diff.cpp
+    test_determinism_validator.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/NodeGraphEditorPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/AIInspectorPanel.cpp
