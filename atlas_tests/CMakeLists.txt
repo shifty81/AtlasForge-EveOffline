@@ -33,6 +33,7 @@ add_executable(AtlasTests
     test_charactergraph.cpp
     test_graph_serializer.cpp
     test_animationgraph.cpp
+    test_weapongraph.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
 )
 

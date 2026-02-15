@@ -252,6 +252,16 @@ void test_animationgraph_execute();
 void test_animationgraph_modifier();
 void test_animationgraph_deterministic();
 
+// WeaponGraph tests
+void test_weapongraph_add_nodes();
+void test_weapongraph_remove_node();
+void test_weapongraph_compile_empty();
+void test_weapongraph_compile_single_node();
+void test_weapongraph_compile_chain();
+void test_weapongraph_execute();
+void test_weapongraph_wear_degrades_stats();
+void test_weapongraph_deterministic();
+
 // Graph Serialization tests
 void test_json_builder_object();
 void test_json_builder_array();
@@ -545,6 +555,17 @@ int main() {
     test_animationgraph_execute();
     test_animationgraph_modifier();
     test_animationgraph_deterministic();
+
+    // Weapon Graph
+    std::cout << "\n--- Weapon Graph ---" << std::endl;
+    test_weapongraph_add_nodes();
+    test_weapongraph_remove_node();
+    test_weapongraph_compile_empty();
+    test_weapongraph_compile_single_node();
+    test_weapongraph_compile_chain();
+    test_weapongraph_execute();
+    test_weapongraph_wear_degrades_stats();
+    test_weapongraph_deterministic();
 
     // Graph Serialization
     std::cout << "\n--- Graph Serialization ---" << std::endl;

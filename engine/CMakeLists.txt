@@ -39,6 +39,8 @@ add_library(AtlasEngine STATIC
     character/CharacterNodes.cpp
     animation/AnimationGraph.cpp
     animation/AnimationNodes.cpp
+    weapon/WeaponGraph.cpp
+    weapon/WeaponNodes.cpp
 )
 
 target_include_directories(AtlasEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
