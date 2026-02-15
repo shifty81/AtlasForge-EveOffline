@@ -4,6 +4,7 @@ add_library(AtlasEngine STATIC
     ecs/ECS.cpp
     graphvm/GraphVM.cpp
     graphvm/GraphCompiler.cpp
+    graphvm/GraphSerializer.cpp
     assets/AssetRegistry.cpp
     assets/AssetBinary.cpp
     net/NetContext.cpp
@@ -28,6 +29,24 @@ add_library(AtlasEngine STATIC
     ai/AISignalRegistry.cpp
     ai/AIMemory.cpp
     ai/RelationshipModel.cpp
+    tile/TileGraph.cpp
+    tile/TileNodes.cpp
+    sound/SoundGraph.cpp
+    sound/SoundNodes.cpp
+    ai/BehaviorGraph.cpp
+    ai/BehaviorNodes.cpp
+    character/CharacterGraph.cpp
+    character/CharacterNodes.cpp
+    animation/AnimationGraph.cpp
+    animation/AnimationNodes.cpp
+    weapon/WeaponGraph.cpp
+    weapon/WeaponNodes.cpp
+    ui/UIGraph.cpp
+    ui/UINodes.cpp
+    flow/GameFlowGraph.cpp
+    flow/GameFlowNodes.cpp
+    schema/SchemaValidator.cpp
+    graphvm/GraphCache.cpp
 )
 
 target_include_directories(AtlasEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

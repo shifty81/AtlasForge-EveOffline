@@ -14,14 +14,22 @@ Atlas/
 ├── engine/           # Atlas Engine (game-agnostic static library)
 │   ├── core/         # Engine lifecycle, logging, capabilities
 │   ├── ecs/          # Entity-Component-System framework
-│   ├── graphvm/      # Deterministic bytecode graph VM
+│   ├── graphvm/      # Deterministic bytecode graph VM, serialization, caching
 │   ├── assets/       # Asset registry, binary format, hot reload
 │   ├── net/          # Networking (client-server, P2P, lockstep/rollback)
 │   ├── sim/          # Tick scheduler, deterministic simulation
 │   ├── world/        # Procedural world generation, WorldGraph, heightfield meshing
+│   ├── tile/         # TileGraph — 2D tile-based procedural generation
 │   ├── strategygraph/# Strategy decision graphs (influence, threat, scoring)
 │   ├── conversation/ # Dialogue + memory graphs (ConversationGraph)
-│   ├── ai/           # AI signal registry (namespaced numeric inputs)
+│   ├── ai/           # AI signals, memory, relationships, BehaviorGraph
+│   ├── character/    # CharacterGraph — modular character generation
+│   ├── animation/    # AnimationGraph — animation state machines + modifiers
+│   ├── weapon/       # WeaponGraph — weapon construction + wear
+│   ├── sound/        # SoundGraph — procedural audio generation
+│   ├── ui/           # UIGraph — UI composition system
+│   ├── flow/         # GameFlowGraph — game flow state machine
+│   ├── schema/       # Schema validation system
 │   ├── camera/       # World modes and camera projection policies
 │   ├── project/      # Project loading and validation (.atlas files)
 │   ├── command/      # Undo/redo command system
@@ -47,8 +55,9 @@ Atlas/
 │   ├── atlas.strategygraph.v1.json
 │   └── atlas.conversation.v1.json
 │
-├── projects/         # External game projects (loaded via .atlas files)
+├── projects/         # External game projects (loaded via Plugin.toml / .atlas files)
 │   ├── eveoffline/   # EVEOFFLINE game project
+│   ├── arena2d/      # Arena2D reference project (2D scalability proof)
 │   └── atlas-sample/ # Minimal sample project
 │
 ├── cpp_client/       # EVEOFFLINE game client (links AtlasEngine)
@@ -181,6 +190,70 @@ Atlas/
 - Modify relationships with delta adjustments
 - Foundation for NPC faction standing and social dynamics
 
+### TileGraph (`engine/tile/`)
+- DAG-based 2D tile-map generation graph with compile/execute pipeline
+- **TilePinType**: TileID, TileMap, Float, Mask, Seed, Metadata
+- Concrete nodes: BaseTile, NoiseField, TileSelect, BiomeGate
+- Deterministic procedural 2D worlds (roguelikes, tactics, side-scrollers)
+
+### SoundGraph (`engine/sound/`)
+- DAG-based procedural audio generation graph
+- **SoundPinType**: AudioBuffer, Float, Seed, Trigger, Envelope
+- Concrete nodes: Oscillator, Gain, Mix, Envelope
+- Deterministic sound synthesis without external audio libraries
+
+### CharacterGraph (`engine/character/`)
+- DAG-based modular character generation graph
+- **CharacterPinType**: Float, Mesh, Material, Skeleton, Seed, Equipment
+- Concrete nodes: BaseBody, Skeleton, Material, Equipment
+- Characters generated from seed + faction + parameters
+
+### AnimationGraph (`engine/animation/`)
+- DAG-based animation state machine with modifier system
+- **AnimPinType**: Float, Pose, Modifier, Trigger, Mask
+- Concrete nodes: Clip, Blend, Modifier (damage/skill/emotion), StateMachine
+- Modifiers are additive layers (limp, recoil, tremor) that warp poses
+
+### WeaponGraph (`engine/weapon/`)
+- DAG-based weapon construction graph
+- **WeaponPinType**: Float, Stats, Seed, Component, Profile
+- Concrete nodes: Receiver, Barrel, RecoilProfile, WeaponStats
+- Weapon wear degrades performance; faction identity drives variation
+
+### BehaviorGraph (`engine/ai/`)
+- DAG-based authorable AI behavior graph
+- **BehaviorPinType**: Float, Bool, Action, Perception, EmotionState
+- Concrete nodes: ThreatAssessment, UtilityScore, ActionSelector, EmotionUpdate
+- AI behavior becomes content, not code — same graph works for FPS, RTS, NPCs
+
+### UIGraph (`engine/ui/`)
+- DAG-based UI composition graph system
+- **UIPinType**: Float, Bool, String, Layout, Action
+- Concrete nodes: Panel, Button, Text, List
+- Title screens, inventories, HUDs authored as graphs
+
+### GameFlowGraph (`engine/flow/`)
+- DAG-based game flow state machine
+- **FlowPinType**: Trigger, State, Bool, Float, String
+- Concrete nodes: State, Transition, Timer, Condition
+- Full game flow (Boot → Menu → Gameplay → Credits) as a graph
+
+### Schema Validator (`engine/schema/`)
+- **SchemaDefinition**: ID, version, fields, node definitions
+- **SchemaValidator**: Validates schemas (unique IDs, valid versions, field integrity)
+- Engine-level enforcement — schemas validated before load
+
+### Graph Cache (`engine/graphvm/`)
+- **GraphCache**: Execution result caching with tick-based invalidation
+- Cache key = hash(graphID, seed, lod) for deterministic lookup
+- EvictBefore(tick) removes stale entries
+- Prevents redundant graph re-evaluation
+
+### Graph Serialization (`engine/graphvm/`)
+- **JsonBuilder**: Minimal JSON writer for graph persistence
+- **JsonReader**: Minimal JSON parser for graph loading
+- No external JSON library dependency — pure C++ standard library
+
 ### Camera / World Modes (`engine/camera/`)
 - **WorldMode**: SideScroller2D, TopDown2D, TopDownOrbit2_5D, Isometric2_5D
 - **CameraProjectionPolicy**: Mode-specific projection parameters
@@ -217,18 +290,32 @@ Projects are defined by a single `project.atlas` JSON file conforming to
 - **WorldGraph** files (`.worldgraph`) conform to `schemas/atlas.worldgraph.v1.json`
 - **StrategyGraph** files (`.strategygraph`) conform to `schemas/atlas.strategygraph.v1.json`
 - **ConversationGraph** files (`.conversation`) conform to `schemas/atlas.conversation.v1.json`
+- **TileGraph** files (`.tilegraph`) for 2D procedural generation
+- **BehaviorGraph** files (`.behaviorgraph`) for AI behavior authoring
 
 ### Project Directory
 
-External game projects live under `projects/` and are loaded via their `.atlas` manifest:
+External game projects live under `projects/` and are loaded via their Plugin.toml + `.atlas` manifest:
 
 ```
 projects/
 ├── eveoffline/           # EVEOFFLINE reference implementation
-│   ├── eveoffline.atlas
+│   ├── eveoffline.atlas  # Project manifest
+│   ├── Plugin.toml       # Plugin descriptor
+│   ├── worlds/           # WorldGraph + TileGraph files
+│   ├── strategy/         # StrategyGraph files
+│   ├── conversations/    # ConversationGraph files
+│   ├── ai/               # AI configuration
+│   ├── data/             # Data manifest
+│   ├── config/           # Runtime configuration
+│   └── assets/           # Art assets
+├── arena2d/              # Arena2D reference project (2D scalability proof)
+│   ├── arena2d.atlas
+│   ├── Plugin.toml
 │   ├── worlds/
-│   ├── strategy/
-│   └── data/
+│   ├── ai/
+│   ├── data/
+│   └── config/
 └── atlas-sample/         # Minimal sample project
     ├── sample.atlas
     └── worlds/

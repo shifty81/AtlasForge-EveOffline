@@ -206,6 +206,103 @@ void test_relationship_has();
 void test_relationship_remove();
 void test_relationship_clear();
 
+// SoundGraph tests
+void test_soundgraph_add_nodes();
+void test_soundgraph_remove_node();
+void test_soundgraph_compile_empty();
+void test_soundgraph_compile_single_node();
+void test_soundgraph_compile_chain();
+void test_soundgraph_execute();
+void test_soundgraph_deterministic();
+
+// TileGraph tests
+void test_tilegraph_add_nodes();
+void test_tilegraph_remove_node();
+void test_tilegraph_compile_empty();
+void test_tilegraph_compile_single_node();
+void test_tilegraph_compile_chain();
+void test_tilegraph_execute();
+void test_tilegraph_deterministic();
+
+// CharacterGraph tests
+void test_charactergraph_add_nodes();
+void test_charactergraph_remove_node();
+void test_charactergraph_compile_empty();
+void test_charactergraph_compile_single_node();
+void test_charactergraph_compile_chain();
+void test_charactergraph_execute();
+void test_charactergraph_deterministic();
+
+// BehaviorGraph tests
+void test_behaviorgraph_add_nodes();
+void test_behaviorgraph_remove_node();
+void test_behaviorgraph_compile_empty();
+void test_behaviorgraph_compile_single_node();
+void test_behaviorgraph_compile_chain();
+void test_behaviorgraph_execute();
+void test_behaviorgraph_deterministic();
+
+// AnimationGraph tests
+void test_animationgraph_add_nodes();
+void test_animationgraph_remove_node();
+void test_animationgraph_compile_empty();
+void test_animationgraph_compile_single_node();
+void test_animationgraph_compile_chain();
+void test_animationgraph_execute();
+void test_animationgraph_modifier();
+void test_animationgraph_deterministic();
+
+// WeaponGraph tests
+void test_weapongraph_add_nodes();
+void test_weapongraph_remove_node();
+void test_weapongraph_compile_empty();
+void test_weapongraph_compile_single_node();
+void test_weapongraph_compile_chain();
+void test_weapongraph_execute();
+void test_weapongraph_wear_degrades_stats();
+void test_weapongraph_deterministic();
+
+// UIGraph tests
+void test_uigraph_add_nodes();
+void test_uigraph_remove_node();
+void test_uigraph_compile_empty();
+void test_uigraph_compile_single_node();
+void test_uigraph_compile_chain();
+void test_uigraph_execute();
+void test_uigraph_deterministic();
+
+// GameFlowGraph tests
+void test_gameflowgraph_add_nodes();
+void test_gameflowgraph_remove_node();
+void test_gameflowgraph_compile_empty();
+void test_gameflowgraph_compile_single_node();
+void test_gameflowgraph_compile_chain();
+void test_gameflowgraph_execute();
+void test_gameflowgraph_deterministic();
+
+// Schema Validator tests
+void test_schema_valid();
+void test_schema_empty_id();
+void test_schema_zero_version();
+void test_schema_duplicate_node_id();
+void test_schema_empty_node_id();
+void test_schema_no_nodes();
+
+// Graph Cache tests
+void test_cache_store_and_get();
+void test_cache_has();
+void test_cache_invalidate();
+void test_cache_invalidate_all();
+void test_cache_evict_before();
+void test_cache_hash_key();
+
+// Graph Serialization tests
+void test_json_builder_object();
+void test_json_builder_array();
+void test_json_reader_parse();
+void test_json_reader_array();
+void test_json_roundtrip();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -441,6 +538,114 @@ int main() {
     test_heightfield_at();
     test_heightfield_mesh_generation();
     test_heightfield_mesh_lod();
+
+    // Sound Graph
+    std::cout << "\n--- Sound Graph ---" << std::endl;
+    test_soundgraph_add_nodes();
+    test_soundgraph_remove_node();
+    test_soundgraph_compile_empty();
+    test_soundgraph_compile_single_node();
+    test_soundgraph_compile_chain();
+    test_soundgraph_execute();
+    test_soundgraph_deterministic();
+
+    // Tile Graph
+    std::cout << "\n--- Tile Graph ---" << std::endl;
+    test_tilegraph_add_nodes();
+    test_tilegraph_remove_node();
+    test_tilegraph_compile_empty();
+    test_tilegraph_compile_single_node();
+    test_tilegraph_compile_chain();
+    test_tilegraph_execute();
+    test_tilegraph_deterministic();
+
+    // Character Graph
+    std::cout << "\n--- Character Graph ---" << std::endl;
+    test_charactergraph_add_nodes();
+    test_charactergraph_remove_node();
+    test_charactergraph_compile_empty();
+    test_charactergraph_compile_single_node();
+    test_charactergraph_compile_chain();
+    test_charactergraph_execute();
+    test_charactergraph_deterministic();
+
+    // Behavior Graph
+    std::cout << "\n--- Behavior Graph ---" << std::endl;
+    test_behaviorgraph_add_nodes();
+    test_behaviorgraph_remove_node();
+    test_behaviorgraph_compile_empty();
+    test_behaviorgraph_compile_single_node();
+    test_behaviorgraph_compile_chain();
+    test_behaviorgraph_execute();
+    test_behaviorgraph_deterministic();
+
+    // Animation Graph
+    std::cout << "\n--- Animation Graph ---" << std::endl;
+    test_animationgraph_add_nodes();
+    test_animationgraph_remove_node();
+    test_animationgraph_compile_empty();
+    test_animationgraph_compile_single_node();
+    test_animationgraph_compile_chain();
+    test_animationgraph_execute();
+    test_animationgraph_modifier();
+    test_animationgraph_deterministic();
+
+    // Weapon Graph
+    std::cout << "\n--- Weapon Graph ---" << std::endl;
+    test_weapongraph_add_nodes();
+    test_weapongraph_remove_node();
+    test_weapongraph_compile_empty();
+    test_weapongraph_compile_single_node();
+    test_weapongraph_compile_chain();
+    test_weapongraph_execute();
+    test_weapongraph_wear_degrades_stats();
+    test_weapongraph_deterministic();
+
+    // UI Graph
+    std::cout << "\n--- UI Graph ---" << std::endl;
+    test_uigraph_add_nodes();
+    test_uigraph_remove_node();
+    test_uigraph_compile_empty();
+    test_uigraph_compile_single_node();
+    test_uigraph_compile_chain();
+    test_uigraph_execute();
+    test_uigraph_deterministic();
+
+    // Game Flow Graph
+    std::cout << "\n--- Game Flow Graph ---" << std::endl;
+    test_gameflowgraph_add_nodes();
+    test_gameflowgraph_remove_node();
+    test_gameflowgraph_compile_empty();
+    test_gameflowgraph_compile_single_node();
+    test_gameflowgraph_compile_chain();
+    test_gameflowgraph_execute();
+    test_gameflowgraph_deterministic();
+
+    // Schema Validator
+    std::cout << "\n--- Schema Validator ---" << std::endl;
+    test_schema_valid();
+    test_schema_empty_id();
+    test_schema_zero_version();
+    test_schema_duplicate_node_id();
+    test_schema_empty_node_id();
+    test_schema_no_nodes();
+
+    // Graph Cache
+    std::cout << "\n--- Graph Cache ---" << std::endl;
+    test_cache_store_and_get();
+    test_cache_has();
+    test_cache_invalidate();
+    test_cache_invalidate_all();
+    test_cache_evict_before();
+    test_cache_hash_key();
+
+    // Graph Serialization
+    std::cout << "\n--- Graph Serialization ---" << std::endl;
+    test_json_builder_object();
+    test_json_builder_array();
+    test_json_reader_parse();
+    test_json_reader_array();
+    test_json_roundtrip();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;
