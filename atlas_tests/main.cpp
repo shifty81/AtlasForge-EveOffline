@@ -162,6 +162,8 @@ void test_strategygraph_compile_chain();
 void test_strategygraph_execute();
 void test_strategygraph_deterministic();
 void test_strategygraph_objective_score();
+void test_strategygraph_read_ai_signal();
+void test_strategygraph_emit_action();
 
 // Server Rules tests
 void test_server_rules_register();
@@ -187,6 +189,22 @@ void test_ai_signal_read_write();
 void test_ai_signal_missing();
 void test_ai_signal_namespace();
 void test_ai_signal_clear();
+
+// AI Memory tests
+void test_ai_memory_store_recall();
+void test_ai_memory_has();
+void test_ai_memory_forget();
+void test_ai_memory_decay();
+void test_ai_memory_permanent();
+void test_ai_memory_clear();
+
+// Relationship Model tests
+void test_relationship_set_get();
+void test_relationship_default_zero();
+void test_relationship_modify();
+void test_relationship_has();
+void test_relationship_remove();
+void test_relationship_clear();
 
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
@@ -262,6 +280,8 @@ int main() {
     test_strategygraph_execute();
     test_strategygraph_deterministic();
     test_strategygraph_objective_score();
+    test_strategygraph_read_ai_signal();
+    test_strategygraph_emit_action();
 
     // Server Rules
     std::cout << "\n--- Server Rules ---" << std::endl;
@@ -290,6 +310,24 @@ int main() {
     test_ai_signal_missing();
     test_ai_signal_namespace();
     test_ai_signal_clear();
+
+    // AI Memory
+    std::cout << "\n--- AI Memory ---" << std::endl;
+    test_ai_memory_store_recall();
+    test_ai_memory_has();
+    test_ai_memory_forget();
+    test_ai_memory_decay();
+    test_ai_memory_permanent();
+    test_ai_memory_clear();
+
+    // Relationship Model
+    std::cout << "\n--- Relationship Model ---" << std::endl;
+    test_relationship_set_get();
+    test_relationship_default_zero();
+    test_relationship_modify();
+    test_relationship_has();
+    test_relationship_remove();
+    test_relationship_clear();
 
     // Noise
     std::cout << "\n--- Noise Generator ---" << std::endl;

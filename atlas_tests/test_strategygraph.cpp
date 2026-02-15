@@ -3,6 +3,7 @@
 #include <memory>
 #include "../engine/strategygraph/StrategyGraph.h"
 #include "../engine/strategygraph/StrategyNodes.h"
+#include "../engine/ai/AISignalRegistry.h"
 
 using namespace atlas::strategy;
 
@@ -153,4 +154,58 @@ void test_strategygraph_objective_score() {
     assert(out->data[0] >= 7.99f && out->data[0] <= 8.01f);
 
     std::cout << "[PASS] test_strategygraph_objective_score" << std::endl;
+}
+
+void test_strategygraph_read_ai_signal() {
+    // Set up a signal in the registry
+    atlas::ai::AISignalRegistry::Get().Clear();
+    atlas::ai::AISignalRegistry::Get().Register("faction", "morale", 0.0f);
+    atlas::ai::AISignalRegistry::Get().Write("faction.morale", 0.8f, 1);
+
+    StrategyGraph graph;
+    auto signal = std::make_unique<ReadAISignalNode>();
+    signal->signalName = "faction.morale";
+    StrategyNodeID n1 = graph.AddNode(std::move(signal));
+
+    assert(graph.Compile());
+
+    StrategyContext ctx;
+    ctx.tick = 1;
+    assert(graph.Execute(ctx));
+
+    const StrategyValue* out = graph.GetOutput(n1, 0);
+    assert(out != nullptr);
+    assert(!out->data.empty());
+    assert(out->data[0] >= 0.79f && out->data[0] <= 0.81f);
+
+    atlas::ai::AISignalRegistry::Get().Clear();
+    std::cout << "[PASS] test_strategygraph_read_ai_signal" << std::endl;
+}
+
+void test_strategygraph_emit_action() {
+    StrategyGraph graph;
+
+    auto constant = std::make_unique<StrategyConstantNode>();
+    constant->value = 5.0f;
+    StrategyNodeID n1 = graph.AddNode(std::move(constant));
+
+    auto action = std::make_unique<EmitActionNode>();
+    action->actionName = "attack";
+    action->basePriority = 2.0f;
+    StrategyNodeID n2 = graph.AddNode(std::move(action));
+
+    graph.AddEdge({ n1, 0, n2, 0 });
+
+    assert(graph.Compile());
+
+    StrategyContext ctx;
+    assert(graph.Execute(ctx));
+
+    // priority = basePriority(2.0) * inputScore(5.0) = 10.0
+    const StrategyValue* out = graph.GetOutput(n2, 0);
+    assert(out != nullptr);
+    assert(!out->data.empty());
+    assert(out->data[0] >= 9.99f && out->data[0] <= 10.01f);
+
+    std::cout << "[PASS] test_strategygraph_emit_action" << std::endl;
 }

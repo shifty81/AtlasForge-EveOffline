@@ -44,7 +44,8 @@ Atlas/
 ├── schemas/          # Versioned schemas
 │   ├── atlas.project.v1.json
 │   ├── atlas.worldgraph.v1.json
-│   └── atlas.strategygraph.v1.json
+│   ├── atlas.strategygraph.v1.json
+│   └── atlas.conversation.v1.json
 │
 ├── projects/         # External game projects (loaded via .atlas files)
 │   ├── eveoffline/   # EVEOFFLINE game project
@@ -140,7 +141,7 @@ Atlas/
 - **StrategyPinType**: ScalarField, VectorField, Mask, Influence, Heatmap
 - **StrategyNode**: Abstract node base with typed ports and evaluation
 - **StrategyGraph**: DAG container with topological sort, cycle detection, type validation
-- Concrete nodes: InfluenceRing, ThreatField, ObjectiveScore, Constant
+- Concrete nodes: InfluenceRing, ThreatField, ObjectiveScore, Constant, ReadAISignal, EmitAction
 - Deterministic execution for multiplayer-safe AI decisions
 - StrategyGraphs are advisory — they never affect physics or spawn entities
 
@@ -166,6 +167,19 @@ Atlas/
 - Read/write with tick tracking for temporal awareness
 - Used as inputs to StrategyGraph decision nodes
 - Mods may register namespaced signals but may not override core signals
+
+### AI Memory (`engine/ai/`)
+- **AIMemory**: Key-value memory storage with tick-based decay
+- Memories have strength values that decay each tick
+- Permanent memories (decay rate = 0) persist indefinitely
+- Expired memories (strength ≤ 0) are automatically removed on tick
+- Used by NPC AI for persistent state across encounters
+
+### Relationship Model (`engine/ai/`)
+- **RelationshipModel**: Symmetric relationship tracking between entity pairs
+- Entity pair → float value (symmetric: A→B == B→A)
+- Modify relationships with delta adjustments
+- Foundation for NPC faction standing and social dynamics
 
 ### Camera / World Modes (`engine/camera/`)
 - **WorldMode**: SideScroller2D, TopDown2D, TopDownOrbit2_5D, Isometric2_5D
@@ -202,6 +216,7 @@ Projects are defined by a single `project.atlas` JSON file conforming to
 
 - **WorldGraph** files (`.worldgraph`) conform to `schemas/atlas.worldgraph.v1.json`
 - **StrategyGraph** files (`.strategygraph`) conform to `schemas/atlas.strategygraph.v1.json`
+- **ConversationGraph** files (`.conversation`) conform to `schemas/atlas.conversation.v1.json`
 
 ### Project Directory
 

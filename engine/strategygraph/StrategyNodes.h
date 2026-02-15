@@ -1,5 +1,6 @@
 #pragma once
 #include "StrategyGraph.h"
+#include "../ai/AISignalRegistry.h"
 #include <cmath>
 
 namespace atlas::strategy {
@@ -136,6 +137,70 @@ public:
         val.type = StrategyPinType::ScalarField;
         val.data = { value };
         outputs[0] = std::move(val);
+    }
+};
+
+// ReadAISignalNode: Reads a signal from AISignalRegistry and outputs its value
+class ReadAISignalNode : public StrategyNode {
+public:
+    std::string signalName; // Qualified name, e.g. "faction.morale"
+
+    const char* GetName() const override { return "ReadAISignal"; }
+    const char* GetCategory() const override { return "AI"; }
+
+    std::vector<StrategyPort> Inputs() const override {
+        return {};
+    }
+
+    std::vector<StrategyPort> Outputs() const override {
+        return {{ "signal", StrategyPinType::ScalarField }};
+    }
+
+    void Evaluate(
+        const StrategyContext& /*ctx*/,
+        const std::vector<StrategyValue>& /*inputs*/,
+        std::vector<StrategyValue>& outputs
+    ) const override {
+        float val = atlas::ai::AISignalRegistry::Get().Read(signalName);
+        StrategyValue out;
+        out.type = StrategyPinType::ScalarField;
+        out.data = { val };
+        outputs[0] = std::move(out);
+    }
+};
+
+// EmitActionNode: Produces an action recommendation with name and priority
+class EmitActionNode : public StrategyNode {
+public:
+    std::string actionName;
+    float basePriority = 1.0f;
+
+    const char* GetName() const override { return "EmitAction"; }
+    const char* GetCategory() const override { return "Strategy"; }
+
+    std::vector<StrategyPort> Inputs() const override {
+        return {{ "score", StrategyPinType::ScalarField }};
+    }
+
+    std::vector<StrategyPort> Outputs() const override {
+        return {{ "priority", StrategyPinType::ScalarField }};
+    }
+
+    void Evaluate(
+        const StrategyContext& /*ctx*/,
+        const std::vector<StrategyValue>& inputs,
+        std::vector<StrategyValue>& outputs
+    ) const override {
+        float inputScore = 0.0f;
+        if (!inputs.empty() && !inputs[0].data.empty()) {
+            inputScore = inputs[0].data[0];
+        }
+        float priority = basePriority * inputScore;
+
+        StrategyValue out;
+        out.type = StrategyPinType::ScalarField;
+        out.data = { priority };
+        outputs[0] = std::move(out);
     }
 };
 

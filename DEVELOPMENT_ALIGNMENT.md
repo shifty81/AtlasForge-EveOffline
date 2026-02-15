@@ -33,6 +33,8 @@ project. It currently provides:
 | Server Rules | ✅ Complete | `engine/rules/` |
 | ConversationGraph | ✅ Complete | `engine/conversation/` |
 | AI Signal Registry | ✅ Complete | `engine/ai/` |
+| AI Memory | ✅ Complete | `engine/ai/` |
+| Relationship Model | ✅ Complete | `engine/ai/` |
 | Camera / World Modes | 🟡 Header-only | `engine/camera/` |
 | Editor (panels, UI) | ✅ Complete | `editor/` |
 | Runtime CLI | ✅ Complete | `runtime/` |
@@ -59,8 +61,8 @@ project. It currently provides:
 | AISignalRegistry | Numeric inputs for AI | ✅ Implemented |
 | ConversationGraph | Dialogue state | ✅ Implemented |
 | StrategyGraph | Action decisions | ✅ Implemented |
-| AI Memory + Decay | Persistent NPC memory | 📋 Planned |
-| Relationship Model | Entity relationships | 📋 Planned |
+| AI Memory + Decay | Persistent NPC memory | ✅ Implemented |
+| Relationship Model | Entity relationships | ✅ Implemented |
 | LLM Context Builder | LLM integration | 📋 Planned |
 
 ### Editor Panels Required
@@ -103,10 +105,11 @@ Extend the graph system to cover all required types:
 
 - [ ] Graph serialization format (JSON `.worldgraph` / `.strategygraph` / `.conversation`)
 - [ ] Graph diff + undo support via Command system
-- [ ] ReadAISignal node for StrategyGraph
-- [ ] EmitAction node for StrategyGraph
-- [ ] AI Memory storage with tick-based decay
-- [ ] Relationship model (entity pairs → float)
+- [x] ReadAISignal node for StrategyGraph
+- [x] EmitAction node for StrategyGraph
+- [x] AI Memory storage with tick-based decay
+- [x] Relationship model (entity pairs → float)
+- [x] ConversationGraph schema (atlas.conversation.v1.json)
 - [ ] TileGraph for 2D procedural generation
 - [ ] Graph execution caching + invalidation
 
