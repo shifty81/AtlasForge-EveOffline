@@ -19,6 +19,9 @@ add_library(AtlasEngine STATIC
     world/HeightfieldMesher.cpp
     project/ProjectManager.cpp
     command/CommandHistory.cpp
+    interaction/Interaction.cpp
+    voice/VoiceCommand.cpp
+    plugin/PluginSystem.cpp
 )
 
 target_include_directories(AtlasEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
