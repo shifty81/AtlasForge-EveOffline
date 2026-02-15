@@ -251,5 +251,5 @@ cd cpp_server/build/bin
 
 - EVE Online Manual: Chapter 11 (Missions & Agents)
 - `docs/design/DESIGN.md`: Section on missions and standings
-- `docs/NEXT_TASKS.md`: Standings system expansion task
+- `docs/ROADMAP.md`: Project roadmap and planned features
 - `data/corporations/corporations.json`: Corporation standings configuration

@@ -79,7 +79,7 @@ This is the most important next step for the project. All foundational systems a
 **Files Modified**:
 - `cpp_client/include/rendering/model.h` - Added `addPartToMesh()` declaration
 - `cpp_client/src/rendering/model.cpp` - Implemented modular part assembly
-- `docs/SHIP_GENERATION_NEXT_STEPS.md` - Updated status to reflect completion
+- `docs/SHIP_GENERATION_NEXT_STEPS.md` - Updated status to reflect completion (archived to `archive/status_reports/`)
 
 **Next Steps for Validation**:
 - Visual testing requires OpenGL/GLFW dependencies
@@ -397,8 +397,7 @@ If the vertical slice is not the immediate priority, here are other valuable tas
 
 **Documentation**:
 - `docs/ROADMAP.md` - Full project roadmap and milestones
-- `docs/NEXT_TASKS.md` - Detailed task recommendations
-- `docs/SHIP_GENERATION_NEXT_STEPS.md` - Ship generation integration guide
+- `docs/DEVELOPMENT_GUIDANCE.md` - Project health and milestone tracking
 - `docs/cpp_client/` - Client architecture and systems
 - `docs/guides/` - Build and setup guides
 

@@ -61,8 +61,7 @@ Test documentation, coverage reports, and test guides.
 ## 📋 Project-Level Documents
 
 - [**ROADMAP.md**](ROADMAP.md) - **Project roadmap showing completed work and planned features**
-- [**PROJECT_SUMMARY.md**](PROJECT_SUMMARY.md) - High-level project summary and accomplishments
-- [**IMPLEMENTATION_SUMMARY.md**](IMPLEMENTATION_SUMMARY.md) - Summary of EVE gameplay loops and 3D support
+- [**DEVELOPMENT_GUIDANCE.md**](DEVELOPMENT_GUIDANCE.md) - Project health status and milestone tracking
 
 ---
 
@@ -87,8 +86,8 @@ Test documentation, coverage reports, and test guides.
 
 ## 📊 Project Status
 
-**Current Phase**: Phase 3 Complete ✅  
-**Latest Version**: Phase 3  
+**Current Phase**: Phase 7 Complete ✅ · Engine Migration In Progress  
+**Atlas Engine**: 28+ modules complete  
 **Documentation Last Updated**: February 2026
 
 See [ROADMAP.md](ROADMAP.md) for detailed status and future plans.

@@ -83,7 +83,6 @@ fleet.set_fleet_booster(fleet_id, booster, FleetBoosterType.SHIELD)
 
 - **LANGUAGE_AND_3D_OPTIONS.md** - Python vs C++20, 3D graphics options
 - **PHASE3_SYSTEMS.md** - Complete API reference for all systems
-- **IMPLEMENTATION_COMPLETE.md** - Full summary of what was built
 
 ## 🎮 Run the Demo
 
