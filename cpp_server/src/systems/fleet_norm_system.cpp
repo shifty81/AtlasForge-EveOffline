@@ -27,7 +27,7 @@ float FleetNormSystem::getNormStability(ecs::Entity* fleet) {
     if (!norm) return 0.0f;
 
     int total = norm->violations + norm->reinforcements;
-    if (total == 0) return 0.0f;
+    if (total == 0) return 1.0f;
     return static_cast<float>(norm->reinforcements) / static_cast<float>(total);
 }
 
