@@ -1,9 +1,9 @@
 @echo off
-REM EVE OFFLINE - Generate Root-Level Visual Studio Solution
+REM EVEOFFLINE - Generate Root-Level Visual Studio Solution
 REM This script creates a solution that includes both C++ client and server
 
 echo ================================================
-echo EVE OFFLINE - Visual Studio Solution Generator
+echo EVEOFFLINE - Visual Studio Solution Generator
 echo ================================================
 echo.
 
@@ -122,10 +122,6 @@ cmake .. ^
     -G "%VS_GENERATOR%" ^
     -A x64 ^
     -DCMAKE_BUILD_TYPE=%BUILD_TYPE% ^
-    -DBUILD_ATLAS_ENGINE=ON ^
-    -DBUILD_ATLAS_EDITOR=ON ^
-    -DBUILD_ATLAS_RUNTIME=ON ^
-    -DBUILD_ATLAS_TESTS=ON ^
     -DBUILD_CLIENT=ON ^
     -DBUILD_SERVER=ON ^
     %VCPKG_TOOLCHAIN%
@@ -181,18 +177,14 @@ echo ================================================
 echo Solution Generated Successfully!
 echo ================================================
 echo.
-echo Solution file location: build_vs\Atlas.sln
+echo Solution file location: build_vs\EveOffline.sln
 echo.
-echo All targets included:
-echo   AtlasEngine    - Core engine library
-echo   AtlasEditor    - Editor authoring tool
-echo   AtlasRuntime   - Standalone runtime
-echo   AtlasTests     - Engine unit tests
+echo Targets included:
 echo   eve_client     - EVEOFFLINE game client
 echo   eve_server     - EVEOFFLINE dedicated server
 echo.
 echo To open in Visual Studio:
-echo   start build_vs\Atlas.sln
+echo   start build_vs\EveOffline.sln
 echo.
 
 pause

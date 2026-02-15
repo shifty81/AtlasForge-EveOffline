@@ -5,14 +5,12 @@ on:
     branches: [ main, develop, 'copilot/**' ]
     paths:
       - 'cpp_client/**'
-      - 'engine/**'
       - 'CMakeLists.txt'
       - '.github/workflows/cpp-client-ci.yml'
   pull_request:
     branches: [ main, develop ]
     paths:
       - 'cpp_client/**'
-      - 'engine/**'
       - 'CMakeLists.txt'
       - '.github/workflows/cpp-client-ci.yml'
   workflow_dispatch:

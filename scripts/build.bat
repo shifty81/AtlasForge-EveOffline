@@ -1,9 +1,9 @@
 @echo off
-REM Atlas - Windows Build Script
+REM EVEOFFLINE - Windows Build Script
 REM Builds the C++ client and server using CMake
 
 echo ================================================
-echo Atlas - Build
+echo EVEOFFLINE - Build
 echo ================================================
 echo.
 
@@ -28,7 +28,7 @@ cd build
 
 REM Configure
 echo Configuring CMake (%BUILD_TYPE%)...
-cmake .. -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DBUILD_ATLAS_ENGINE=ON -DBUILD_ATLAS_EDITOR=ON -DBUILD_ATLAS_RUNTIME=ON -DBUILD_ATLAS_TESTS=ON -DBUILD_CLIENT=ON -DBUILD_SERVER=ON -DUSE_SYSTEM_LIBS=ON
+cmake .. -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DBUILD_CLIENT=ON -DBUILD_SERVER=ON -DUSE_SYSTEM_LIBS=ON
 
 if errorlevel 1 (
     echo.

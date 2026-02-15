@@ -4,8 +4,9 @@ build
 build_vs
 cpp_client
 docs
-testing
-archive
+projects
+tools
+scripts
 *.pdf
 *.zip
 *.rar

@@ -441,7 +441,7 @@ Four parallel tracks have been defined for Atlas engine work:
 
 ### Sync Strategy
 
-The `engine/` and `editor/` directories in this repo mirror the Atlas repo. Changes flow both ways during co-development. Once the Atlas repo matures, these will be consumed via git submodule or CMake `FetchContent`. See [ATLAS_INTEGRATION.md](../ATLAS_INTEGRATION.md) for details.
+The Atlas Engine is developed in its own repository at [github.com/shifty81/Atlas](https://github.com/shifty81/Atlas). See the [Repo Split Plan](https://github.com/shifty81/Atlas/blob/main/docs/10_REPO_SPLIT_PLAN.md) for details.
 
 ---
 

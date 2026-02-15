@@ -1,10 +1,10 @@
 <p align="center">
-  <img src="docs/images/banner.svg" alt="Atlas — PVE Space Simulator" width="900"/>
+  <img src="eveoffline.PNG" alt="EVEOFFLINE — PVE Space Simulator" width="900"/>
 </p>
 
-<h3 align="center">A PVE-focused space simulator for solo play and small groups (2–20 players)</h3>
+<h3 align="center">EVEOFFLINE — A PVE-focused space simulator for solo play and small groups (2–20 players)</h3>
 <p align="center">
-  Built with <b>C++20 / OpenGL</b> and the custom <b>Atlas Engine</b> — a modular, deterministic game engine
+  Built with <b>C++20 / OpenGL</b> · Powered by the <a href="https://github.com/shifty81/Atlas"><b>Atlas Engine</b></a>
 </p>
 
 <p align="center">
@@ -15,132 +15,82 @@
 
 ## What Is This?
 
-**Atlas-EveOffline** is a PVE space simulation inspired by EVE Online — rebuilt from scratch
+**EVEOFFLINE** is a PVE space simulation inspired by EVE Online — rebuilt from scratch
 with a custom engine. AI drives the universe: economy, pirates, factions, and fleet behavior
 all run whether or not the player is watching.
 
-The **Atlas Engine** underneath is game-agnostic and designed for extraction into a
-[standalone engine](https://github.com/shifty81/Atlas).
+This repository contains the **game project** — client, server, game data, and project
+configuration. The [Atlas Engine](https://github.com/shifty81/Atlas) is developed
+separately as a standalone, game-agnostic engine.
 
 ---
 
-## 🗺️ Roadmap
+## 🏗️ Repository Structure
 
 ```
-  COMPLETED                          IN PROGRESS                       PLANNED
-  ─────────                          ───────────                       ───────
-  ✅ Phase 1  Core Engine            🔧 Engine Migration               📋 Phase 8   Cinematic Warp
-     ECS, networking, tick sim          StrategyGraph module            📋 Phase 9   Fleet AI
-  ✅ Phase 2  Content                   ConversationGraph module        📋 Phase 10  Tactical Overlay
-     102 ships, 159 modules             AI Signal Registry              📋 Phase 11  Fleet Civilization
-  ✅ Phase 3  Economy                   Server Rules system             📋 Phase 12  Ship Gen v2
-     Manufacturing, market              World Modes / Camera
-  ✅ Phase 4  Social                    Editor project loading       ┌──────────────────────┐
-     Corps, contracts, chat             Sandboxing policy            │  🎯 NEXT MILESTONE   │
-  ✅ Phase 5  3D Graphics                                            │                      │
-     OpenGL, PBR, particles                                          │  Vertical Slice      │
-  ✅ Phase 6  Tech II                                                │  One full star       │
-     HAC, Recon, Logistics                                           │  system, playable    │
-  ✅ Phase 7  Industry                                               │  loop, AI-driven     │
-     Mining, PI, wormholes                                           └──────────────────────┘
-  ✅ Documentation
-     Repo cleanup, archive,
-     README & docs update
-```
-
-> **[Full Roadmap →](docs/ROADMAP.md)** · **[Development Alignment →](DEVELOPMENT_ALIGNMENT.md)**
-
----
-
-## 🏗️ Architecture
-
-```
-Atlas/
-├── engine/                 ← Atlas Engine (game-agnostic, 17 modules)
-│   ├── core/                  Engine lifecycle, logging
-│   ├── ecs/                   Entity-Component-System
-│   ├── graphvm/               Deterministic bytecode VM
-│   ├── assets/                Binary assets, hot reload
-│   ├── net/                   Client-Server + P2P networking
-│   ├── sim/                   Fixed-rate tick scheduler
-│   ├── world/                 WorldGraph, terrain, galaxy gen
-│   ├── strategygraph/         Strategy decision graphs (AI)
-│   ├── conversation/          Dialogue + memory graphs
-│   ├── ai/                    AI signal registry
-│   ├── rules/                 Server rules (live tuning)
-│   ├── camera/                World modes + projection
-│   ├── project/               .atlas project loading
-│   ├── command/               Undo/redo system
-│   ├── interaction/           Unified intent system
-│   ├── voice/                 Voice command registry
-│   └── plugin/                Plugin validation + sandbox
-│
-├── editor/                 ← Atlas Editor (authoring tool)
-├── runtime/                ← Atlas Runtime (standalone exe)
-├── atlas_tests/            ← Engine unit tests (97 tests)
-├── schemas/                ← Versioned project schemas
-├── projects/               ← Game projects (.atlas files)
-│   ├── eveoffline/            EVEOFFLINE reference project
-│   └── atlas-sample/          Minimal sample project
-│
-├── cpp_client/             ← EVEOFFLINE game client (OpenGL)
-├── cpp_server/             ← EVEOFFLINE dedicated server
+EVEOFFLINE/
+├── cpp_client/             ← Game client (OpenGL 3D renderer)
+├── cpp_server/             ← Dedicated server (up to ~75 players)
 ├── data/                   ← Moddable game content (JSON)
+│   ├── ships/                 102+ ship definitions
+│   ├── modules/               159+ module definitions
+│   ├── skills/                137 skill definitions
+│   ├── universe/              Solar systems, stargates, wormholes
+│   ├── missions/              Mission templates (5 levels × 7 types)
+│   ├── market/                Economy and pricing
+│   ├── npcs/                  NPC pilots, factions, corporations
+│   ├── industry/              Mining, manufacturing, PI
+│   └── ...
+├── projects/
+│   └── eveoffline/         ← Atlas Engine project files
+│       ├── eveoffline.atlas   Project manifest
+│       ├── worlds/            WorldGraph files
+│       ├── strategy/          StrategyGraph files
+│       ├── conversations/     ConversationGraph files
+│       ├── ai/                AI configuration
+│       ├── config/            Runtime configuration
+│       ├── data/              Project data manifest
+│       ├── assets/            Models, textures, audio
+│       ├── Code/              Game-specific code
+│       ├── Schemas/           Data validation schemas
+│       └── Tests/             Project-specific tests
 ├── tools/                  ← Modding utilities
+├── docs/                   ← Documentation
 ├── scripts/                ← Build scripts
-├── docs/                   ← Active documentation
-└── archive/                ← Historical docs & legacy code
+├── .github/workflows/      ← CI/CD pipelines
+├── PROJECT_CONTEXT.md      ← Game vision and design pillars
+├── CMakeLists.txt          ← Build configuration
+├── Dockerfile              ← Server container build
+└── Makefile                ← Development shortcuts
 ```
 
-> **[Architecture →](ARCHITECTURE.md)** · **[Integration Guide →](ATLAS_INTEGRATION.md)** · **[Project Guidelines →](docs/PROJECT_GUIDELINES.md)**
+> **[Project Context →](PROJECT_CONTEXT.md)** · **[Project Guidelines →](docs/PROJECT_GUIDELINES.md)**
 
 ---
 
 ## 🚀 Quick Start
 
 ```bash
-# Linux/macOS — install deps and build everything
+# Linux/macOS — install deps and build
 sudo apt-get install build-essential cmake libgl1-mesa-dev libglew-dev \
   libglfw3-dev libglm-dev nlohmann-json3-dev libopenal-dev libfreetype-dev
-./scripts/build_project.sh
 
 # Build specific targets
-./scripts/build_project.sh Release engine     # Engine only
-./scripts/build_project.sh Release client     # Dev client only
-./scripts/build_project.sh Release server     # Dedicated server only
+./scripts/build_project.sh Release client     # Game client
+./scripts/build_project.sh Release server     # Dedicated server
 ./scripts/build_project.sh Release test       # Build and run all tests
 ./scripts/build_project.sh Release validate   # Validate project structure
 
-# Windows
-scripts\build_project.bat Release all
-
 # Or use Make shortcuts
-make build          # Build everything
+make build-client   # Build game client
+make build-server   # Build dedicated server
 make test           # Run all tests
-make validate       # Validate projects
+make validate       # Validate project structure
 
-# Load a project
-./build/runtime/AtlasRuntime --project projects/eveoffline/eveoffline.atlas --validate-only
+# Docker — run dedicated server
+docker build -t eveoffline-server .
+docker run -p 8765:8765 eveoffline-server
 ```
-
----
-
-## 🔩 Engine Modules
-
-| Module | What It Does |
-|--------|-------------|
-| **ECS** | Entity/Component/System with type-safe components |
-| **Graph VM** | Deterministic bytecode VM for visual scripting |
-| **WorldGraph** | DAG-based procedural world generation |
-| **StrategyGraph** | AI decision graphs (influence, threat, scoring) |
-| **ConversationGraph** | Dialogue, player choices, memory, relationships |
-| **AI Signals** | Namespaced numeric inputs for AI systems |
-| **Server Rules** | Live parameter tuning with replay awareness |
-| **Networking** | Client-Server + P2P with lockstep/rollback |
-| **Asset System** | Binary format, registry, hot reload |
-| **Project System** | `.atlas` manifest loading and validation |
-| **Command System** | Undo/redo for editor and multiplayer sync |
-| **Plugin System** | Validated, sandboxed extensions |
 
 ---
 
@@ -191,17 +141,33 @@ data/skills/    137 skill definitions        data/market/     Economy and pricin
 
 ---
 
+## 🔗 Atlas Engine
+
+This game is built on the [Atlas Engine](https://github.com/shifty81/Atlas) — a modular,
+deterministic C++20 game engine. The engine is developed in its own repository and provides:
+
+- **ECS Framework** — Entity/Component/System with type-safe components
+- **Graph VM** — Deterministic bytecode VM for visual scripting
+- **WorldGraph** — DAG-based procedural world generation
+- **Networking** — Client-Server + P2P with lockstep/rollback
+- **Asset System** — Binary format, registry, hot reload
+
+The `projects/eveoffline/` directory contains Atlas project files (`.atlas` manifest,
+world graphs, strategy graphs, etc.) that are designed to be portable — they can be
+copied into the Atlas repo's `projects/` directory for development with the full
+Atlas Editor.
+
+---
+
 ## 📚 Documentation
 
 | Topic | Links |
 |-------|-------|
 | **Getting Started** | [Tutorial](docs/TUTORIAL.md) · [Build Guides](docs/guides/) · [C++ Client Quickstart](docs/development/CPP_CLIENT_QUICKSTART.md) |
-| **Engine** | [Architecture](ARCHITECTURE.md) · [Integration](ATLAS_INTEGRATION.md) · [Sandboxing](SANDBOXING.md) |
-| **Development** | [Alignment Goals](DEVELOPMENT_ALIGNMENT.md) · [Roadmap](docs/ROADMAP.md) · [Contributing](docs/CONTRIBUTING.md) · [CI/CD](docs/development/CI_CD.md) |
-| **Design** | [Project Context](PROJECT_CONTEXT.md) · [Simulation Philosophy](ATLAS_SIMULATION_PHILOSOPHY.md) · [Naming](ATLAS_NAMING_CONVENTIONS.md) |
+| **Design** | [Project Context](PROJECT_CONTEXT.md) · [Roadmap](docs/ROADMAP.md) |
+| **Development** | [Contributing](docs/CONTRIBUTING.md) · [CI/CD](docs/development/CI_CD.md) |
 | **UI & Client** | [Atlas UI](docs/atlas-ui/) · [C++ Client](docs/cpp_client/) · [Game Mechanics](docs/game_mechanics/) |
-| **Schemas** | [Project Schema](schemas/atlas.project.v1.json) · [WorldGraph](schemas/atlas.worldgraph.v1.json) · [StrategyGraph](schemas/atlas.strategygraph.v1.json) |
-| **Archive** | [Historical docs & legacy code](archive/) |
+| **Atlas Engine** | [Atlas Repo](https://github.com/shifty81/Atlas) · [Repo Split Plan](https://github.com/shifty81/Atlas/blob/main/docs/10_REPO_SPLIT_PLAN.md) |
 
 ---
 
@@ -209,12 +175,10 @@ data/skills/    137 skill definitions        data/market/     Economy and pricin
 
 Contributions are welcome! See [CONTRIBUTING.md](docs/CONTRIBUTING.md).
 
-**Rules:** Every new module needs tests · No breaking determinism · Editor authors data, runtime executes data
-
 ## 📝 License
 
 [To be determined]
 
 ---
 
-<sub>Atlas is an indie PVE space simulator. All in-game content uses original naming conventions. Not affiliated with CCP Games.</sub>
+<sub>EVEOFFLINE is an indie PVE space simulator. All in-game content uses original naming conventions. Not affiliated with CCP Games.</sub>

@@ -176,7 +176,7 @@ make test
 
 ### C++ Code
 
-Follow the [Atlas Naming Conventions](../ATLAS_NAMING_CONVENTIONS.md):
+Follow the [Atlas Naming Conventions](https://github.com/shifty81/Atlas/blob/main/docs/ATLAS_NAMING_CONVENTIONS.md):
 
 ```cpp
 // Use PascalCase for classes, types, and components
