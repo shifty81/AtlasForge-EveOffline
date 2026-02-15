@@ -26,6 +26,8 @@ add_library(AtlasEngine STATIC
     rules/ServerRules.cpp
     conversation/ConversationGraph.cpp
     ai/AISignalRegistry.cpp
+    ai/AIMemory.cpp
+    ai/RelationshipModel.cpp
 )
 
 target_include_directories(AtlasEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

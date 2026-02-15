@@ -25,6 +25,8 @@ add_executable(AtlasTests
     test_server_rules.cpp
     test_conversation.cpp
     test_ai_signals.cpp
+    test_ai_memory.cpp
+    test_relationship.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
 )
 
