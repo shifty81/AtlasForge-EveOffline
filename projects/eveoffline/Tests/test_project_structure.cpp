@@ -82,6 +82,12 @@ void test_data_manifest_exists() {
     std::cout << "[PASS] test_data_manifest_exists" << std::endl;
 }
 
+void test_data_manifest_harvesting_entries() {
+    assert(FileContains("data/manifest.json", "gas_types.json"));
+    assert(FileContains("data/manifest.json", "ice_types.json"));
+    std::cout << "[PASS] test_data_manifest_harvesting_entries" << std::endl;
+}
+
 void test_runtime_config_exists() {
     assert(FileExists("config/runtime.json"));
     assert(FileContains("config/runtime.json", "atlas.config.v1"));
@@ -143,6 +149,7 @@ int main(int argc, char* argv[]) {
     test_behavior_graphs_exist();
     test_ai_config_exists();
     test_data_manifest_exists();
+    test_data_manifest_harvesting_entries();
     test_runtime_config_exists();
     test_code_entry_point_exists();
     test_adapters_exist();

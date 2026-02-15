@@ -38,6 +38,7 @@
         "asteroidFields": { "path": "asteroid_fields/", "files": ["belts.json", "belt_layouts.json", "ore_types.json"] },
         "security": { "path": "security/", "files": ["concord_and_insurance.json"] },
         "planetaryInteraction": { "path": "planetary_interaction/", "files": ["resources.json"] },
+        "harvesting": { "path": "", "files": ["gas_types.json", "ice_types.json"] },
         "ui": { "path": "ui/", "files": ["eve_dark_theme.json"] }
     }
 }

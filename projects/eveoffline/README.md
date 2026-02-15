@@ -72,6 +72,7 @@ The manifest organizes data into categories:
 | Character Creation   | races.json, clones.json, implants.json             |
 | Wormholes            | wormhole_classes.json, wormhole_effects.json       |
 | Asteroid Fields      | belts.json, ore_types.json                         |
+| Harvesting           | gas_types.json, ice_types.json                     |
 | Security             | concord_and_insurance.json                         |
 | Planetary Interaction| resources.json                                     |
 | UI                   | eve_dark_theme.json                                |
