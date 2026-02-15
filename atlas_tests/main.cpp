@@ -334,6 +334,47 @@ void test_shadergraph_execute();
 void test_shadergraph_lerp_node();
 void test_shadergraph_deterministic();
 
+// Node Editor Model tests
+void test_node_editor_add_node();
+void test_node_editor_remove_node();
+void test_node_editor_set_position();
+void test_node_editor_add_link();
+void test_node_editor_remove_link();
+void test_node_editor_link_invalid_pins();
+void test_node_editor_selection();
+void test_node_editor_canvas();
+void test_node_editor_hit_test();
+void test_node_editor_clear();
+void test_node_editor_get_node_ids();
+void test_node_editor_pin_position();
+
+// AI Inspector tests
+void test_ai_inspector_create();
+void test_ai_inspector_set_sources();
+void test_ai_inspector_filter();
+void test_ai_inspector_visibility();
+
+// Graph Diff tests
+void test_graph_diff_empty();
+void test_graph_diff_added_node();
+void test_graph_diff_removed_node();
+void test_graph_diff_added_edge();
+void test_graph_diff_removed_edge();
+void test_graph_diff_no_changes();
+void test_graph_diff_complex();
+
+// Graph Timeline tests
+void test_timeline_empty();
+void test_timeline_record_frame();
+void test_timeline_seek();
+void test_timeline_step();
+void test_timeline_seek_to_end();
+void test_timeline_diff_to_next();
+void test_timeline_diff_from_previous();
+void test_timeline_tick_range();
+void test_timeline_clear();
+void test_timeline_get_frame_at_tick();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -711,6 +752,51 @@ int main() {
     test_shadergraph_execute();
     test_shadergraph_lerp_node();
     test_shadergraph_deterministic();
+
+    // Node Editor Model
+    std::cout << "\n--- Node Editor Model ---" << std::endl;
+    test_node_editor_add_node();
+    test_node_editor_remove_node();
+    test_node_editor_set_position();
+    test_node_editor_add_link();
+    test_node_editor_remove_link();
+    test_node_editor_link_invalid_pins();
+    test_node_editor_selection();
+    test_node_editor_canvas();
+    test_node_editor_hit_test();
+    test_node_editor_clear();
+    test_node_editor_get_node_ids();
+    test_node_editor_pin_position();
+
+    // AI Inspector
+    std::cout << "\n--- AI Inspector ---" << std::endl;
+    test_ai_inspector_create();
+    test_ai_inspector_set_sources();
+    test_ai_inspector_filter();
+    test_ai_inspector_visibility();
+
+    // Graph Diff
+    std::cout << "\n--- Graph Diff ---" << std::endl;
+    test_graph_diff_empty();
+    test_graph_diff_added_node();
+    test_graph_diff_removed_node();
+    test_graph_diff_added_edge();
+    test_graph_diff_removed_edge();
+    test_graph_diff_no_changes();
+    test_graph_diff_complex();
+
+    // Graph Timeline
+    std::cout << "\n--- Graph Timeline ---" << std::endl;
+    test_timeline_empty();
+    test_timeline_record_frame();
+    test_timeline_seek();
+    test_timeline_step();
+    test_timeline_seek_to_end();
+    test_timeline_diff_to_next();
+    test_timeline_diff_from_previous();
+    test_timeline_tick_range();
+    test_timeline_clear();
+    test_timeline_get_frame_at_tick();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

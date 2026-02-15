@@ -51,6 +51,9 @@ add_library(AtlasEngine STATIC
     render/RenderNodes.cpp
     shader/ShaderGraph.cpp
     shader/ShaderNodes.cpp
+    nodeeditor/NodeEditorModel.cpp
+    graphvm/GraphDiff.cpp
+    graphvm/GraphTimeline.cpp
 )
 
 target_include_directories(AtlasEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
