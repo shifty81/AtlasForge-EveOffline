@@ -112,9 +112,9 @@ project. It currently provides:
 
 | Panel | Status |
 |-------|--------|
-| ECS Inspector | ✅ Exists (stub) |
+| ECS Inspector | ✅ Complete |
 | Console | ✅ Complete |
-| Network Inspector | ✅ Exists (stub) |
+| Network Inspector | ✅ Complete |
 | Project Picker | ✅ Complete |
 | World Graph Editor | ✅ Complete |
 | Voice Commands | ✅ Complete |

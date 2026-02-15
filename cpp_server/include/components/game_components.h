@@ -1923,6 +1923,24 @@ public:
     COMPONENT_TYPE(FleetNorm)
 };
 
+// ==================== Phase 2: Star System State Component ====================
+
+class StarSystemState : public ecs::Component {
+public:
+    float traffic = 0.0f;               // NPC/player ship activity level (0-1)
+    float economy = 0.5f;               // economic health (0=collapsed, 1=booming)
+    float security = 0.5f;              // effective security level (0=lawless, 1=high-sec)
+    float threat = 0.0f;                // aggregate danger level (0=safe, 1=critical)
+    float faction_influence = 0.5f;     // controlling faction's grip (0-1)
+
+    // Derived / event thresholds
+    float pirate_spawn_pressure = 0.0f; // how likely pirate surges are (0-1)
+    float shortage_severity = 0.0f;     // resource shortage indicator (0-1)
+    bool lockdown = false;              // whether system is under lockdown
+
+    COMPONENT_TYPE(StarSystemState)
+};
+
 } // namespace components
 } // namespace atlas
 

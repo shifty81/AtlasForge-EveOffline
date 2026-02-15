@@ -73,6 +73,7 @@
 #include "systems/rumor_propagation_system.h"
 #include "systems/fleet_norm_system.h"
 #include "systems/lod_culling_system.h"
+#include "systems/star_system_state_system.h"
 #include "network/protocol_handler.h"
 #include "ui/server_console.h"
 #include "utils/logger.h"
@@ -12808,6 +12809,75 @@ void testCompressedVsUncompressedSize() {
     std::remove(comp_path.c_str());
 }
 
+// ==================== Phase 2: Star System State System Tests ====================
+
+void testStarSystemStateInitialize() {
+    std::cout << "\n=== StarSystemState: Initialize ===" << std::endl;
+    ecs::World world;
+    auto* sys = world.createEntity("system_1");
+    StarSystemStateSystem::initialize(sys);
+    auto* state = sys->getComponent<components::StarSystemState>();
+    assertTrue(state != nullptr, "StarSystemState added");
+    assertTrue(approxEqual(state->traffic, 0.0f), "traffic starts at 0");
+    assertTrue(approxEqual(state->economy, 0.5f), "economy starts at 0.5");
+    assertTrue(approxEqual(state->security, 0.5f), "security starts at 0.5");
+    assertTrue(approxEqual(state->threat, 0.0f), "threat starts at 0");
+    assertTrue(!state->lockdown, "not in lockdown initially");
+}
+
+void testStarSystemStateUpdateSafe() {
+    std::cout << "\n=== StarSystemState: Update Safe Conditions ===" << std::endl;
+    ecs::World world;
+    auto* sys = world.createEntity("system_1");
+    StarSystemStateSystem::initialize(sys);
+    // Low pirate activity, good mining
+    StarSystemStateSystem::update(sys, 1.0f, 0.5f, 0.8f, 0.1f);
+    assertTrue(StarSystemStateSystem::getSecurity(sys) > 0.5f, "security is high with low pirate activity");
+    assertTrue(StarSystemStateSystem::getThreat(sys) < 0.5f, "threat is low");
+    assertTrue(!StarSystemStateSystem::isLockdown(sys), "no lockdown");
+}
+
+void testStarSystemStateUpdateDangerous() {
+    std::cout << "\n=== StarSystemState: Update Dangerous Conditions ===" << std::endl;
+    ecs::World world;
+    auto* sys = world.createEntity("system_1");
+    StarSystemStateSystem::initialize(sys);
+    // High pirate activity, low mining
+    for (int i = 0; i < 10; i++) {
+        StarSystemStateSystem::update(sys, 1.0f, 0.2f, 0.1f, 0.9f);
+    }
+    assertTrue(StarSystemStateSystem::getSecurity(sys) < 0.5f, "security dropped with high pirate activity");
+    assertTrue(StarSystemStateSystem::getThreat(sys) > 0.5f, "threat is elevated");
+}
+
+void testStarSystemStateLockdown() {
+    std::cout << "\n=== StarSystemState: Lockdown Trigger ===" << std::endl;
+    ecs::World world;
+    auto* sys = world.createEntity("system_1");
+    StarSystemStateSystem::initialize(sys);
+    // Extreme pirate activity triggers lockdown
+    StarSystemStateSystem::update(sys, 1.0f, 0.1f, 0.0f, 1.0f);
+    assertTrue(StarSystemStateSystem::isLockdown(sys), "lockdown triggered at extreme threat");
+}
+
+void testStarSystemStateEconomyRecovery() {
+    std::cout << "\n=== StarSystemState: Economy Recovery ===" << std::endl;
+    ecs::World world;
+    auto* sys = world.createEntity("system_1");
+    StarSystemStateSystem::initialize(sys);
+    // Damage economy first
+    for (int i = 0; i < 20; i++) {
+        StarSystemStateSystem::update(sys, 1.0f, 0.1f, 0.0f, 0.8f);
+    }
+    float damaged_economy = StarSystemStateSystem::getEconomy(sys);
+    // Then recover with good mining and no pirates
+    for (int i = 0; i < 20; i++) {
+        StarSystemStateSystem::update(sys, 1.0f, 0.5f, 0.9f, 0.0f);
+    }
+    float recovered_economy = StarSystemStateSystem::getEconomy(sys);
+    assertTrue(recovered_economy > damaged_economy, "economy recovers with mining and no pirates");
+}
+
 int main() {
     std::cout << "========================================" << std::endl;
     std::cout << "EVE OFFLINE C++ Server System Tests" << std::endl;
@@ -13613,6 +13683,13 @@ int main() {
     testCompressedWorldPersistence();
     testCompressedChecksum();
     testCompressedVsUncompressedSize();
+
+    // Phase 2: Star System State System tests
+    testStarSystemStateInitialize();
+    testStarSystemStateUpdateSafe();
+    testStarSystemStateUpdateDangerous();
+    testStarSystemStateLockdown();
+    testStarSystemStateEconomyRecovery();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;
