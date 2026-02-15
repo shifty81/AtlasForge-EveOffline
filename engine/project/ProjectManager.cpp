@@ -34,34 +34,36 @@ std::string ExtractStringValue(const std::string& json, const std::string& key) 
     return json.substr(pos + 1, end - pos - 1);
 }
 
-int ExtractIntValue(const std::string& json, const std::string& key, int defaultVal) {
+int ExtractIntValue(const std::string& json, const std::string& key, int defaultValue) {
     std::string search = "\"" + key + "\"";
     size_t pos = json.find(search);
-    if (pos == std::string::npos) return defaultVal;
+    if (pos == std::string::npos) return defaultValue;
 
     pos = json.find(':', pos + search.size());
-    if (pos == std::string::npos) return defaultVal;
+    if (pos == std::string::npos) return defaultValue;
 
     pos++;
     while (pos < json.size() && (json[pos] == ' ' || json[pos] == '\t')) pos++;
-    if (pos >= json.size()) return defaultVal;
+    if (pos >= json.size()) return defaultValue;
 
     std::string numStr;
     while (pos < json.size() && (json[pos] >= '0' && json[pos] <= '9')) {
         numStr += json[pos++];
     }
 
-    if (numStr.empty()) return defaultVal;
-    return std::stoi(numStr);
+    if (numStr.empty()) return defaultValue;
+    int value = std::stoi(numStr);
+    if (value < 0) return defaultValue;
+    return value;
 }
 
-bool ExtractBoolValue(const std::string& json, const std::string& key, bool defaultVal) {
+bool ExtractBoolValue(const std::string& json, const std::string& key, bool defaultValue) {
     std::string search = "\"" + key + "\"";
     size_t pos = json.find(search);
-    if (pos == std::string::npos) return defaultVal;
+    if (pos == std::string::npos) return defaultValue;
 
     pos = json.find(':', pos + search.size());
-    if (pos == std::string::npos) return defaultVal;
+    if (pos == std::string::npos) return defaultValue;
 
     pos++;
     while (pos < json.size() && (json[pos] == ' ' || json[pos] == '\t')) pos++;
@@ -69,7 +71,7 @@ bool ExtractBoolValue(const std::string& json, const std::string& key, bool defa
     if (pos + 3 < json.size() && json.substr(pos, 4) == "true") return true;
     if (pos + 4 < json.size() && json.substr(pos, 5) == "false") return false;
 
-    return defaultVal;
+    return defaultValue;
 }
 
 } // anonymous namespace

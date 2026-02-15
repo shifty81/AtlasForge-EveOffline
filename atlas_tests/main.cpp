@@ -102,6 +102,7 @@ void test_project_load_minimal();
 void test_project_load_missing_file();
 void test_project_invalid_schema();
 void test_project_missing_name();
+void test_project_missing_name_field();
 void test_project_invalid_version();
 void test_project_schema_validation();
 
@@ -234,6 +235,7 @@ int main() {
     test_project_load_missing_file();
     test_project_invalid_schema();
     test_project_missing_name();
+    test_project_missing_name_field();
     test_project_invalid_version();
     test_project_schema_validation();
 

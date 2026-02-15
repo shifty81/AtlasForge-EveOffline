@@ -110,6 +110,20 @@ void test_project_missing_name() {
     std::cout << "[PASS] test_project_missing_name" << std::endl;
 }
 
+void test_project_missing_name_field() {
+    std::string path = "test_project_no_name_field.atlas";
+    WriteTestProject(path, R"({
+        "schema": "atlas.project.v1",
+        "version": "1.0.0"
+    })");
+
+    ProjectManager mgr;
+    assert(!mgr.Load(path));
+
+    std::filesystem::remove(path);
+    std::cout << "[PASS] test_project_missing_name_field" << std::endl;
+}
+
 void test_project_invalid_version() {
     std::string path = "test_project_bad_ver.atlas";
     WriteTestProject(path, R"({

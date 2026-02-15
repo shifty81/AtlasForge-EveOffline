@@ -120,16 +120,19 @@ Projects are defined by a single `project.atlas` JSON file conforming to
 
 ## Build System
 
-The root `CMakeLists.txt` controls all build targets:
+The root `CMakeLists.txt` controls all build targets. **All targets are ON by default**
+so a single build produces every executable, making everything debuggable at the same time.
 
 | Option              | Default | Description                     |
 |---------------------|---------|---------------------------------|
 | BUILD_ATLAS_ENGINE  | ON      | Atlas Engine static library     |
 | BUILD_ATLAS_TESTS   | ON      | Engine unit tests               |
-| BUILD_ATLAS_EDITOR  | OFF     | Atlas Editor application        |
-| BUILD_ATLAS_RUNTIME | OFF     | Atlas Runtime application       |
+| BUILD_ATLAS_EDITOR  | ON      | Atlas Editor application        |
+| BUILD_ATLAS_RUNTIME | ON      | Atlas Runtime application       |
 | BUILD_CLIENT        | ON      | EVEOFFLINE game client          |
 | BUILD_SERVER        | ON      | EVEOFFLINE game server          |
+
+Individual targets can be disabled when only a subset is needed (e.g. CI engine-only builds).
 
 ## Testing
 

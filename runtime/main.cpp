@@ -55,8 +55,6 @@ int main(int argc, char* argv[]) {
     atlas::EngineMode engineMode = atlas::EngineMode::Client;
     if (modeStr == "server") {
         engineMode = atlas::EngineMode::Server;
-    } else if (modeStr == "editor") {
-        engineMode = atlas::EngineMode::Editor;
     }
 
     // Configure engine
