@@ -41,6 +41,10 @@ add_library(AtlasEngine STATIC
     animation/AnimationNodes.cpp
     weapon/WeaponGraph.cpp
     weapon/WeaponNodes.cpp
+    ui/UIGraph.cpp
+    ui/UINodes.cpp
+    flow/GameFlowGraph.cpp
+    flow/GameFlowNodes.cpp
 )
 
 target_include_directories(AtlasEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

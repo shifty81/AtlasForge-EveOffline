@@ -262,6 +262,24 @@ void test_weapongraph_execute();
 void test_weapongraph_wear_degrades_stats();
 void test_weapongraph_deterministic();
 
+// UIGraph tests
+void test_uigraph_add_nodes();
+void test_uigraph_remove_node();
+void test_uigraph_compile_empty();
+void test_uigraph_compile_single_node();
+void test_uigraph_compile_chain();
+void test_uigraph_execute();
+void test_uigraph_deterministic();
+
+// GameFlowGraph tests
+void test_gameflowgraph_add_nodes();
+void test_gameflowgraph_remove_node();
+void test_gameflowgraph_compile_empty();
+void test_gameflowgraph_compile_single_node();
+void test_gameflowgraph_compile_chain();
+void test_gameflowgraph_execute();
+void test_gameflowgraph_deterministic();
+
 // Graph Serialization tests
 void test_json_builder_object();
 void test_json_builder_array();
@@ -566,6 +584,26 @@ int main() {
     test_weapongraph_execute();
     test_weapongraph_wear_degrades_stats();
     test_weapongraph_deterministic();
+
+    // UI Graph
+    std::cout << "\n--- UI Graph ---" << std::endl;
+    test_uigraph_add_nodes();
+    test_uigraph_remove_node();
+    test_uigraph_compile_empty();
+    test_uigraph_compile_single_node();
+    test_uigraph_compile_chain();
+    test_uigraph_execute();
+    test_uigraph_deterministic();
+
+    // Game Flow Graph
+    std::cout << "\n--- Game Flow Graph ---" << std::endl;
+    test_gameflowgraph_add_nodes();
+    test_gameflowgraph_remove_node();
+    test_gameflowgraph_compile_empty();
+    test_gameflowgraph_compile_single_node();
+    test_gameflowgraph_compile_chain();
+    test_gameflowgraph_execute();
+    test_gameflowgraph_deterministic();
 
     // Graph Serialization
     std::cout << "\n--- Graph Serialization ---" << std::endl;
