@@ -29,8 +29,8 @@ std::string NetInspectorPanel::ModeName() const {
         case net::NetMode::Server:     return "Server";
         case net::NetMode::P2P_Host:   return "P2P_Host";
         case net::NetMode::P2P_Peer:   return "P2P_Peer";
+        default:                       return "Unknown";
     }
-    return "Unknown";
 }
 
 bool NetInspectorPanel::IsAuthority() const {
