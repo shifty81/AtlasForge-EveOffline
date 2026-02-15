@@ -280,6 +280,22 @@ void test_gameflowgraph_compile_chain();
 void test_gameflowgraph_execute();
 void test_gameflowgraph_deterministic();
 
+// Schema Validator tests
+void test_schema_valid();
+void test_schema_empty_id();
+void test_schema_zero_version();
+void test_schema_duplicate_node_id();
+void test_schema_empty_node_id();
+void test_schema_no_nodes();
+
+// Graph Cache tests
+void test_cache_store_and_get();
+void test_cache_has();
+void test_cache_invalidate();
+void test_cache_invalidate_all();
+void test_cache_evict_before();
+void test_cache_hash_key();
+
 // Graph Serialization tests
 void test_json_builder_object();
 void test_json_builder_array();
@@ -604,6 +620,24 @@ int main() {
     test_gameflowgraph_compile_chain();
     test_gameflowgraph_execute();
     test_gameflowgraph_deterministic();
+
+    // Schema Validator
+    std::cout << "\n--- Schema Validator ---" << std::endl;
+    test_schema_valid();
+    test_schema_empty_id();
+    test_schema_zero_version();
+    test_schema_duplicate_node_id();
+    test_schema_empty_node_id();
+    test_schema_no_nodes();
+
+    // Graph Cache
+    std::cout << "\n--- Graph Cache ---" << std::endl;
+    test_cache_store_and_get();
+    test_cache_has();
+    test_cache_invalidate();
+    test_cache_invalidate_all();
+    test_cache_evict_before();
+    test_cache_hash_key();
 
     // Graph Serialization
     std::cout << "\n--- Graph Serialization ---" << std::endl;

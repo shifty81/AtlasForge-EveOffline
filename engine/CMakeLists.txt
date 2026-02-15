@@ -45,6 +45,8 @@ add_library(AtlasEngine STATIC
     ui/UINodes.cpp
     flow/GameFlowGraph.cpp
     flow/GameFlowNodes.cpp
+    schema/SchemaValidator.cpp
+    graphvm/GraphCache.cpp
 )
 
 target_include_directories(AtlasEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
