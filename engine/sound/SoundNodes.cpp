@@ -28,9 +28,11 @@ void OscillatorNode::Evaluate(const SoundContext& ctx, const std::vector<SoundVa
     outputs[0].type = SoundPinType::AudioBuffer;
     outputs[0].data.resize(ctx.bufferSize);
 
+    double phaseInc = 2.0 * M_PI * static_cast<double>(freq) / static_cast<double>(ctx.sampleRate);
+    double phase = 0.0;
     for (uint32_t i = 0; i < ctx.bufferSize; ++i) {
-        float t = static_cast<float>(i) / static_cast<float>(ctx.sampleRate);
-        outputs[0].data[i] = static_cast<float>(std::sin(2.0 * M_PI * static_cast<double>(freq) * static_cast<double>(t)));
+        outputs[0].data[i] = static_cast<float>(std::sin(phase));
+        phase += phaseInc;
     }
 }
 
