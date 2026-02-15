@@ -96,6 +96,16 @@ set(SERVER_SOURCES
     src/systems/difficulty_scaling_system.cpp
     src/systems/mission_template_system.cpp
     src/systems/mission_generator_system.cpp
+    src/systems/background_simulation_system.cpp
+    src/systems/sector_tension_system.cpp
+    src/systems/npc_intent_system.cpp
+    src/systems/trade_flow_system.cpp
+    src/systems/pirate_doctrine_system.cpp
+    src/systems/titan_assembly_system.cpp
+    src/systems/galactic_response_system.cpp
+    src/systems/operational_wear_system.cpp
+    src/systems/rumor_propagation_system.cpp
+    src/systems/fleet_norm_system.cpp
     src/data/ship_database.cpp
     src/data/npc_database.cpp
     src/data/wormhole_database.cpp
@@ -168,6 +178,16 @@ set(SERVER_HEADERS
     include/systems/difficulty_scaling_system.h
     include/systems/mission_template_system.h
     include/systems/mission_generator_system.h
+    include/systems/background_simulation_system.h
+    include/systems/sector_tension_system.h
+    include/systems/npc_intent_system.h
+    include/systems/trade_flow_system.h
+    include/systems/pirate_doctrine_system.h
+    include/systems/titan_assembly_system.h
+    include/systems/galactic_response_system.h
+    include/systems/operational_wear_system.h
+    include/systems/rumor_propagation_system.h
+    include/systems/fleet_norm_system.h
     include/data/ship_database.h
     include/data/npc_database.h
     include/data/wormhole_database.h
@@ -301,6 +321,16 @@ if(BUILD_TESTS)
         src/systems/difficulty_scaling_system.cpp
         src/systems/mission_template_system.cpp
         src/systems/mission_generator_system.cpp
+        src/systems/background_simulation_system.cpp
+        src/systems/sector_tension_system.cpp
+        src/systems/npc_intent_system.cpp
+        src/systems/trade_flow_system.cpp
+        src/systems/pirate_doctrine_system.cpp
+        src/systems/titan_assembly_system.cpp
+        src/systems/galactic_response_system.cpp
+        src/systems/operational_wear_system.cpp
+        src/systems/rumor_propagation_system.cpp
+        src/systems/fleet_norm_system.cpp
         src/data/world_persistence.cpp
         src/utils/logger.cpp
         src/utils/server_metrics.cpp

@@ -1784,6 +1784,145 @@ public:
     COMPONENT_TYPE(FactionCulture)
 };
 
+// ==================== Phase 11: Background Simulation Components ====================
+
+class BackgroundSimState : public ecs::Component {
+public:
+    float sim_time = 0.0f;              // total simulation time elapsed
+    float tick_accumulator = 0.0f;      // partial tick accumulation
+    float sim_tick_rate = 1.0f;         // seconds per background sim tick
+    int total_ticks = 0;                // total background ticks processed
+    bool paused = false;                // whether background sim is paused
+
+    COMPONENT_TYPE(BackgroundSimState)
+};
+
+class SectorTension : public ecs::Component {
+public:
+    float resource_stress = 0.0f;       // 0=abundant, 1=critical shortage
+    float pirate_pressure = 0.0f;       // 0=none, 1=overwhelming
+    float industrial_output = 1.0f;     // production multiplier (0-2)
+    float security_confidence = 1.0f;   // how safe the system feels (0-1)
+    float population_stability = 1.0f;  // population retention (0-1)
+    float military_readiness = 0.5f;    // faction defense posture (0-1)
+    float faction_influence = 0.5f;     // controlling faction's grip (0-1)
+
+    COMPONENT_TYPE(SectorTension)
+};
+
+class NPCIntent : public ecs::Component {
+public:
+    enum class Intent { Idle, Mine, Haul, Trade, Patrol, Raid, Flee, Defend, Escort, Produce };
+    Intent current_intent = Intent::Idle;
+    Intent previous_intent = Intent::Idle;
+    float intent_confidence = 0.0f;     // how committed to current intent (0-1)
+    float intent_timer = 0.0f;          // time in current intent
+    std::string target_system;          // destination system if traveling
+    uint64_t target_entity = 0;         // target entity if interacting
+
+    COMPONENT_TYPE(NPCIntent)
+};
+
+class TradeFlow : public ecs::Component {
+public:
+    struct FlowEntry {
+        std::string item_type;
+        float supply_rate = 0.0f;       // units produced per tick
+        float demand_rate = 0.0f;       // units consumed per tick
+        float price_modifier = 1.0f;    // dynamic price adjustment
+    };
+    std::vector<FlowEntry> flows;
+    float trade_volume = 0.0f;          // total trade activity this tick
+    float scarcity_index = 0.0f;        // overall shortage indicator (0-1)
+
+    COMPONENT_TYPE(TradeFlow)
+};
+
+enum class PirateDoctrineState {
+    Accumulate,     // hoard resources quietly
+    Conceal,        // avoid attention, protect assets
+    Disrupt,        // destabilize local economy
+    Defend,         // protect assembly operations
+    PrepareLaunch   // endgame escalation
+};
+
+class PirateDoctrine : public ecs::Component {
+public:
+    PirateDoctrineState doctrine = PirateDoctrineState::Accumulate;
+    float aggression_level = 0.0f;      // how aggressively pirates raid (0-1)
+    float coordination = 0.0f;          // inter-faction cooperation (0-1)
+    float resource_stockpile = 0.0f;    // accumulated strategic resources
+    float discovery_risk = 0.0f;        // how close to being exposed (0-1)
+    float logistics_health = 1.0f;      // supply chain integrity (0-1)
+
+    COMPONENT_TYPE(PirateDoctrine)
+};
+
+class TitanAssemblyProgress : public ecs::Component {
+public:
+    struct AssemblyNode {
+        std::string name;               // e.g., "Superstructure Spine"
+        float completion = 0.0f;        // 0.0 to 1.0
+        float resource_debt = 1.0f;     // materials still required (1=full, 0=done)
+        float workforce_skill = 0.5f;   // assembly efficiency
+        float concealment = 1.0f;       // detection resistance (0=exposed, 1=hidden)
+        std::string current_system;     // system where this node resides
+    };
+
+    std::vector<AssemblyNode> nodes;
+    float overall_progress = 0.0f;      // aggregate completion (0-1)
+    float resource_pressure = 0.0f;     // economic distortion caused
+    bool launched = false;              // whether titan has been activated
+    bool destroyed = false;             // whether titan was sabotaged
+
+    COMPONENT_TYPE(TitanAssemblyProgress)
+};
+
+class GalacticResponse : public ecs::Component {
+public:
+    float perceived_threat = 0.0f;      // how threatened factions feel (0-1)
+    float border_reinforcement = 0.0f;  // patrol density increase
+    float capital_production_priority = 0.0f; // faction capital ship focus
+    float outer_system_abandonment = 0.0f;  // outer region evacuation rate
+    float emergency_doctrine_level = 0.0f;  // military escalation level (0-1)
+
+    COMPONENT_TYPE(GalacticResponse)
+};
+
+class OperationalWear : public ecs::Component {
+public:
+    float deployment_time = 0.0f;       // cumulative time since last dock
+    float fuel_inefficiency = 0.0f;     // fuel waste due to wear (0-1)
+    float repair_debt = 0.0f;           // accumulated minor damage
+    float crew_stress = 0.0f;           // fatigue level (0-1)
+    bool field_repaired = false;        // true if emergency fix applied
+
+    COMPONENT_TYPE(OperationalWear)
+};
+
+class CaptainBackground : public ecs::Component {
+public:
+    enum class Origin { Miner, Military, Corporate, Salvager, Nomad, Pirate };
+    Origin origin = Origin::Military;
+    std::string home_system;            // where they came from
+    float experience_years = 0.0f;      // time in service
+    std::string preferred_role;         // mining, combat, logistics, etc.
+
+    COMPONENT_TYPE(CaptainBackground)
+};
+
+class FleetNorm : public ecs::Component {
+public:
+    bool always_salvage = false;        // fleet habit: always salvage wrecks
+    bool never_retreat = false;         // fleet habit: stand and fight
+    bool avoid_faction_space = false;   // fleet habit: avoid specific faction
+    float risk_appetite = 0.5f;        // fleet's collective risk tolerance
+    int violations = 0;                 // times norms have been broken
+    int reinforcements = 0;             // times norms have been upheld
+
+    COMPONENT_TYPE(FleetNorm)
+};
+
 } // namespace components
 } // namespace atlas
 
