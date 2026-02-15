@@ -19,11 +19,13 @@ Atlas/
 │   ├── net/          # Networking (client-server, P2P, lockstep/rollback)
 │   ├── sim/          # Tick scheduler, deterministic simulation
 │   ├── world/        # Procedural world generation, WorldGraph, heightfield meshing
+│   ├── strategygraph/# Strategy decision graphs (influence, threat, scoring)
 │   ├── project/      # Project loading and validation (.atlas files)
 │   ├── command/      # Undo/redo command system
 │   ├── interaction/  # Unified intent/utterance system (voice, AI, console)
 │   ├── voice/        # Voice command registry and matching
-│   └── plugin/       # Plugin validation, registry, and sandboxing
+│   ├── plugin/       # Plugin validation, registry, and sandboxing
+│   └── rules/        # Server rules system (live parameter tuning)
 │
 ├── editor/           # Atlas Editor (authoring tool)
 │   ├── panels/       # Inspector panels (ECS, console, network, project picker,
@@ -129,6 +131,23 @@ Atlas/
 - **PluginRegistry**: Register, find, filter plugins by type
 - Enforcement: plugins must be deterministic, version-compatible
 - Plugin types: graph-extension, editor-panel, asset-importer
+
+### Strategy Graphs (`engine/strategygraph/`)
+- DAG-based strategy decision graph with compile/execute pipeline
+- **StrategyPinType**: ScalarField, VectorField, Mask, Influence, Heatmap
+- **StrategyNode**: Abstract node base with typed ports and evaluation
+- **StrategyGraph**: DAG container with topological sort, cycle detection, type validation
+- Concrete nodes: InfluenceRing, ThreatField, ObjectiveScore, Constant
+- Deterministic execution for multiplayer-safe AI decisions
+- StrategyGraphs are advisory — they never affect physics or spawn entities
+
+### Server Rules (`engine/rules/`)
+- **RuleDescriptor**: Name, base value, multiplier, bounds, hot-reload flag, replay impact
+- **ServerRules**: Singleton registry for live parameter tuning
+- Multiplier-based: `final_value = base_value * multiplier`
+- Clamped to declared min/max bounds
+- Hot-reloadable rules apply at tick boundaries
+- Replay-aware: rules affecting replay are explicitly marked
 
 ## Runtime Modes
 
