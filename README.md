@@ -97,18 +97,22 @@ Atlas/
 # Linux/macOS — install deps and build everything
 sudo apt-get install build-essential cmake libgl1-mesa-dev libglew-dev \
   libglfw3-dev libglm-dev nlohmann-json3-dev libopenal-dev libfreetype-dev
-./build.sh
+./build_project.sh
 
-# Windows — use vcpkg + Visual Studio
-generate_solution.bat --open
+# Build specific targets
+./build_project.sh Release engine     # Engine only
+./build_project.sh Release client     # Dev client only
+./build_project.sh Release server     # Dedicated server only
+./build_project.sh Release test       # Build and run all tests
+./build_project.sh Release validate   # Validate project structure
 
-# CMake (any platform) — single build produces all executables
-mkdir build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
-cmake --build . --config Release
+# Windows
+build_project.bat Release all
 
-# Run engine tests
-make test-engine
+# Or use Make shortcuts
+make build          # Build everything
+make test           # Run all tests
+make validate       # Validate projects
 
 # Load a project
 ./build/runtime/AtlasRuntime --project projects/eveoffline/eveoffline.atlas --validate-only

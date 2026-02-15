@@ -249,6 +249,49 @@ cp -r EVEOFFLINE/editor/* Atlas/editor/
 
 Once the split is complete, this will be replaced with a git submodule or CMake `FetchContent`.
 
+## Project Portability (Drag and Drop)
+
+Atlas projects under `projects/` are designed to be **portable** between repos.
+You can take the `eveoffline` folder from this repo and drop it into the Atlas
+repo's `projects/` directory for testing.
+
+### Requirements for Drag-and-Drop
+
+1. The project must follow the structure defined in `docs/PROJECT_GUIDELINES.md`
+2. It must have exactly one `.atlas` manifest file
+3. All paths in the manifest must be relative (no absolute paths)
+4. Required directories: `worlds/`, `assets/`, `data/`
+5. No symlinks (cross-platform compatibility)
+
+### Validating Portability
+
+Before porting a project to another repo, run the validator:
+
+```bash
+./validate_project.sh projects/eveoffline
+```
+
+### Shared Data Handling
+
+The `eveoffline` project references shared data at the repo root (`data/`)
+through its `data/manifest.json`. When porting to the Atlas repo:
+
+- Copy `data/` into the project folder, or
+- Ensure the Atlas repo has a compatible `data/` directory at its root
+
+### Building After Porting
+
+The target repo must have:
+- The Atlas Engine (`engine/` directory)
+- A compatible CMake build system
+- The project build script (`build_project.sh` or `build_project.bat`)
+
+```bash
+# In the target repo
+./build_project.sh Release validate   # Check project structure
+./build_project.sh Release all        # Build everything
+```
+
 ## Related Documentation
 
 - [Atlas Engine README](https://github.com/shifty81/Atlas/blob/main/README.md)
