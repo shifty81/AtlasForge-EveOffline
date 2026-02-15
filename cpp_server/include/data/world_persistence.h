@@ -3,6 +3,7 @@
 
 #include "ecs/world.h"
 #include <string>
+#include <cstdint>
 
 namespace atlas {
 namespace data {
@@ -37,6 +38,23 @@ public:
 
     /// Deserialize a JSON string into the world.
     bool deserializeWorld(ecs::World* world, const std::string& json) const;
+
+    /// Save world state to a compressed binary file (.atlasw).
+    /// Uses a simple compression scheme: 4-byte magic, 4-byte uncompressed
+    /// size, 4-byte compressed size, 4-byte checksum, then compressed data.
+    bool saveWorldCompressed(const ecs::World* world, const std::string& filepath);
+
+    /// Load world state from a compressed binary file.
+    bool loadWorldCompressed(ecs::World* world, const std::string& filepath);
+
+    /// Compress a string using simple run-length encoding.
+    static std::string compress(const std::string& input);
+
+    /// Decompress a run-length-encoded string.
+    static std::string decompress(const std::string& input, uint32_t original_size);
+
+    /// Compute a simple 32-bit checksum.
+    static uint32_t checksum(const std::string& data);
 
 private:
     /// Serialize a single entity to a JSON object string.

@@ -2003,5 +2003,145 @@ std::string WorldPersistence::extractObject(const std::string& json,
     return "";
 }
 
+// ---------------------------------------------------------------------------
+// Compressed persistence
+// ---------------------------------------------------------------------------
+
+static const uint32_t ATLASW_MAGIC = 0x57534C41; // 'ATLW' little-endian
+
+uint32_t WorldPersistence::checksum(const std::string& data) {
+    // FNV-1a 32-bit
+    uint32_t hash = 2166136261u;
+    for (unsigned char c : data) {
+        hash ^= c;
+        hash *= 16777619u;
+    }
+    return hash;
+}
+
+std::string WorldPersistence::compress(const std::string& input) {
+    if (input.empty()) return {};
+
+    std::string out;
+    out.reserve(input.size());
+
+    size_t i = 0;
+    while (i < input.size()) {
+        char ch = input[i];
+        size_t run = 1;
+        while (i + run < input.size() && input[i + run] == ch && run < 255) {
+            ++run;
+        }
+
+        if (run >= 4) {
+            // Encode run: 0x00, count, byte
+            out += '\0';
+            out += static_cast<char>(static_cast<unsigned char>(run));
+            out += ch;
+            i += run;
+        } else {
+            // Literal byte (escape null bytes)
+            if (ch == '\0') {
+                out += '\0';
+                out += '\x01';
+                out += '\0';
+            } else {
+                out += ch;
+            }
+            ++i;
+        }
+    }
+    return out;
+}
+
+std::string WorldPersistence::decompress(const std::string& input,
+                                          uint32_t original_size) {
+    std::string out;
+    out.reserve(original_size);
+
+    size_t i = 0;
+    while (i < input.size()) {
+        if (input[i] == '\0' && i + 2 < input.size()) {
+            unsigned char count = static_cast<unsigned char>(input[i + 1]);
+            char ch = input[i + 2];
+            out.append(count, ch);
+            i += 3;
+        } else {
+            out += input[i];
+            ++i;
+        }
+    }
+    return out;
+}
+
+bool WorldPersistence::saveWorldCompressed(const ecs::World* world,
+                                            const std::string& filepath) {
+    std::string json = serializeWorld(world);
+    uint32_t original_size = static_cast<uint32_t>(json.size());
+    uint32_t csum = checksum(json);
+
+    std::string compressed = compress(json);
+    uint32_t compressed_size = static_cast<uint32_t>(compressed.size());
+
+    std::ofstream file(filepath, std::ios::binary);
+    if (!file.is_open()) {
+        std::cerr << "[WorldPersistence] Cannot open compressed file for writing: "
+                  << filepath << std::endl;
+        return false;
+    }
+
+    // Header: magic(4) + original_size(4) + compressed_size(4) + checksum(4)
+    file.write(reinterpret_cast<const char*>(&ATLASW_MAGIC), 4);
+    file.write(reinterpret_cast<const char*>(&original_size), 4);
+    file.write(reinterpret_cast<const char*>(&compressed_size), 4);
+    file.write(reinterpret_cast<const char*>(&csum), 4);
+    file.write(compressed.data(), compressed.size());
+    file.close();
+
+    std::cout << "[WorldPersistence] Compressed save: "
+              << original_size << " → " << compressed_size
+              << " bytes (" << filepath << ")" << std::endl;
+    return true;
+}
+
+bool WorldPersistence::loadWorldCompressed(ecs::World* world,
+                                            const std::string& filepath) {
+    std::ifstream file(filepath, std::ios::binary);
+    if (!file.is_open()) {
+        std::cerr << "[WorldPersistence] Cannot open compressed file for reading: "
+                  << filepath << std::endl;
+        return false;
+    }
+
+    uint32_t magic = 0, original_size = 0, compressed_size = 0, csum = 0;
+    file.read(reinterpret_cast<char*>(&magic), 4);
+    file.read(reinterpret_cast<char*>(&original_size), 4);
+    file.read(reinterpret_cast<char*>(&compressed_size), 4);
+    file.read(reinterpret_cast<char*>(&csum), 4);
+
+    if (magic != ATLASW_MAGIC) {
+        std::cerr << "[WorldPersistence] Invalid compressed file magic" << std::endl;
+        return false;
+    }
+
+    std::string compressed(compressed_size, '\0');
+    file.read(&compressed[0], compressed_size);
+    file.close();
+
+    std::string json = decompress(compressed, original_size);
+
+    if (json.size() != original_size) {
+        std::cerr << "[WorldPersistence] Size mismatch after decompression" << std::endl;
+        return false;
+    }
+
+    if (checksum(json) != csum) {
+        std::cerr << "[WorldPersistence] Checksum mismatch — file may be corrupt" << std::endl;
+        return false;
+    }
+
+    return deserializeWorld(world, json);
+}
+
 } // namespace data
 } // namespace atlas

@@ -72,6 +72,7 @@
 #include "systems/operational_wear_system.h"
 #include "systems/rumor_propagation_system.h"
 #include "systems/fleet_norm_system.h"
+#include "systems/lod_culling_system.h"
 #include "network/protocol_handler.h"
 #include "ui/server_console.h"
 #include "utils/logger.h"
@@ -12437,6 +12438,376 @@ void testNewComponentDefaults() {
     assertTrue(fn->violations == 0, "FleetNorm violations 0 default");
 }
 
+// =========================================================================
+// Phase 5 Completion: LOD Culling System tests
+// =========================================================================
+
+void testLODCullingUpdatePriorities() {
+    std::cout << "\n=== LOD Culling: Update Priorities ===" << std::endl;
+
+    ecs::World world;
+
+    // Observer at origin
+    float ox = 0.0f, oy = 0.0f, oz = 0.0f;
+
+    // Close entity (distance ~100)
+    auto* close = world.createEntity("close_ship");
+    auto* cp = addComp<components::Position>(close);
+    cp->x = 100.0f; cp->y = 0.0f; cp->z = 0.0f;
+    auto* cl = addComp<components::LODPriority>(close);
+    cl->impostor_distance = 500.0f;
+
+    // Far entity (distance ~40000)
+    auto* far = world.createEntity("far_ship");
+    auto* fp = addComp<components::Position>(far);
+    fp->x = 40000.0f; fp->y = 0.0f; fp->z = 0.0f;
+    auto* fl = addComp<components::LODPriority>(far);
+    fl->impostor_distance = 500.0f;
+
+    // Very far entity beyond cull distance (distance ~60000)
+    auto* culled = world.createEntity("culled_ship");
+    auto* vfp = addComp<components::Position>(culled);
+    vfp->x = 60000.0f; vfp->y = 0.0f; vfp->z = 0.0f;
+    auto* vfl = addComp<components::LODPriority>(culled);
+    vfl->impostor_distance = 500.0f;
+
+    LODCullingSystem::updatePriorities(&world, ox, oy, oz, 50000.0f);
+
+    assertTrue(cl->priority > 1.0f, "Close entity has high priority");
+    assertTrue(fl->priority > 0.0f && fl->priority < 1.0f, "Far entity has low priority");
+    assertTrue(vfl->priority <= 0.0f, "Very far entity is culled (priority 0)");
+}
+
+void testLODCullingForceVisible() {
+    std::cout << "\n=== LOD Culling: Force Visible Override ===" << std::endl;
+
+    ecs::World world;
+
+    // Player ship far away but force_visible
+    auto* player = world.createEntity("player_ship");
+    auto* pp = addComp<components::Position>(player);
+    pp->x = 99999.0f; pp->y = 0.0f; pp->z = 0.0f;
+    auto* pl = addComp<components::LODPriority>(player);
+    pl->force_visible = true;
+
+    LODCullingSystem::updatePriorities(&world, 0.0f, 0.0f, 0.0f, 50000.0f);
+
+    assertTrue(pl->priority == 2.0f, "Force-visible entity always priority 2.0");
+    assertTrue(pl->force_visible, "force_visible flag unchanged");
+}
+
+void testLODCullingCounts() {
+    std::cout << "\n=== LOD Culling: Culled/Visible Counts ===" << std::endl;
+
+    ecs::World world;
+
+    // 5 close, 5 far (beyond cull distance)
+    for (int i = 0; i < 5; ++i) {
+        auto* e = world.createEntity("near_" + std::to_string(i));
+        auto* p = addComp<components::Position>(e);
+        p->x = static_cast<float>(i * 100);
+        addComp<components::LODPriority>(e);
+    }
+    for (int i = 0; i < 5; ++i) {
+        auto* e = world.createEntity("far_" + std::to_string(i));
+        auto* p = addComp<components::Position>(e);
+        p->x = 60000.0f + static_cast<float>(i * 100);
+        addComp<components::LODPriority>(e);
+    }
+
+    LODCullingSystem::updatePriorities(&world, 0.0f, 0.0f, 0.0f, 50000.0f);
+
+    int culled = LODCullingSystem::getCulledCount(&world);
+    int visible = LODCullingSystem::getVisibleCount(&world);
+    assertTrue(culled == 5, "5 entities culled");
+    assertTrue(visible == 5, "5 entities visible");
+}
+
+void testLODCullingEntityLists() {
+    std::cout << "\n=== LOD Culling: Entity Lists ===" << std::endl;
+
+    ecs::World world;
+
+    auto* a = world.createEntity("shipA");
+    auto* pa = addComp<components::Position>(a);
+    pa->x = 10.0f;
+    addComp<components::LODPriority>(a);
+
+    auto* b = world.createEntity("shipB");
+    auto* pb = addComp<components::Position>(b);
+    pb->x = 99999.0f;
+    addComp<components::LODPriority>(b);
+
+    LODCullingSystem::updatePriorities(&world, 0.0f, 0.0f, 0.0f, 50000.0f);
+
+    auto culled_list = LODCullingSystem::getCulledEntities(&world);
+    auto visible_list = LODCullingSystem::getVisibleEntities(&world);
+
+    assertTrue(culled_list.size() == 1, "1 entity in culled list");
+    assertTrue(visible_list.size() == 1, "1 entity in visible list");
+}
+
+// =========================================================================
+// Phase 5 Completion: 150-Ship Fleet Stress Test with Tick Simulation
+// =========================================================================
+
+void testFleetStress150ShipsTickSimulation() {
+    std::cout << "\n=== Stress: 150-Ship Fleet Tick Simulation ===" << std::endl;
+
+    ecs::World world;
+    const int SHIP_COUNT = 150;
+
+    // Create 150 ships with Position, Velocity, Health, Ship, AI, LODPriority
+    for (int i = 0; i < SHIP_COUNT; ++i) {
+        std::string id = "stress_tick_ship_" + std::to_string(i);
+        auto* e = world.createEntity(id);
+
+        auto* pos = addComp<components::Position>(e);
+        pos->x = static_cast<float>(i * 500);
+        pos->y = static_cast<float>((i % 20) * 100);
+        pos->z = 0.0f;
+
+        auto* vel = addComp<components::Velocity>(e);
+        vel->vx = static_cast<float>(i % 10) * 10.0f;
+        vel->vy = 0.0f;
+        vel->max_speed = 200.0f;
+
+        auto* hp = addComp<components::Health>(e);
+        hp->shield_hp = 500.0f;
+        hp->shield_max = 500.0f;
+        hp->armor_hp = 300.0f;
+        hp->armor_max = 300.0f;
+        hp->hull_hp = 200.0f;
+        hp->hull_max = 200.0f;
+
+        auto* ship = addComp<components::Ship>(e);
+        ship->ship_type = (i % 3 == 0) ? "Frigate" : ((i % 3 == 1) ? "Cruiser" : "Battleship");
+
+        auto* ai = addComp<components::AI>(e);
+        ai->state = components::AI::State::Idle;
+
+        auto* cap = addComp<components::Capacitor>(e);
+        cap->capacitor = 200.0f;
+        cap->capacitor_max = 200.0f;
+        cap->recharge_rate = 5.0f;
+
+        addComp<components::LODPriority>(e);
+    }
+
+    assertTrue(world.getEntityCount() == static_cast<size_t>(SHIP_COUNT),
+               "150 ships created for tick stress test");
+
+    // Run 10 tick cycles through movement + capacitor + shield systems
+    systems::MovementSystem moveSys(&world);
+    systems::CapacitorSystem capSys(&world);
+    systems::ShieldRechargeSystem shieldSys(&world);
+
+    for (int tick = 0; tick < 10; ++tick) {
+        float dt = 0.1f; // 100ms tick
+        moveSys.update(dt);
+        capSys.update(dt);
+        shieldSys.update(dt);
+    }
+
+    // Verify ships moved (first ship had vx=0 but second should have moved)
+    auto* ship1 = world.getEntity("stress_tick_ship_1");
+    assertTrue(ship1 != nullptr, "Ship 1 exists after 10 ticks");
+    auto* pos1 = ship1->getComponent<components::Position>();
+    assertTrue(pos1 != nullptr, "Ship 1 has position");
+    // Ship 1 had vx=10, after 10 ticks of 0.1s = 1s total, should move ~10 units
+    assertTrue(pos1->x > 500.0f, "Ship 1 moved from initial position");
+
+    // Verify capacitor recharged
+    auto* cap1 = ship1->getComponent<components::Capacitor>();
+    assertTrue(cap1 != nullptr, "Ship 1 has capacitor");
+    assertTrue(cap1->capacitor >= 200.0f, "Ship 1 capacitor at least maintained");
+
+    // Run LOD culling from ship 0's perspective
+    auto* ship0 = world.getEntity("stress_tick_ship_0");
+    auto* pos0 = ship0->getComponent<components::Position>();
+    LODCullingSystem::updatePriorities(&world, pos0->x, pos0->y, pos0->z, 30000.0f);
+
+    int visible = LODCullingSystem::getVisibleCount(&world);
+    int culled = LODCullingSystem::getCulledCount(&world);
+    assertTrue(visible + culled == SHIP_COUNT, "Visible + culled = total ship count");
+    assertTrue(visible > 0, "At least some ships visible from ship 0");
+    assertTrue(culled > 0, "Some distant ships culled");
+}
+
+void testFleetStress150ShipsPersistence() {
+    std::cout << "\n=== Stress: 150-Ship Save/Load ===" << std::endl;
+
+    ecs::World world;
+    const int SHIP_COUNT = 150;
+
+    for (int i = 0; i < SHIP_COUNT; ++i) {
+        std::string id = "persist150_" + std::to_string(i);
+        auto* e = world.createEntity(id);
+
+        auto* pos = addComp<components::Position>(e);
+        pos->x = static_cast<float>(i * 300);
+        pos->y = static_cast<float>(i % 15 * 100);
+
+        auto* hp = addComp<components::Health>(e);
+        hp->shield_hp = 400.0f + static_cast<float>(i);
+        hp->shield_max = 500.0f;
+
+        auto* ship = addComp<components::Ship>(e);
+        ship->ship_type = "Cruiser";
+
+        auto* ai = addComp<components::AI>(e);
+        ai->state = components::AI::State::Idle;
+
+        auto* lod = addComp<components::LODPriority>(e);
+        lod->priority = (i < 10) ? 2.0f : 0.5f;
+    }
+
+    data::WorldPersistence persistence;
+    std::string filepath = "/tmp/eve_stress_150ships.json";
+    bool saved = persistence.saveWorld(&world, filepath);
+    assertTrue(saved, "150-ship world saved");
+
+    ecs::World world2;
+    bool loaded = persistence.loadWorld(&world2, filepath);
+    assertTrue(loaded, "150-ship world loaded");
+    assertTrue(world2.getEntityCount() == static_cast<size_t>(SHIP_COUNT),
+               "150 entities restored");
+
+    // Spot check
+    auto* e75 = world2.getEntity("persist150_75");
+    assertTrue(e75 != nullptr, "Ship 75 found after load");
+    auto* hp75 = e75->getComponent<components::Health>();
+    assertTrue(hp75 != nullptr, "Ship 75 health present");
+    assertTrue(approxEqual(hp75->shield_hp, 475.0f), "Ship 75 shield_hp correct");
+
+    std::remove(filepath.c_str());
+}
+
+// =========================================================================
+// Phase 5 Completion: Compressed Persistence tests
+// =========================================================================
+
+void testCompressDecompressRoundTrip() {
+    std::cout << "\n=== Compressed Persistence: Compress/Decompress Round-Trip ===" << std::endl;
+
+    std::string input = "Hello, World! This is a test of compression.";
+    std::string compressed = data::WorldPersistence::compress(input);
+    std::string decompressed = data::WorldPersistence::decompress(compressed, static_cast<uint32_t>(input.size()));
+
+    assertTrue(decompressed == input, "Simple string round-trips through compression");
+}
+
+void testCompressRunLengthEncoding() {
+    std::cout << "\n=== Compressed Persistence: RLE Effectiveness ===" << std::endl;
+
+    // Long run of repeated characters (common in JSON whitespace and repeated structures)
+    std::string input(1000, ' ');
+    std::string compressed = data::WorldPersistence::compress(input);
+
+    assertTrue(compressed.size() < input.size(), "Repeated data compresses smaller");
+    
+    std::string decompressed = data::WorldPersistence::decompress(compressed, static_cast<uint32_t>(input.size()));
+    assertTrue(decompressed == input, "RLE compressed data round-trips correctly");
+    assertTrue(decompressed.size() == 1000, "Decompressed size matches original");
+}
+
+void testCompressedWorldPersistence() {
+    std::cout << "\n=== Compressed Persistence: World Save/Load ===" << std::endl;
+
+    ecs::World world;
+
+    for (int i = 0; i < 50; ++i) {
+        auto* e = world.createEntity("comp_" + std::to_string(i));
+        auto* pos = addComp<components::Position>(e);
+        pos->x = static_cast<float>(i * 100);
+        pos->y = static_cast<float>(i * 50);
+        
+        auto* hp = addComp<components::Health>(e);
+        hp->shield_hp = 300.0f + static_cast<float>(i);
+        hp->shield_max = 500.0f;
+
+        auto* ship = addComp<components::Ship>(e);
+        ship->ship_type = "Frigate";
+    }
+
+    data::WorldPersistence persistence;
+    std::string filepath = "/tmp/eve_compressed_test.atlasw";
+
+    bool saved = persistence.saveWorldCompressed(&world, filepath);
+    assertTrue(saved, "Compressed world save succeeded");
+
+    ecs::World world2;
+    bool loaded = persistence.loadWorldCompressed(&world2, filepath);
+    assertTrue(loaded, "Compressed world load succeeded");
+    assertTrue(world2.getEntityCount() == 50, "Compressed load has correct entity count");
+
+    // Verify data integrity
+    auto* e25 = world2.getEntity("comp_25");
+    assertTrue(e25 != nullptr, "Entity 25 present after compressed load");
+    auto* hp25 = e25->getComponent<components::Health>();
+    assertTrue(hp25 != nullptr, "Health present after compressed load");
+    assertTrue(approxEqual(hp25->shield_hp, 325.0f), "Health data correct after compressed load");
+
+    std::remove(filepath.c_str());
+}
+
+void testCompressedChecksum() {
+    std::cout << "\n=== Compressed Persistence: Checksum ===" << std::endl;
+
+    std::string data1 = "test data for checksum";
+    std::string data2 = "test data for checksuM"; // different last char
+
+    uint32_t cs1 = data::WorldPersistence::checksum(data1);
+    uint32_t cs2 = data::WorldPersistence::checksum(data2);
+
+    assertTrue(cs1 != 0, "Checksum is non-zero");
+    assertTrue(cs1 != cs2, "Different data produces different checksum");
+    assertTrue(data::WorldPersistence::checksum(data1) == cs1, "Checksum is deterministic");
+}
+
+void testCompressedVsUncompressedSize() {
+    std::cout << "\n=== Compressed Persistence: Size Comparison ===" << std::endl;
+
+    ecs::World world;
+
+    for (int i = 0; i < 100; ++i) {
+        auto* e = world.createEntity("size_" + std::to_string(i));
+        auto* pos = addComp<components::Position>(e);
+        pos->x = static_cast<float>(i * 100);
+        
+        auto* hp = addComp<components::Health>(e);
+        hp->shield_hp = 500.0f;
+        hp->shield_max = 500.0f;
+
+        auto* ship = addComp<components::Ship>(e);
+        ship->ship_type = "Frigate";
+    }
+
+    data::WorldPersistence persistence;
+
+    // Save uncompressed
+    std::string json_path = "/tmp/eve_size_test.json";
+    persistence.saveWorld(&world, json_path);
+
+    // Save compressed
+    std::string comp_path = "/tmp/eve_size_test.atlasw";
+    persistence.saveWorldCompressed(&world, comp_path);
+
+    // Compare file sizes
+    std::ifstream f1(json_path, std::ios::binary | std::ios::ate);
+    std::ifstream f2(comp_path, std::ios::binary | std::ios::ate);
+
+    auto json_size = f1.tellg();
+    auto comp_size = f2.tellg();
+
+    assertTrue(json_size > 0, "JSON file created");
+    assertTrue(comp_size > 0, "Compressed file created");
+    assertTrue(comp_size < json_size, "Compressed file is smaller than JSON");
+
+    std::remove(json_path.c_str());
+    std::remove(comp_path.c_str());
+}
+
 int main() {
     std::cout << "========================================" << std::endl;
     std::cout << "EVE OFFLINE C++ Server System Tests" << std::endl;
@@ -12465,7 +12836,8 @@ int main() {
     std::cout << "PersistenceStress, FleetPersistence, EconomyPersistence," << std::endl;
     std::cout << "BackgroundSim, SectorTension, NPCIntent, TradeFlow," << std::endl;
     std::cout << "PirateDoctrine, TitanAssembly, GalacticResponse," << std::endl;
-    std::cout << "OperationalWear, RumorPropagation, FleetNorm" << std::endl;
+    std::cout << "OperationalWear, RumorPropagation, FleetNorm," << std::endl;
+    std::cout << "LODCulling, CompressedPersistence" << std::endl;
     std::cout << "========================================" << std::endl;
     
     // Capacitor tests
@@ -13224,6 +13596,23 @@ int main() {
 
     // Phase 11: New component defaults
     testNewComponentDefaults();
+
+    // Phase 5 Completion: LOD Culling System tests
+    testLODCullingUpdatePriorities();
+    testLODCullingForceVisible();
+    testLODCullingCounts();
+    testLODCullingEntityLists();
+
+    // Phase 5 Completion: 150-Ship Fleet Stress Test with Tick Simulation
+    testFleetStress150ShipsTickSimulation();
+    testFleetStress150ShipsPersistence();
+
+    // Phase 5 Completion: Compressed Persistence tests
+    testCompressDecompressRoundTrip();
+    testCompressRunLengthEncoding();
+    testCompressedWorldPersistence();
+    testCompressedChecksum();
+    testCompressedVsUncompressedSize();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;
