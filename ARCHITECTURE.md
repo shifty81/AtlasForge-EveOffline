@@ -43,7 +43,8 @@ Atlas/
 │
 ├── editor/           # Atlas Editor (authoring tool)
 │   ├── panels/       # Inspector panels (ECS, console, network, project picker,
-│   │                 #   world graph editor, voice commands, interaction debugger)
+│   │                 #   world graph editor, voice commands, interaction debugger,
+│   │                 #   AI prompt debugger)
 │   ├── ui/           # Dock layout, panel framework
 │   ├── tools/        # Game packager, asset tools
 │   └── ai/           # AI assistant aggregator
@@ -308,6 +309,32 @@ Atlas/
 - Diff-to-next and diff-from-previous for change visualization
 - Tick range queries for timeline UI rendering
 
+### LLM Context Builder (`engine/ai/`)
+- **LLMContextBuilder**: Assembles deterministic, layered context for LLM requests
+- **LLMContextLayer**: EngineConstitution, SystemContracts, SchemaDefinitions, ToolContext, RuntimeSummary, UserPrompt
+- **LLMContextBlock**: Layer + content pair
+- Context is immutable once built — prompt is read-only
+- Layers enforce what information each LLM query receives
+
+### LLM Request Types (`engine/ai/`)
+- **LLMRequestType**: Typed request categories (ExplainSystem, GenerateStrategyGraph, etc.)
+- **LLMRequestTypeEnforcer**: Validates which tools may issue which request types
+- Hard-coded defaults: StrategyGraph Editor → GenerateStrategyGraph, AI Inspector → ExplainSystem
+- If a tool tries an invalid request type → engine rejects
+
+### LLM Response Validator (`engine/ai/`)
+- **LLMResponseValidator**: Validates LLM outputs against schema and safety rules
+- Structure validation: responses must be JSON objects
+- Graph target validation: only declared graph types are allowed targets
+- Safety validation: forbidden keywords (system calls, code execution) are rejected
+- Full pipeline: structure → graph target → safety
+
+### LLM Cache (`engine/ai/`)
+- **LLMCache**: Deterministic LLM response cache with tick-based eviction
+- Cache key = FNV-1a hash(prompt, seed, schemaVersion)
+- EvictBefore(tick) removes stale entries
+- Ensures replay safety — cached responses are deterministic
+
 ## Runtime Modes
 
 | Mode   | Rendering | Networking | Asset Write | Graph Edit |
@@ -395,6 +422,7 @@ See [Project Guidelines](docs/PROJECT_GUIDELINES.md) for complete rules.
 | **Voice Commands** | Voice command testing and monitoring |
 | **Interaction Debugger** | AI interaction logging and analysis |
 | **AI Inspector** | AI signals, memory, and relationship debugging |
+| **AI Prompt Debugger** | LLM context assembly, prompt, and response debugging |
 | Game Packager | Build configuration and packaging |
 
 ## Build System
