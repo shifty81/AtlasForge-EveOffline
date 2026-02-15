@@ -4,6 +4,7 @@ add_library(AtlasEngine STATIC
     ecs/ECS.cpp
     graphvm/GraphVM.cpp
     graphvm/GraphCompiler.cpp
+    graphvm/GraphSerializer.cpp
     assets/AssetRegistry.cpp
     assets/AssetBinary.cpp
     net/NetContext.cpp

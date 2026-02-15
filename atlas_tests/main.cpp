@@ -215,6 +215,13 @@ void test_tilegraph_compile_chain();
 void test_tilegraph_execute();
 void test_tilegraph_deterministic();
 
+// Graph Serialization tests
+void test_json_builder_object();
+void test_json_builder_array();
+void test_json_reader_parse();
+void test_json_reader_array();
+void test_json_roundtrip();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -460,6 +467,14 @@ int main() {
     test_tilegraph_compile_chain();
     test_tilegraph_execute();
     test_tilegraph_deterministic();
+
+    // Graph Serialization
+    std::cout << "\n--- Graph Serialization ---" << std::endl;
+    test_json_builder_object();
+    test_json_builder_array();
+    test_json_reader_parse();
+    test_json_reader_array();
+    test_json_roundtrip();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;
