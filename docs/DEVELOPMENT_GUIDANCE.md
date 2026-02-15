@@ -7,7 +7,7 @@
 - **159+ modules** (Tech I, Tech II, Faction, Officer, Capital)
 - **137 skills** with complete skill tree
 - **31 C++ server systems** fully implemented
-- **1802 test assertions** all passing
+- **1925 test assertions** all passing
 - **Zero security vulnerabilities** (CodeQL verified)
 - **CI/CD pipelines** for both client and server
 
@@ -294,7 +294,7 @@ This is the most important next step for the project. All foundational systems a
 
 ### Vertical Slice Phase 5 (Weeks 13-16): Persistence & Stress Testing
 
-**Status**: 🚧 IN PROGRESS
+**Status**: ✅ COMPLETE
 
 **Completed (February 15, 2026)**:
 - ✅ Server load-on-startup: `loadWorld()` called during `Server::initialize()` when `persistent_world` is enabled
@@ -303,12 +303,10 @@ This is the most important next step for the project. All foundational systems a
 - ✅ Fleet state file persistence test: FleetMembership, FleetFormation, FleetMorale, FleetCargoPool round-trip via file I/O (25 assertions)
 - ✅ Economy state file persistence test: MarketHub orders, MineralDeposit, SystemResources round-trip via file I/O (21 assertions)
 - ✅ Bug fix: FleetFormation `spacing_modifier` field was not serialized — added to WorldPersistence serialize/deserialize
-- ✅ **1802 test assertions passing**
-
-**Remaining**:
-- LOD & impostors for large battles (server-side culling)
-- 100+ ship fleet stress test with full tick simulation
-- Save file compression (JSON → binary/compressed format)
+- ✅ LOD culling system: `LODCullingSystem` with distance-based priority updates, force-visible override, culled/visible entity partitioning (10 assertions)
+- ✅ 150-ship fleet stress test with full tick simulation: MovementSystem, CapacitorSystem, ShieldRechargeSystem through 10 ticks + LOD culling verification (15 assertions)
+- ✅ Compressed persistence: RLE compression + FNV-1a checksum + binary header (.atlasw format) via `saveWorldCompressed`/`loadWorldCompressed` (15 assertions)
+- ✅ **1925 test assertions passing**
 
 **Dependencies**: Phase 4 complete
 

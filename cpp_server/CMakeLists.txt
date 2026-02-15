@@ -106,6 +106,7 @@ set(SERVER_SOURCES
     src/systems/operational_wear_system.cpp
     src/systems/rumor_propagation_system.cpp
     src/systems/fleet_norm_system.cpp
+    src/systems/lod_culling_system.cpp
     src/data/ship_database.cpp
     src/data/npc_database.cpp
     src/data/wormhole_database.cpp
@@ -188,6 +189,7 @@ set(SERVER_HEADERS
     include/systems/operational_wear_system.h
     include/systems/rumor_propagation_system.h
     include/systems/fleet_norm_system.h
+    include/systems/lod_culling_system.h
     include/data/ship_database.h
     include/data/npc_database.h
     include/data/wormhole_database.h
@@ -331,6 +333,7 @@ if(BUILD_TESTS)
         src/systems/operational_wear_system.cpp
         src/systems/rumor_propagation_system.cpp
         src/systems/fleet_norm_system.cpp
+        src/systems/lod_culling_system.cpp
         src/data/world_persistence.cpp
         src/utils/logger.cpp
         src/utils/server_metrics.cpp
