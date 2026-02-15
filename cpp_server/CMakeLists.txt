@@ -108,6 +108,8 @@ set(SERVER_SOURCES
     src/systems/fleet_norm_system.cpp
     src/systems/lod_culling_system.cpp
     src/systems/star_system_state_system.cpp
+    src/systems/local_reputation_system.cpp
+    src/systems/npc_archetype_system.cpp
     src/data/ship_database.cpp
     src/data/npc_database.cpp
     src/data/wormhole_database.cpp
@@ -192,6 +194,8 @@ set(SERVER_HEADERS
     include/systems/fleet_norm_system.h
     include/systems/lod_culling_system.h
     include/systems/star_system_state_system.h
+    include/systems/local_reputation_system.h
+    include/systems/npc_archetype_system.h
     include/data/ship_database.h
     include/data/npc_database.h
     include/data/wormhole_database.h
@@ -337,6 +341,8 @@ if(BUILD_TESTS)
         src/systems/fleet_norm_system.cpp
         src/systems/lod_culling_system.cpp
         src/systems/star_system_state_system.cpp
+        src/systems/local_reputation_system.cpp
+        src/systems/npc_archetype_system.cpp
         src/data/world_persistence.cpp
         src/utils/logger.cpp
         src/utils/server_metrics.cpp

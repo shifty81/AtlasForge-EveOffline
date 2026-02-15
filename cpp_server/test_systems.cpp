@@ -74,6 +74,8 @@
 #include "systems/fleet_norm_system.h"
 #include "systems/lod_culling_system.h"
 #include "systems/star_system_state_system.h"
+#include "systems/local_reputation_system.h"
+#include "systems/npc_archetype_system.h"
 #include "network/protocol_handler.h"
 #include "ui/server_console.h"
 #include "utils/logger.h"
@@ -12878,6 +12880,189 @@ void testStarSystemStateEconomyRecovery() {
     assertTrue(recovered_economy > damaged_economy, "economy recovers with mining and no pirates");
 }
 
+// ==================== Phase 2: Local Reputation System tests ====================
+
+void testLocalReputationInitialize() {
+    std::cout << "\n=== LocalReputation: Initialize ===" << std::endl;
+    ecs::World world;
+    auto* player = world.createEntity("player_1");
+    LocalReputationSystem::initialize(player);
+    auto* rep = player->getComponent<components::LocalReputation>();
+    assertTrue(rep != nullptr, "LocalReputation component added");
+    assertTrue(rep->system_reputations.empty(), "no reputations initially");
+    assertTrue(approxEqual(rep->decay_rate, 0.01f), "default decay rate is 0.01");
+}
+
+void testLocalReputationModify() {
+    std::cout << "\n=== LocalReputation: Modify ===" << std::endl;
+    ecs::World world;
+    auto* player = world.createEntity("player_1");
+    LocalReputationSystem::initialize(player);
+
+    LocalReputationSystem::modifyReputation(player, "Jita", 3.0f);
+    assertTrue(approxEqual(LocalReputationSystem::getReputation(player, "Jita"), 3.0f),
+               "reputation set to 3.0 in Jita");
+
+    LocalReputationSystem::modifyReputation(player, "Jita", -1.0f);
+    assertTrue(approxEqual(LocalReputationSystem::getReputation(player, "Jita"), 2.0f),
+               "reputation decremented to 2.0 in Jita");
+
+    // Different system should be independent
+    assertTrue(approxEqual(LocalReputationSystem::getReputation(player, "Rens"), 0.0f),
+               "Rens reputation is 0 (unvisited)");
+}
+
+void testLocalReputationClamped() {
+    std::cout << "\n=== LocalReputation: Clamped ===" << std::endl;
+    ecs::World world;
+    auto* player = world.createEntity("player_1");
+    LocalReputationSystem::initialize(player);
+
+    LocalReputationSystem::modifyReputation(player, "Jita", 15.0f);
+    assertTrue(approxEqual(LocalReputationSystem::getReputation(player, "Jita"), 10.0f),
+               "reputation clamped to +10");
+
+    LocalReputationSystem::modifyReputation(player, "Amarr", -20.0f);
+    assertTrue(approxEqual(LocalReputationSystem::getReputation(player, "Amarr"), -10.0f),
+               "reputation clamped to -10");
+}
+
+void testLocalReputationDecay() {
+    std::cout << "\n=== LocalReputation: Decay ===" << std::endl;
+    ecs::World world;
+    auto* player = world.createEntity("player_1");
+    LocalReputationSystem::initialize(player);
+
+    LocalReputationSystem::modifyReputation(player, "Jita", 5.0f);
+    LocalReputationSystem::modifyReputation(player, "Rens", -3.0f);
+
+    // Decay for 10 seconds at 0.01/s → 0.1 total decay
+    LocalReputationSystem::decayReputations(player, 10.0f);
+
+    float jita_rep = LocalReputationSystem::getReputation(player, "Jita");
+    float rens_rep = LocalReputationSystem::getReputation(player, "Rens");
+
+    assertTrue(jita_rep < 5.0f, "positive reputation decayed toward zero");
+    assertTrue(rens_rep > -3.0f, "negative reputation decayed toward zero");
+    assertTrue(jita_rep > 0.0f, "did not cross zero");
+    assertTrue(rens_rep < 0.0f, "did not cross zero");
+}
+
+void testLocalReputationWelcome() {
+    std::cout << "\n=== LocalReputation: Welcome Check ===" << std::endl;
+    ecs::World world;
+    auto* player = world.createEntity("player_1");
+    LocalReputationSystem::initialize(player);
+
+    assertTrue(LocalReputationSystem::isWelcome(player, "Jita"), "welcome by default (0 >= 0)");
+
+    LocalReputationSystem::modifyReputation(player, "Jita", -1.0f);
+    assertTrue(!LocalReputationSystem::isWelcome(player, "Jita"), "unwelcome with negative reputation");
+
+    LocalReputationSystem::modifyReputation(player, "Jita", 2.0f);
+    assertTrue(LocalReputationSystem::isWelcome(player, "Jita"), "welcome again after repair");
+}
+
+// ==================== Phase 2: NPC Archetype System tests ====================
+
+void testNPCArchetypeInitializeTrader() {
+    std::cout << "\n=== NPCArchetype: Initialize Trader ===" << std::endl;
+    ecs::World world;
+    auto* npc = world.createEntity("npc_trader");
+    NPCArchetypeSystem::initialize(npc, "Trader");
+
+    auto* arch = npc->getComponent<components::NPCArchetype>();
+    assertTrue(arch != nullptr, "NPCArchetype component added");
+    assertTrue(arch->archetype == components::NPCArchetype::Archetype::Trader, "archetype is Trader");
+    assertTrue(approxEqual(arch->risk_tolerance, 0.3f), "Trader risk tolerance is 0.3");
+    assertTrue(NPCArchetypeSystem::getArchetypeName(npc) == "Trader", "name is Trader");
+
+    auto* intent = npc->getComponent<components::NPCIntent>();
+    assertTrue(intent != nullptr, "NPCIntent component also added");
+    assertTrue(intent->current_intent == components::NPCIntent::Intent::Trade, "default intent is Trade");
+}
+
+void testNPCArchetypeInitializePirate() {
+    std::cout << "\n=== NPCArchetype: Initialize Pirate ===" << std::endl;
+    ecs::World world;
+    auto* npc = world.createEntity("npc_pirate");
+    NPCArchetypeSystem::initialize(npc, "Pirate");
+
+    assertTrue(NPCArchetypeSystem::getArchetypeName(npc) == "Pirate", "name is Pirate");
+    assertTrue(approxEqual(NPCArchetypeSystem::getRiskTolerance(npc), 0.8f), "Pirate risk tolerance is 0.8");
+}
+
+void testNPCArchetypeInitializeAllTypes() {
+    std::cout << "\n=== NPCArchetype: Initialize All Types ===" << std::endl;
+    ecs::World world;
+
+    auto* miner = world.createEntity("npc_miner");
+    NPCArchetypeSystem::initialize(miner, "Miner");
+    assertTrue(NPCArchetypeSystem::getArchetypeName(miner) == "Miner", "Miner archetype");
+
+    auto* hauler = world.createEntity("npc_hauler");
+    NPCArchetypeSystem::initialize(hauler, "Hauler");
+    assertTrue(NPCArchetypeSystem::getArchetypeName(hauler) == "Hauler", "Hauler archetype");
+
+    auto* patrol = world.createEntity("npc_patrol");
+    NPCArchetypeSystem::initialize(patrol, "Patrol");
+    assertTrue(NPCArchetypeSystem::getArchetypeName(patrol) == "Patrol", "Patrol archetype");
+
+    auto* industrialist = world.createEntity("npc_industrialist");
+    NPCArchetypeSystem::initialize(industrialist, "Industrialist");
+    assertTrue(NPCArchetypeSystem::getArchetypeName(industrialist) == "Industrialist", "Industrialist archetype");
+}
+
+void testNPCArchetypeIntentTraderFlees() {
+    std::cout << "\n=== NPCArchetype: Trader Flees in Low-Sec ===" << std::endl;
+    ecs::World world;
+    auto* npc = world.createEntity("npc_trader");
+    NPCArchetypeSystem::initialize(npc, "Trader");
+
+    // Low security → trader should flee
+    NPCArchetypeSystem::selectArchetypeIntent(npc, 0.1f, 0.5f, 0.2f);
+    auto* intent = npc->getComponent<components::NPCIntent>();
+    assertTrue(intent->current_intent == components::NPCIntent::Intent::Flee, "Trader flees in low-sec");
+}
+
+void testNPCArchetypeIntentPirateRaids() {
+    std::cout << "\n=== NPCArchetype: Pirate Raids in Low-Sec ===" << std::endl;
+    ecs::World world;
+    auto* npc = world.createEntity("npc_pirate");
+    NPCArchetypeSystem::initialize(npc, "Pirate");
+
+    // Low security, moderate threat → pirate raids
+    NPCArchetypeSystem::selectArchetypeIntent(npc, 0.2f, 0.5f, 0.3f);
+    auto* intent = npc->getComponent<components::NPCIntent>();
+    assertTrue(intent->current_intent == components::NPCIntent::Intent::Raid, "Pirate raids in low-sec");
+}
+
+void testNPCArchetypeIntentEveryoneFleesExtremeThreat() {
+    std::cout << "\n=== NPCArchetype: Everyone Flees at Extreme Threat ===" << std::endl;
+    ecs::World world;
+    auto* pirate = world.createEntity("npc_pirate");
+    NPCArchetypeSystem::initialize(pirate, "Pirate");
+
+    // Extreme threat → even pirate flees
+    NPCArchetypeSystem::selectArchetypeIntent(pirate, 0.5f, 0.5f, 0.95f);
+    auto* intent = pirate->getComponent<components::NPCIntent>();
+    assertTrue(intent->current_intent == components::NPCIntent::Intent::Flee,
+               "Pirate flees at extreme threat despite high risk tolerance");
+}
+
+void testNPCArchetypeIntentPatrolDefends() {
+    std::cout << "\n=== NPCArchetype: Patrol Defends Under Threat ===" << std::endl;
+    ecs::World world;
+    auto* patrol = world.createEntity("npc_patrol");
+    NPCArchetypeSystem::initialize(patrol, "Patrol");
+
+    // Moderate threat → patrol defends
+    NPCArchetypeSystem::selectArchetypeIntent(patrol, 0.5f, 0.5f, 0.4f);
+    auto* intent = patrol->getComponent<components::NPCIntent>();
+    assertTrue(intent->current_intent == components::NPCIntent::Intent::Defend,
+               "Patrol defends under moderate threat");
+}
+
 int main() {
     std::cout << "========================================" << std::endl;
     std::cout << "EVE OFFLINE C++ Server System Tests" << std::endl;
@@ -13690,6 +13875,22 @@ int main() {
     testStarSystemStateUpdateDangerous();
     testStarSystemStateLockdown();
     testStarSystemStateEconomyRecovery();
+
+    // Phase 2: Local Reputation System tests
+    testLocalReputationInitialize();
+    testLocalReputationModify();
+    testLocalReputationClamped();
+    testLocalReputationDecay();
+    testLocalReputationWelcome();
+
+    // Phase 2: NPC Archetype System tests
+    testNPCArchetypeInitializeTrader();
+    testNPCArchetypeInitializePirate();
+    testNPCArchetypeInitializeAllTypes();
+    testNPCArchetypeIntentTraderFlees();
+    testNPCArchetypeIntentPirateRaids();
+    testNPCArchetypeIntentEveryoneFleesExtremeThreat();
+    testNPCArchetypeIntentPatrolDefends();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;
