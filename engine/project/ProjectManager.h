@@ -33,10 +33,14 @@ struct ProjectDescriptor {
 
 class ProjectManager {
 public:
+    static ProjectManager& Get();
+
     bool Load(const std::string& path);
+    void Unload();
 
     bool IsLoaded() const;
     const ProjectDescriptor& Descriptor() const;
+    const std::string& ProjectRoot() const;
 
     bool Validate() const;
 

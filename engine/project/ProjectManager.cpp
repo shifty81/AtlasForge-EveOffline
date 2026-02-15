@@ -6,6 +6,11 @@
 
 namespace atlas::project {
 
+ProjectManager& ProjectManager::Get() {
+    static ProjectManager instance;
+    return instance;
+}
+
 // Minimal JSON value parser for project files
 // Supports strings, integers, and booleans in a flat/nested object structure
 namespace {
@@ -129,12 +134,22 @@ bool ProjectManager::Load(const std::string& path) {
     return true;
 }
 
+void ProjectManager::Unload() {
+    m_descriptor = ProjectDescriptor{};
+    m_loaded = false;
+    m_projectRoot.clear();
+}
+
 bool ProjectManager::IsLoaded() const {
     return m_loaded;
 }
 
 const ProjectDescriptor& ProjectManager::Descriptor() const {
     return m_descriptor;
+}
+
+const std::string& ProjectManager::ProjectRoot() const {
+    return m_projectRoot;
 }
 
 bool ProjectManager::Validate() const {

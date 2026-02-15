@@ -2,356 +2,203 @@
   <img src="docs/images/banner.svg" alt="Atlas — PVE Space Simulator" width="900"/>
 </p>
 
-A PVE-focused space simulator for small groups (2–20 players) or solo play with AI wingmates.
-Built with **C++20 / OpenGL** and the custom **Atlas Engine** — a modular, deterministic game engine with the **Atlas UI** framework for sci-fi cockpit interfaces.
-
-> **Status** — Active R&D · Builds on Linux, macOS, Windows · Unified build produces all executables in one go
-
----
-
-## ✨ At a Glance
-
+<h3 align="center">A PVE-focused space simulator for solo play and small groups (2–20 players)</h3>
 <p align="center">
-  <img src="docs/images/ui-layout.svg" alt="Atlas UI — Cockpit Interface Layout" width="900"/>
+  Built with <b>C++20 / OpenGL</b> and the custom <b>Atlas Engine</b> — a modular, deterministic game engine
 </p>
 
 <p align="center">
-  <img src="docs/images/features.svg" alt="Atlas Features" width="900"/>
+  <code>Status: Active R&D</code> · <code>Platforms: Linux · macOS · Windows</code> · <code>License: TBD</code>
 </p>
 
 ---
 
-## 🚀 Quick Start
+## What Is This?
 
-### Prerequisites
+**Atlas-EveOffline** is a PVE space simulation inspired by EVE Online — rebuilt from scratch
+with a custom engine. AI drives the universe: economy, pirates, factions, and fleet behavior
+all run whether or not the player is watching.
 
-- **CMake** 3.15+
-- **C++20** compiler (GCC 11+, Clang 14+, MSVC 2022+)
-- **Libraries**: GLFW3 · GLM · GLEW · nlohmann-json · OpenAL (optional)
-
-### Linux / macOS
-
-```bash
-# Ubuntu/Debian
-sudo apt-get install build-essential cmake \
-  libgl1-mesa-dev libglew-dev libglfw3-dev libglm-dev \
-  nlohmann-json3-dev libopenal-dev libfreetype-dev
-
-# macOS
-brew install cmake glfw glm glew nlohmann-json openal-soft freetype
-
-# Build everything (engine, editor, runtime, client, server, tests)
-./build.sh
-```
-
-### Windows (Visual Studio)
-
-```cmd
-:: Install dependencies via vcpkg
-vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows ^
-              nlohmann-json:x64-windows freetype:x64-windows
-
-:: Generate solution with all targets & open in Visual Studio
-generate_solution.bat --open
-```
-
-### CMake (any platform)
-
-A single build produces **all executables** so everything is working and debuggable at the same time:
-
-```bash
-mkdir build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
-cmake --build . --config Release
-```
-
-This builds: `AtlasEngine` (library) · `AtlasEditor` · `AtlasRuntime` · `AtlasTests` · `eve_client` · `eve_server`
-
-Individual targets can be disabled if needed:
-
-```bash
-cmake .. -DBUILD_CLIENT=OFF -DBUILD_SERVER=OFF   # engine-only build
-```
-
----
-
-## 🗂️ Project Structure
-
-```
-Atlas/
-├── engine/                # ★ Atlas Engine — generic, game-agnostic core
-│   ├── core/              #   Engine bootstrap, logging, config
-│   ├── ecs/               #   Entity/Component/System framework
-│   ├── graphvm/           #   Deterministic Graph VM + compiler
-│   ├── assets/            #   Asset registry, binary format, hot reload
-│   ├── net/               #   Networking (CS + P2P + lockstep/rollback)
-│   ├── sim/               #   Tick scheduler, deterministic simulation
-│   ├── world/             #   World layouts (cube-sphere, voxel grid)
-│   ├── project/           #   Project loading & validation (.atlas files)
-│   └── command/           #   Undo/redo command system
-├── editor/                # ★ Atlas Editor — authoring tool
-│   ├── ui/                #   Docking, layout, panel system
-│   ├── panels/            #   ECS Inspector, Net Inspector, Console
-│   ├── tools/             #   Game Packager, Asset Cooker
-│   └── ai/                #   AI Aggregator for asset generation
-├── runtime/               # ★ Atlas Runtime — standalone runtime executable
-├── schemas/               # Versioned project schemas (.atlas format)
-├── atlas_tests/           # Atlas Engine unit tests
-├── cpp_client/            # C++ OpenGL game client
-│   ├── src/               #   Source (core, rendering, network, ui, audio)
-│   ├── include/           #   Headers
-│   │   └── ui/atlas/      #   ★ Atlas UI framework headers
-│   ├── shaders/           #   GLSL shaders
-│   └── assets/            #   Models, textures
-├── cpp_server/            # C++ dedicated game server
-│   ├── src/               #   Server source (ECS, network, systems)
-│   └── config/            #   Server configuration
-├── data/                  # Game data — fully moddable JSON
-│   ├── ships/             #   102+ ship definitions
-│   ├── modules/           #   159+ module definitions
-│   ├── missions/          #   Mission templates (5 levels, 7 types)
-│   ├── universe/          #   Solar systems, stargates, stations
-│   └── ...                #   Skills, NPCs, market, industry, etc.
-├── docs/                  # Documentation
-│   ├── atlas-ui/          #   ★ Atlas UI framework docs
-│   ├── guides/            #   Build & setup guides
-│   └── ...                #   Design, features, development notes
-├── tools/                 # Utilities (ship creator, JSON validator, Blender addon)
-│   └── BlenderSpaceshipGenerator/  # Blender addon for procedural ship/station generation
-├── archive/               # Legacy code & deprecated files
-├── ARCHITECTURE.md        # ★ Baseline architecture document
-├── ATLAS_INTEGRATION.md   # ★ Atlas Engine integration guide
-├── CMakeLists.txt         # Root build configuration (unified build)
-├── build.sh / build.bat   # Build scripts (builds everything)
-└── Makefile               # Development task shortcuts
-```
-
----
-
-## 🎨 Atlas UI Framework
-
-Atlas is both the game **and** its UI framework. The Atlas UI system is a custom, immediate-mode, GPU-accelerated UI toolkit built specifically for sci-fi game interfaces — and designed to be reusable in other projects.
-
-**→ [Full Atlas UI Documentation](docs/atlas-ui/README.md)**
-
-### Key Features
-
-- **Immediate-mode API** — no retained widget trees; simple `if (button(...))` pattern
-- **Single draw-call batching** — all UI rendered in one GPU pass
-- **EVE-style widget set** — panels, status arcs, capacitor rings, module racks, overview tables
-- **Interactive** — drag-to-move panels, click buttons, tab switching, scrolling
-- **Themeable** — full color scheme support (default teal, classic amber, colorblind-safe)
-- **Zero dependencies** beyond OpenGL 3.3
-
-### Quick Example
-
-```cpp
-#include "ui/atlas/atlas_context.h"
-#include "ui/atlas/atlas_widgets.h"
-
-atlas::AtlasContext ctx;
-ctx.init();
-
-// Each frame:
-atlas::InputState input = getInputFromGLFW();
-ctx.beginFrame(input);
-
-atlas::Rect panelBounds = {100, 100, 300, 200};
-if (atlas::panelBegin(ctx, "My Panel", panelBounds)) {
-    if (atlas::button(ctx, "Click Me", {110, 140, 80, 24})) {
-        // handle click
-    }
-    atlas::progressBar(ctx, {110, 170, 200, 16}, 0.75f,
-                       ctx.theme().shield, "Shield: 75%");
-}
-atlas::panelEnd(ctx);
-
-ctx.endFrame();
-```
-
----
-
-## 🔩 Atlas Engine
-
-This project includes the **Atlas Engine** — a modular, data-driven game engine core that powers both the client and server. The engine is designed to be game-agnostic and will eventually become its own standalone repository at [github.com/shifty81/Atlas](https://github.com/shifty81/Atlas).
-
-**→ [Architecture](ARCHITECTURE.md)** · **→ [Integration Guide](ATLAS_INTEGRATION.md)**
-
-### Engine Components
-
-| Module | Description |
-|--------|-------------|
-| **ECS** | Entity/Component/System framework with type-safe component management |
-| **Graph VM** | Deterministic bytecode virtual machine for gameplay logic |
-| **Asset System** | Binary asset format, registry, hot reload |
-| **Networking** | Client-Server + P2P, lockstep/rollback, peer management |
-| **Simulation** | Fixed-rate tick scheduler, deterministic time |
-| **World Gen** | Cube-sphere (planetary) and voxel grid layouts with LOD |
-| **Project System** | Load and validate `.atlas` project files with schema versioning |
-| **Command System** | Undo/redo history for editor mutations and multiplayer sync |
-
-### Project Files
-
-Games built with Atlas are defined by a single `.atlas` project file:
-
-```json
-{
-  "schema": "atlas.project.v1",
-  "name": "MyGame",
-  "version": "1.0.0",
-  "modules": { "worldGraph": "world/galaxy.worldgraph", "ai": true },
-  "runtime": { "entryWorld": "world/galaxy.worldgraph", "tickRate": 30 }
-}
-```
-
-Schema: [`schemas/atlas.project.v1.json`](schemas/atlas.project.v1.json)
-
-### Build Targets
-
-All targets build together by default — one build gives you everything:
-
-| Target | Executable | Description |
-|--------|------------|-------------|
-| `AtlasEngine` | `libAtlasEngine.a` | Core engine static library |
-| `AtlasEditor` | `AtlasEditor` | Authoring tool with ECS/net inspectors |
-| `AtlasRuntime` | `AtlasRuntime` | Standalone runtime (`--project game.atlas`) |
-| `AtlasTests` | `AtlasTests` | Engine unit tests |
-| `eve_client` | `eve_client` | EVEOFFLINE game client |
-| `eve_server` | `eve_server` | EVEOFFLINE dedicated server |
-
-```bash
-# Build and run tests
-make test-engine
-
-# Build runtime and load a project
-make build-runtime
-./build/runtime/AtlasRuntime --project my_game.atlas --validate-only
-```
-
----
-
-## 🎮 Game Features
-
-### Four Factions
-
-| Faction | Style | Specialty |
-|---------|-------|-----------|
-| **Solari** | Golden / elegant | Armor tanking, energy weapons |
-| **Veyren** | Angular / utilitarian | Shield tanking, hybrid turrets |
-| **Aurelian** | Sleek / organic | Speed, drones, electronic warfare |
-| **Keldari** | Rugged / industrial | Missiles, shields, ECM |
-
-### Ship Classes
-Frigates · Destroyers · Cruisers · Battlecruisers · Battleships · Capitals
-Tech I · Tech II (Interceptors, Covert Ops, Assault Frigs, Stealth Bombers, Marauders, Logistics, Recon, Command Ships)
-Industrials · Mining Barges · Exhumers · Carriers · Dreadnoughts · Titans
-
-### Game Systems
-- **Combat** — Module activation, target locking, damage types, electronic warfare
-- **Movement** — Approach, orbit, keep-at-range, warp, align (EVE-style)
-- **Fleet** — Party system with AI or human wingmates
-- **Skills** — 137 skills across 20 categories with attribute-based training
-- **Industry** — Mining, manufacturing, market, contracts
-- **Exploration** — Probe scanning, deadspace complexes, wormholes
-- **Missions** — 5 levels × 7 types (combat, mining, courier, trade, scenario, exploration, storyline)
-
----
-
-## 🔧 Modding
-
-All game content lives in `data/` as JSON files — fully moddable:
-
-```bash
-data/
-├── ships/              # Ship stats, slots, bonuses
-├── modules/            # Weapons, defenses, utilities
-├── skills/             # Training requirements and bonuses
-├── missions/           # Mission templates and objectives
-├── npcs/               # NPC spawns and AI behavior
-├── universe/           # Solar systems and celestials
-├── market/             # Economy and pricing
-└── ...                 # Industry, exploration, corps, security
-```
-
-**Tools**: `tools/validate_json.py` (validate data) · `tools/create_ship.py` (ship wizard) · `tools/BlenderSpaceshipGenerator/` (procedural 3D ship generation)
-
-See the [Modding Guide](docs/MODDING_GUIDE.md) for details.
+The **Atlas Engine** underneath is game-agnostic and designed for extraction into a
+[standalone engine](https://github.com/shifty81/Atlas).
 
 ---
 
 ## 🗺️ Roadmap
 
-> **[Full Roadmap →](docs/ROADMAP.md)** — Detailed milestones, ECS specs, and implementation status
+```
+  COMPLETED                          IN PROGRESS                       PLANNED
+  ─────────                          ───────────                       ───────
+  ✅ Phase 1  Core Engine            🔧 Engine Migration               📋 Phase 8   Cinematic Warp
+     ECS, networking, tick sim          StrategyGraph module            📋 Phase 9   Fleet AI
+  ✅ Phase 2  Content                   ConversationGraph module        📋 Phase 10  Tactical Overlay
+     102 ships, 159 modules             AI Signal Registry              📋 Phase 11  Fleet Civilization
+  ✅ Phase 3  Economy                   Server Rules system             📋 Phase 12  Ship Gen v2
+     Manufacturing, market              World Modes / Camera
+  ✅ Phase 4  Social                    Editor project loading       ┌──────────────────────┐
+     Corps, contracts, chat             Sandboxing policy            │  🎯 NEXT MILESTONE   │
+  ✅ Phase 5  3D Graphics                                            │                      │
+     OpenGL, PBR, particles          🔧 Documentation                │  Vertical Slice      │
+  ✅ Phase 6  Tech II                   README overhaul               │  One full star       │
+     HAC, Recon, Logistics              Development alignment         │  system, playable    │
+  ✅ Phase 7  Industry                  Architecture updates          │  loop, AI-driven     │
+     Mining, PI, wormholes                                            └──────────────────────┘
+```
+
+> **[Full Roadmap →](docs/ROADMAP.md)** · **[Development Alignment →](DEVELOPMENT_ALIGNMENT.md)**
+
+---
+
+## 🏗️ Architecture
+
+```
+Atlas/
+├── engine/                 ← Atlas Engine (game-agnostic, 17 modules)
+│   ├── core/                  Engine lifecycle, logging
+│   ├── ecs/                   Entity-Component-System
+│   ├── graphvm/               Deterministic bytecode VM
+│   ├── assets/                Binary assets, hot reload
+│   ├── net/                   Client-Server + P2P networking
+│   ├── sim/                   Fixed-rate tick scheduler
+│   ├── world/                 WorldGraph, terrain, galaxy gen
+│   ├── strategygraph/         Strategy decision graphs (AI)
+│   ├── conversation/          Dialogue + memory graphs
+│   ├── ai/                    AI signal registry
+│   ├── rules/                 Server rules (live tuning)
+│   ├── camera/                World modes + projection
+│   ├── project/               .atlas project loading
+│   ├── command/               Undo/redo system
+│   ├── interaction/           Unified intent system
+│   ├── voice/                 Voice command registry
+│   └── plugin/                Plugin validation + sandbox
+│
+├── editor/                 ← Atlas Editor (authoring tool)
+├── runtime/                ← Atlas Runtime (standalone exe)
+├── atlas_tests/            ← Engine unit tests (69 tests)
+├── schemas/                ← Versioned project schemas
+├── projects/               ← Game projects (.atlas files)
+│   ├── eveoffline/            EVEOFFLINE reference project
+│   └── atlas-sample/          Minimal sample project
+│
+├── cpp_client/             ← EVEOFFLINE game client (OpenGL)
+├── cpp_server/             ← EVEOFFLINE dedicated server
+├── data/                   ← Moddable game content (JSON)
+├── tools/                  ← Modding utilities
+└── docs/                   ← Documentation (40+ files)
+```
+
+> **[Architecture →](ARCHITECTURE.md)** · **[Integration Guide →](ATLAS_INTEGRATION.md)** · **[Project Guidelines →](docs/PROJECT_GUIDELINES.md)**
+
+---
+
+## 🚀 Quick Start
+
+```bash
+# Linux/macOS — install deps and build everything
+sudo apt-get install build-essential cmake libgl1-mesa-dev libglew-dev \
+  libglfw3-dev libglm-dev nlohmann-json3-dev libopenal-dev libfreetype-dev
+./build.sh
+
+# Windows — use vcpkg + Visual Studio
+generate_solution.bat --open
+
+# CMake (any platform) — single build produces all executables
+mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+cmake --build . --config Release
+
+# Run engine tests
+make test-engine
+
+# Load a project
+./build/runtime/AtlasRuntime --project projects/eveoffline/eveoffline.atlas --validate-only
+```
+
+---
+
+## 🔩 Engine Modules
+
+| Module | What It Does |
+|--------|-------------|
+| **ECS** | Entity/Component/System with type-safe components |
+| **Graph VM** | Deterministic bytecode VM for visual scripting |
+| **WorldGraph** | DAG-based procedural world generation |
+| **StrategyGraph** | AI decision graphs (influence, threat, scoring) |
+| **ConversationGraph** | Dialogue, player choices, memory, relationships |
+| **AI Signals** | Namespaced numeric inputs for AI systems |
+| **Server Rules** | Live parameter tuning with replay awareness |
+| **Networking** | Client-Server + P2P with lockstep/rollback |
+| **Asset System** | Binary format, registry, hot reload |
+| **Project System** | `.atlas` manifest loading and validation |
+| **Command System** | Undo/redo for editor and multiplayer sync |
+| **Plugin System** | Validated, sandboxed extensions |
+
+---
+
+## 🎮 Game Features
 
 <table>
-<tr>
-<td width="50%" valign="top">
+<tr><td width="50%" valign="top">
 
-### ✅ Completed
+**Combat & Movement**
+- Module activation, target locking, damage types, EW
+- Approach, orbit, keep-at-range, warp, align
+- Fleet system with AI or human wingmates
 
-| Phase | Milestone | Status |
-|:-----:|-----------|:------:|
-| 1 | **Core Engine** — ECS, networking, tick-based sim | ✅ |
-| 2 | **Content** — 102 ships, 159 modules, 137 skills | ✅ |
-| 3 | **Economy** — Manufacturing, market, exploration, loot | ✅ |
-| 4 | **Social** — Corps, contracts, mail, chat | ✅ |
-| 5 | **3D Graphics** — OpenGL client, PBR, particles, audio | ✅ |
-| 6 | **Tech II** — HAC, Recon, Logistics, capitals, L5 missions | ✅ |
-| 7 | **Industry** — Mining, PI, invention, wormholes, fleet | ✅ |
+**Ships & Factions**
+- 102 ships across frigates → titans
+- Tech I + Tech II specializations
+- 4 factions: Solari · Veyren · Aurelian · Keldari
 
-</td>
-<td width="50%" valign="top">
+</td><td width="50%" valign="top">
 
-### 🚧 Next Up
+**Economy & Industry**
+- Mining, manufacturing, market, contracts
+- AI miners, haulers, pirates drive the economy
+- Resources extracted → moved → produced → destroyed
 
-| Phase | Milestone | Focus |
-|:-----:|-----------|:-----:|
-| 🎯 | **Vertical Slice** — One full star system, playable loop | 🔜 |
-| 8 | **Cinematic Warp** — Tunnel shaders, audio, anomalies | 📋 |
-| 9 | **Fleet AI** — Captain personalities, morale, chatter | 📋 |
-| 10 | **Tactical Overlay** — 2.5D strategy view, distance rings | 📋 |
-| 11 | **Fleet Civilization** — 25-ship fleets, station deployment | 📋 |
-| 12 | **Ship Gen v2** — Spine-based hulls, silhouette-first design | 📋 |
+**Exploration & Missions**
+- Probe scanning, deadspace, wormholes
+- 5 levels × 7 mission types
+- 137 skills across 20 categories
 
-</td>
-</tr>
+</td></tr>
 </table>
 
-<details>
-<summary><strong>🔭 Vision — Where This Is Going</strong></summary>
-<br>
+---
 
-**Warp as ritual, not loading screen** — Long warps become meditative experiences with layered audio, visual anomalies, and fleet chatter. Ships warp in formation; captains talk about victories, losses, and rumors.
+## 🔧 Modding
 
-**Fleet members are people** — AI captains have personality axes (aggression, optimism, humor), form friendships and grudges, track morale, and may leave if conditions worsen. Their chatter shifts across mining, combat, exploration, and idle states.
+All game content is JSON in `data/` — fully moddable:
 
-**Tactical overlay for spatial mastery** — A passive 2.5D strategy view shows true distances, tool ranges, and entity positions without clutter or interaction. Information > spectacle.
+```
+data/ships/     102+ ship definitions       data/universe/   Solar systems, stargates
+data/modules/   159+ module definitions      data/missions/   Mission templates
+data/skills/    137 skill definitions        data/market/     Economy and pricing
+```
 
-**Traveling civilizations** — At 25 ships with titans and capitals, your fleet becomes a moving polity with distributed economy, station deployment, and fleet-scale industry. Titan is a civilizational threshold, not just the next ship.
-
-**Ships that read in silhouette** — Procedural generation overhaul: spine-based hull grammar (Needle, Wedge, Hammer, Slab, Ring) with functional zones and faction shape language, replacing blob-assembly.
-
-</details>
+**Tools:** `validate_json.py` · `create_ship.py` · `BlenderSpaceshipGenerator/`
+→ **[Modding Guide](docs/MODDING_GUIDE.md)**
 
 ---
 
 ## 📚 Documentation
 
-| Category | Links |
-|----------|-------|
-| **Get Started** | [Tutorial](docs/TUTORIAL.md) · [Build Guides](docs/guides/) |
-| **Architecture** | [Architecture](ARCHITECTURE.md) · [Project Schema](schemas/atlas.project.v1.json) |
-| **Atlas Engine** | [Integration Guide](ATLAS_INTEGRATION.md) · [Atlas Repo](https://github.com/shifty81/Atlas) |
-| **Atlas UI** | [Atlas UI Docs](docs/atlas-ui/README.md) · [Widget Reference](docs/atlas-ui/WIDGETS.md) |
-| **Development** | [Roadmap](docs/ROADMAP.md) · [Contributing](docs/CONTRIBUTING.md) |
-| **Design** | [Game Design](docs/design/DESIGN.md) · [Ship Modeling](docs/SHIP_MODELING.md) |
-| **Technical** | [C++ Client](docs/cpp_client/) · [Networking](docs/cpp_client/) |
+| Topic | Links |
+|-------|-------|
+| **Getting Started** | [Tutorial](docs/TUTORIAL.md) · [Build Guides](docs/guides/) |
+| **Engine** | [Architecture](ARCHITECTURE.md) · [Integration](ATLAS_INTEGRATION.md) · [Sandboxing](SANDBOXING.md) |
+| **Development** | [Alignment Goals](DEVELOPMENT_ALIGNMENT.md) · [Roadmap](docs/ROADMAP.md) · [Contributing](docs/CONTRIBUTING.md) |
+| **Design** | [Project Context](PROJECT_CONTEXT.md) · [Simulation Philosophy](ATLAS_SIMULATION_PHILOSOPHY.md) · [Naming](ATLAS_NAMING_CONVENTIONS.md) |
+| **Schemas** | [Project Schema](schemas/atlas.project.v1.json) · [WorldGraph](schemas/atlas.worldgraph.v1.json) · [StrategyGraph](schemas/atlas.strategygraph.v1.json) |
 
 ---
 
 ## 🤝 Contributing
 
 Contributions are welcome! See [CONTRIBUTING.md](docs/CONTRIBUTING.md).
+
+**Rules:** Every new module needs tests · No breaking determinism · Editor authors data, runtime executes data
 
 ## 📝 License
 

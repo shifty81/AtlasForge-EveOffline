@@ -22,6 +22,10 @@ add_library(AtlasEngine STATIC
     interaction/Interaction.cpp
     voice/VoiceCommand.cpp
     plugin/PluginSystem.cpp
+    strategygraph/StrategyGraph.cpp
+    rules/ServerRules.cpp
+    conversation/ConversationGraph.cpp
+    ai/AISignalRegistry.cpp
 )
 
 target_include_directories(AtlasEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

@@ -37,16 +37,15 @@ int main(int argc, char* argv[]) {
     atlas::Logger::Init();
 
     // Load project if specified
-    atlas::project::ProjectManager projectMgr;
     if (!projectPath.empty()) {
-        if (!projectMgr.Load(projectPath)) {
+        if (!atlas::project::ProjectManager::Get().Load(projectPath)) {
             std::cerr << "Failed to load project: " << projectPath << std::endl;
             return 1;
         }
 
         if (validateOnly) {
             std::cout << "Project validation passed: "
-                      << projectMgr.Descriptor().name << std::endl;
+                      << atlas::project::ProjectManager::Get().Descriptor().name << std::endl;
             return 0;
         }
     }
@@ -61,9 +60,9 @@ int main(int argc, char* argv[]) {
     atlas::EngineConfig cfg;
     cfg.mode = engineMode;
 
-    if (projectMgr.IsLoaded()) {
-        cfg.tickRate = projectMgr.Descriptor().runtime.tickRate;
-        cfg.assetRoot = projectMgr.Descriptor().assets.root;
+    if (atlas::project::ProjectManager::Get().IsLoaded()) {
+        cfg.tickRate = atlas::project::ProjectManager::Get().Descriptor().runtime.tickRate;
+        cfg.assetRoot = atlas::project::ProjectManager::Get().Descriptor().assets.root;
     }
 
     // Initialize and run
