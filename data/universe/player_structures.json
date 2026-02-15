@@ -90,7 +90,7 @@
         "name": "Metenox Moon Drill",
         "type": "nullsec_structure",
         "category": "moon_mining",
-        "description": "Specialized, automated moon mining structure for sbastion, less-populated, or 'dead end' systems",
+        "description": "Specialized, automated moon mining structure for bastion, less-populated, or 'dead end' systems",
         "deployment": {
           "location": "moon_orbit",
           "anchoring_time": "12_hours",
