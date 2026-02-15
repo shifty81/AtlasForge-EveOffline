@@ -224,6 +224,15 @@ void test_tilegraph_compile_chain();
 void test_tilegraph_execute();
 void test_tilegraph_deterministic();
 
+// CharacterGraph tests
+void test_charactergraph_add_nodes();
+void test_charactergraph_remove_node();
+void test_charactergraph_compile_empty();
+void test_charactergraph_compile_single_node();
+void test_charactergraph_compile_chain();
+void test_charactergraph_execute();
+void test_charactergraph_deterministic();
+
 // BehaviorGraph tests
 void test_behaviorgraph_add_nodes();
 void test_behaviorgraph_remove_node();
@@ -495,6 +504,16 @@ int main() {
     test_tilegraph_compile_chain();
     test_tilegraph_execute();
     test_tilegraph_deterministic();
+
+    // Character Graph
+    std::cout << "\n--- Character Graph ---" << std::endl;
+    test_charactergraph_add_nodes();
+    test_charactergraph_remove_node();
+    test_charactergraph_compile_empty();
+    test_charactergraph_compile_single_node();
+    test_charactergraph_compile_chain();
+    test_charactergraph_execute();
+    test_charactergraph_deterministic();
 
     // Behavior Graph
     std::cout << "\n--- Behavior Graph ---" << std::endl;

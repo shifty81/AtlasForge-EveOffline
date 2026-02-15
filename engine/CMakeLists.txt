@@ -35,6 +35,8 @@ add_library(AtlasEngine STATIC
     sound/SoundNodes.cpp
     ai/BehaviorGraph.cpp
     ai/BehaviorNodes.cpp
+    character/CharacterGraph.cpp
+    character/CharacterNodes.cpp
 )
 
 target_include_directories(AtlasEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
