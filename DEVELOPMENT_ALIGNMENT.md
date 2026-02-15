@@ -110,7 +110,6 @@ project. It currently provides:
 | Node Graph Editor | ✅ Complete |
 | AI Inspector | ✅ Complete |
 | AI Prompt Debugger | ✅ Complete |
-| AI Prompt Debugger | ✅ Complete |
 
 ---
 

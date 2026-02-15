@@ -60,10 +60,16 @@ LLMValidationResult LLMResponseValidator::Validate(const std::string& responseJS
 }
 
 void LLMResponseValidator::AllowGraphType(const std::string& graphType) {
+    for (const auto& existing : m_allowedGraphTypes) {
+        if (existing == graphType) return;
+    }
     m_allowedGraphTypes.push_back(graphType);
 }
 
 void LLMResponseValidator::AddForbiddenKeyword(const std::string& keyword) {
+    for (const auto& existing : m_forbiddenKeywords) {
+        if (existing == keyword) return;
+    }
     m_forbiddenKeywords.push_back(keyword);
 }
 
