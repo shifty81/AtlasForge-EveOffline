@@ -1,7 +1,7 @@
 {
     "schema": "atlas.data.v1",
-    "description": "EVEOFFLINE game data manifest — references content at repository data/ root",
-    "contentRoot": "../../data",
+    "description": "EVEOFFLINE game data manifest — all content bundled inside the project",
+    "contentRoot": ".",
     "categories": {
         "ships": {
             "path": "ships/",

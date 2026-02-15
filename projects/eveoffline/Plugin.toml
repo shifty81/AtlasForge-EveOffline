@@ -1,7 +1,7 @@
 [plugin]
 id = "eveoffline"
 name = "EVE Offline"
-version = "0.12.0"
+version = "0.13.0"
 type = "game"
 
 [engine]
