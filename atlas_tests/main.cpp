@@ -315,6 +315,15 @@ void test_graph_cmd_remove_edge();
 void test_graph_cmd_remove_edge_undo();
 void test_graph_cmd_sequence();
 
+// RenderGraph tests
+void test_rendergraph_add_nodes();
+void test_rendergraph_remove_node();
+void test_rendergraph_compile_empty();
+void test_rendergraph_compile_single_node();
+void test_rendergraph_compile_chain();
+void test_rendergraph_execute();
+void test_rendergraph_deterministic();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -671,6 +680,16 @@ int main() {
     test_graph_cmd_remove_edge();
     test_graph_cmd_remove_edge_undo();
     test_graph_cmd_sequence();
+
+    // Render Graph
+    std::cout << "\n--- Render Graph ---" << std::endl;
+    test_rendergraph_add_nodes();
+    test_rendergraph_remove_node();
+    test_rendergraph_compile_empty();
+    test_rendergraph_compile_single_node();
+    test_rendergraph_compile_chain();
+    test_rendergraph_execute();
+    test_rendergraph_deterministic();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;
