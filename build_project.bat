@@ -162,12 +162,12 @@ set "valid=0"
 for /d %%D in (projects\*) do (
     echo Validating project: %%D
     set "atlas_found=0"
-    for %%F in (%%D\*.atlas) do set "atlas_found=1"
-    if !atlas_found!==0 (
+    if exist "%%D\*.atlas" (
+        set "atlas_found=1"
+        echo   OK .atlas manifest found
+    ) else (
         echo   X Missing .atlas manifest file
         set "valid=1"
-    ) else (
-        echo   OK .atlas manifest found
     )
     if exist "%%D\worlds" (echo   OK worlds/ directory) else (echo   X Missing worlds/ directory & set "valid=1")
     if exist "%%D\assets" (echo   OK assets/ directory) else (echo   X Missing assets/ directory & set "valid=1")

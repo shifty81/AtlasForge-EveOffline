@@ -30,7 +30,7 @@ cd "$SCRIPT_DIR"
 BUILD_TYPE="${1:-Release}"
 TARGET="${2:-all}"
 BUILD_DIR="build"
-NPROC=$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
+NPROC=$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 1)
 
 # ── Helper functions ───────────────────────────────────────────
 
@@ -265,7 +265,7 @@ echo ""
 
 if [ -d "$BUILD_DIR/bin" ]; then
     echo "Executables:"
-    find "$BUILD_DIR/bin" -type f -executable 2>/dev/null | head -10
+    find "$BUILD_DIR/bin" -type f \( -perm -u+x -o -name "*.exe" \) 2>/dev/null | head -10
 fi
 
 echo ""

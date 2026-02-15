@@ -73,10 +73,10 @@ validate_project() {
         warn "No README.md — recommended for documentation"
     fi
 
-    # 6. No absolute paths in .atlas file
+    # 6. No absolute paths in .atlas file (check for drive letters or root paths in values)
     if [ "$atlas_count" -eq 1 ]; then
-        if grep -q '^\s*".*[A-Za-z]:\\' "$atlas_files" 2>/dev/null || \
-           grep -q '^\s*".*:/' "$atlas_files" 2>/dev/null; then
+        if grep -qE '"[^"]*[A-Za-z]:\\\\' "$atlas_files" 2>/dev/null || \
+           grep -qE '"\/[A-Za-z]' "$atlas_files" 2>/dev/null; then
             fail ".atlas file contains absolute paths (must be relative)"
         else
             pass ".atlas uses relative paths only"
