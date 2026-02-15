@@ -22,13 +22,13 @@ python build_and_test.py --install
 
 **Windows:**
 ```cmd
-build.bat
+scripts\build.bat
 ```
 
 **Linux/macOS:**
 ```bash
 chmod +x build.sh
-./build.sh
+./scripts/build.sh
 ```
 
 ### Option 3: Make Commands

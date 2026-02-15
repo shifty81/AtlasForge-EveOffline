@@ -66,6 +66,14 @@ project. It currently provides:
 | Replay Capture | ✅ Complete | `engine/graphvm/` |
 | Replay Diff | ✅ Complete | `engine/graphvm/` |
 | Determinism Validator | ✅ Complete | `engine/graphvm/` |
+| AI Execution Model | ✅ Complete | `engine/ai/` |
+| AI Visualization | ✅ Complete | `engine/ai/` |
+| AI Replication | ✅ Complete | `engine/net/` |
+| Plugin Scanner | ✅ Complete | `engine/plugin/` |
+| Plugin Permissions | ✅ Complete | `engine/plugin/` |
+| Mod Manifest | ✅ Complete | `engine/plugin/` |
+| Mod Overlay Resolver | ✅ Complete | `engine/plugin/` |
+| Mod Signal Policy | ✅ Complete | `engine/plugin/` |
 
 ---
 
@@ -189,19 +197,19 @@ Determinism enforcement at scale:
 - [x] AI replay capture format
 - [x] Replay diff tool
 - [x] CI determinism tests (graph hash stability)
-- [ ] Server-side AI execution model
-- [ ] AI replication packets
-- [ ] Client-side visualization-only AI
+- [x] Server-side AI execution model
+- [x] AI replication packets
+- [x] Client-side visualization-only AI
 
 ### Phase F — Plugin & Mod Ecosystem
 
 Safe extensibility:
 
-- [ ] Plugin binary symbol scanner
-- [ ] Plugin permission manifests
-- [ ] Mod manifest parsing
-- [ ] Mod overlay resolver (load-order based)
-- [ ] AI signal namespace enforcement for mods
+- [x] Plugin binary symbol scanner
+- [x] Plugin permission manifests
+- [x] Mod manifest parsing
+- [x] Mod overlay resolver (load-order based)
+- [x] AI signal namespace enforcement for mods
 - [ ] WASM plugin support (future)
 
 ---

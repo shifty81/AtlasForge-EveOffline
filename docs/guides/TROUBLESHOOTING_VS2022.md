@@ -16,7 +16,7 @@ This document provides solutions to common issues when building EVE OFFLINE in V
 
 ### "\Microsoft was unexpected at this time"
 
-**Symptoms**: Running `build_vs.bat` fails immediately with this error.
+**Symptoms**: Running `scripts\build_vs.bat` fails immediately with this error.
 
 **Cause**: Batch file syntax issue with paths containing parentheses (e.g., "Program Files (x86)").
 

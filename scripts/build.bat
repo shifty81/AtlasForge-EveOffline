@@ -19,6 +19,9 @@ if errorlevel 1 (
 set "BUILD_TYPE=Release"
 if /i "%~1"=="--debug" (set "BUILD_TYPE=Debug")
 
+REM Navigate to project root
+cd /d "%~dp0.."
+
 REM Create build directory
 if not exist build mkdir build
 cd build

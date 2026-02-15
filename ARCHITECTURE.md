@@ -16,13 +16,14 @@ Atlas/
 │   ├── ecs/          # Entity-Component-System framework
 │   ├── graphvm/      # Deterministic bytecode graph VM, serialization, caching, replay, determinism
 │   ├── assets/       # Asset registry, binary format, hot reload
-│   ├── net/          # Networking (client-server, P2P, lockstep/rollback)
+│   ├── net/          # Networking (client-server, P2P, lockstep/rollback, AI replication)
 │   ├── sim/          # Tick scheduler, deterministic simulation
 │   ├── world/        # Procedural world generation, WorldGraph, heightfield meshing
 │   ├── tile/         # TileGraph — 2D tile-based procedural generation
 │   ├── strategygraph/# Strategy decision graphs (influence, threat, scoring)
 │   ├── conversation/ # Dialogue + memory graphs (ConversationGraph)
-│   ├── ai/           # AI signals, memory, relationships, BehaviorGraph, graph sandbox
+│   ├── ai/           # AI signals, memory, relationships, BehaviorGraph, graph sandbox,
+│   │                 #   execution model, visualization
 │   ├── character/    # CharacterGraph — modular character generation
 │   ├── animation/    # AnimationGraph — animation state machines + modifiers
 │   ├── weapon/       # WeaponGraph — weapon construction + wear
@@ -35,7 +36,8 @@ Atlas/
 │   ├── command/      # Undo/redo command system
 │   ├── interaction/  # Unified intent/utterance system (voice, AI, console)
 │   ├── voice/        # Voice command registry and matching
-│   ├── plugin/       # Plugin validation, registry, and sandboxing
+│   ├── plugin/       # Plugin validation, registry, sandboxing, scanner, permissions,
+│   │                 #   mod manifests, overlay resolver, signal policy
 │   ├── rules/        # Server rules system (live parameter tuning)
 │   ├── render/       # RenderGraph — GPU render pass scheduling
 │   ├── shader/       # ShaderGraph — shader/material composition
@@ -67,6 +69,7 @@ Atlas/
 ├── cpp_client/       # EVEOFFLINE game client (links AtlasEngine)
 ├── cpp_server/       # EVEOFFLINE game server (links AtlasEngine)
 ├── data/             # Moddable game content (JSON)
+├── scripts/          # Build scripts (build.sh/bat, build_project.sh/bat, etc.)
 ├── tools/            # Modding utilities (Blender addon, validators)
 └── docs/             # Design documents, guides, session logs
 ```
@@ -363,6 +366,57 @@ Atlas/
 - Runs each producer twice with the same seed, compares output hashes
 - **HashSnapshot**: FNV-1a hash over snapshot nodes and edges
 - Foundation for CI determinism regression tests
+
+### AI Execution Model (`engine/ai/`)
+- **AIExecutionModel**: Controls how AI runs based on network mode
+- **AIExecutionMode**: Standalone (full local), ServerAuthoritative, ClientVisualization
+- Authority check: only Standalone and ServerAuthoritative may execute graphs
+- Graph submission with tick-based result tracking
+- Client-side result reception for visualization-only mode
+
+### AI Visualization (`engine/ai/`)
+- **AIVisualization**: Client-side display layer for AI state without execution
+- **AIVisualState**: Per-entity action, confidence, tick, and graph reference
+- Stale entity detection and purging by tick threshold
+- Display-only: no AI logic runs, just receives and presents server results
+
+### AI Replication (`engine/net/`)
+- **AIReplicationManager**: Packet queuing for server→client AI state sync
+- **AIPacketType**: AIStateSync, AIResultBroadcast, AISignalUpdate, AIMemorySync
+- **AIStatePacket**: Full AI execution result for an entity
+- **AISignalPacket**: Signal value change notification
+- **AIMemoryPacket**: Memory state replication for NPC persistence
+- Queue/flush outbound, apply/query inbound — supports server and client roles
+
+### Plugin Scanner (`engine/plugin/`)
+- **PluginScanner**: Validates exported symbols from plugin binaries
+- Required/forbidden symbol lists with scan result classification
+- **ScanResult**: Valid, MissingRequired, ForbiddenSymbol, EmptyBinary
+- Query missing required symbols and found forbidden symbols
+
+### Plugin Permissions (`engine/plugin/`)
+- **PermissionManifest**: Plugin name → granted permissions mapping
+- **Permission**: ReadSignals, WriteSignals, ReadECS, WriteECS, NetworkSend, AssetRead, AssetWrite, GraphExecute
+- **PermissionValidator**: Validates manifests against maximum allowed permissions
+- Enforces principle of least privilege for plugins
+
+### Mod Manifest (`engine/plugin/`)
+- **ModDescriptor**: Name, version, author, load order, signal namespaces, dependencies
+- **ModManifestParser**: Creates and validates mod descriptors
+- **ModRegistry**: Register, find, sort by load order, check dependencies
+- Dependency resolution: validates all required mods are registered
+
+### Mod Overlay Resolver (`engine/plugin/`)
+- **ModOverlayResolver**: Resolves conflicting mod overrides by load order
+- **OverlayEntry**: Mod name, key, value, load order
+- Highest load order wins for each key
+- Query all overlays for a key, sorted by load order
+
+### Mod Signal Policy (`engine/plugin/`)
+- **ModSignalPolicy**: Enforces AI signal namespace ownership for mods
+- Core namespace protection: engine namespaces cannot be overridden by mods
+- Per-mod namespace allowlists: mods may only register/write signals in declared namespaces
+- **SignalAccessResult**: Allowed, DeniedNamespace, DeniedCoreSignal, UnregisteredMod
 
 ## Runtime Modes
 

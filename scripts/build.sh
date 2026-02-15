@@ -8,7 +8,7 @@ echo "================================================"
 echo ""
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-cd "$SCRIPT_DIR"
+cd "$SCRIPT_DIR/.."
 
 # Check for CMake
 if ! command -v cmake &> /dev/null; then

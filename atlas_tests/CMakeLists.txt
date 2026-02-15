@@ -54,6 +54,14 @@ add_executable(AtlasTests
     test_replay_capture.cpp
     test_replay_diff.cpp
     test_determinism_validator.cpp
+    test_ai_execution_model.cpp
+    test_ai_replication.cpp
+    test_ai_visualization.cpp
+    test_plugin_scanner.cpp
+    test_plugin_permission.cpp
+    test_mod_manifest.cpp
+    test_mod_overlay.cpp
+    test_mod_signal_policy.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/NodeGraphEditorPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/AIInspectorPanel.cpp

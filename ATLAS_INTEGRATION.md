@@ -111,7 +111,7 @@ EVEOFFLINE/
 ### Build Everything
 
 ```bash
-./build.sh
+./scripts/build.sh
 ```
 
 ### Build Atlas Engine Only
@@ -268,7 +268,7 @@ repo's `projects/` directory for testing.
 Before porting a project to another repo, run the validator:
 
 ```bash
-./validate_project.sh projects/eveoffline
+./scripts/validate_project.sh projects/eveoffline
 ```
 
 ### Shared Data Handling
@@ -284,12 +284,12 @@ through its `data/manifest.json`. When porting to the Atlas repo:
 The target repo must have:
 - The Atlas Engine (`engine/` directory)
 - A compatible CMake build system
-- The project build script (`build_project.sh` or `build_project.bat`)
+- The project build script (`scripts/build_project.sh` or `scripts\build_project.bat`)
 
 ```bash
 # In the target repo
-./build_project.sh Release validate   # Check project structure
-./build_project.sh Release all        # Build everything
+./scripts/build_project.sh Release validate   # Check project structure
+./scripts/build_project.sh Release all        # Build everything
 ```
 
 ## Related Documentation

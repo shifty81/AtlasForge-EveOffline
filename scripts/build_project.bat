@@ -23,7 +23,7 @@ REM   validate — Validate project structure only
 setlocal enabledelayedexpansion
 
 set "SCRIPT_DIR=%~dp0"
-cd /d "%SCRIPT_DIR%"
+cd /d "%SCRIPT_DIR%\.."
 
 set "BUILD_TYPE=%~1"
 if "%BUILD_TYPE%"=="" set "BUILD_TYPE=Release"
@@ -72,7 +72,7 @@ cmake .. -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DBUILD_ATLAS_ENGINE=ON -DBUILD_ATLAS_E
 if %ERRORLEVEL% neq 0 goto :cmake_fail
 cmake --build . --config %BUILD_TYPE%
 if %ERRORLEVEL% neq 0 goto :build_fail
-cd "%SCRIPT_DIR%"
+cd /d "%SCRIPT_DIR%\.."
 goto :success
 
 :build_engine
@@ -83,7 +83,7 @@ cmake .. -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DBUILD_ATLAS_ENGINE=ON -DBUILD_CLIENT=
 if %ERRORLEVEL% neq 0 goto :cmake_fail
 cmake --build . --config %BUILD_TYPE% --target AtlasEngine
 if %ERRORLEVEL% neq 0 goto :build_fail
-cd "%SCRIPT_DIR%"
+cd /d "%SCRIPT_DIR%\.."
 goto :success
 
 :build_client
@@ -94,7 +94,7 @@ cmake .. -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DBUILD_ATLAS_ENGINE=ON -DBUILD_CLIENT=
 if %ERRORLEVEL% neq 0 goto :cmake_fail
 cmake --build . --config %BUILD_TYPE%
 if %ERRORLEVEL% neq 0 goto :build_fail
-cd "%SCRIPT_DIR%"
+cd /d "%SCRIPT_DIR%\.."
 goto :success
 
 :build_server
@@ -105,7 +105,7 @@ cmake .. -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DBUILD_ATLAS_ENGINE=ON -DBUILD_SERVER=
 if %ERRORLEVEL% neq 0 goto :cmake_fail
 cmake --build . --config %BUILD_TYPE%
 if %ERRORLEVEL% neq 0 goto :build_fail
-cd "%SCRIPT_DIR%"
+cd /d "%SCRIPT_DIR%\.."
 goto :success
 
 :build_editor
@@ -116,7 +116,7 @@ cmake .. -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DBUILD_ATLAS_ENGINE=ON -DBUILD_ATLAS_E
 if %ERRORLEVEL% neq 0 goto :cmake_fail
 cmake --build . --config %BUILD_TYPE% --target AtlasEditor
 if %ERRORLEVEL% neq 0 goto :build_fail
-cd "%SCRIPT_DIR%"
+cd /d "%SCRIPT_DIR%\.."
 goto :success
 
 :build_runtime
@@ -127,7 +127,7 @@ cmake .. -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DBUILD_ATLAS_ENGINE=ON -DBUILD_ATLAS_R
 if %ERRORLEVEL% neq 0 goto :cmake_fail
 cmake --build . --config %BUILD_TYPE% --target AtlasRuntime
 if %ERRORLEVEL% neq 0 goto :build_fail
-cd "%SCRIPT_DIR%"
+cd /d "%SCRIPT_DIR%\.."
 goto :success
 
 :build_test
@@ -138,7 +138,7 @@ cmake .. -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DBUILD_ATLAS_ENGINE=ON -DBUILD_ATLAS_T
 if %ERRORLEVEL% neq 0 goto :cmake_fail
 cmake --build . --config %BUILD_TYPE%
 if %ERRORLEVEL% neq 0 goto :build_fail
-cd "%SCRIPT_DIR%"
+cd /d "%SCRIPT_DIR%\.."
 echo.
 echo Running engine tests...
 if exist "%BUILD_DIR%\atlas_tests\%BUILD_TYPE%\AtlasTests.exe" (
@@ -153,7 +153,7 @@ cmake --build . --config %BUILD_TYPE% --target test_systems
 if exist "bin\%BUILD_TYPE%\test_systems.exe" (
     "bin\%BUILD_TYPE%\test_systems.exe"
 )
-cd "%SCRIPT_DIR%"
+cd /d "%SCRIPT_DIR%\.."
 goto :success
 
 :validate
@@ -187,7 +187,7 @@ echo.
 echo ================================================
 echo   CMAKE CONFIGURATION FAILED
 echo ================================================
-cd "%SCRIPT_DIR%"
+cd /d "%SCRIPT_DIR%\.."
 exit /b 1
 
 :build_fail
@@ -195,7 +195,7 @@ echo.
 echo ================================================
 echo   BUILD FAILED
 echo ================================================
-cd "%SCRIPT_DIR%"
+cd /d "%SCRIPT_DIR%\.."
 exit /b 1
 
 :success
@@ -208,7 +208,7 @@ echo Build type: %BUILD_TYPE%
 echo Target:     %TARGET%
 echo.
 echo Next steps:
-echo   build_project.bat %BUILD_TYPE% validate   # Validate project structure
-echo   build_project.bat %BUILD_TYPE% test        # Run all tests
+echo   scripts\build_project.bat %BUILD_TYPE% validate   # Validate project structure
+echo   scripts\build_project.bat %BUILD_TYPE% test        # Run all tests
 echo.
 exit /b 0

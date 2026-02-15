@@ -61,7 +61,7 @@ cp -r projects/eveoffline /path/to/Atlas/projects/
 
 # Validate it works
 cd /path/to/Atlas
-./validate_project.sh projects/eveoffline
+./scripts/validate_project.sh projects/eveoffline
 ```
 
 ### Shared Data
@@ -77,7 +77,7 @@ via `../../data` in their `data/manifest.json`. When porting to another repo:
 Run the portability validator before moving a project:
 
 ```bash
-./validate_project.sh projects/eveoffline
+./scripts/validate_project.sh projects/eveoffline
 ```
 
 This checks for all portability requirements and reports warnings for anything
@@ -88,12 +88,12 @@ that might need attention.
 Use the project build script to build engine, client, and server:
 
 ```bash
-./build_project.sh                    # Build everything (Release)
-./build_project.sh Release engine     # Build engine only
-./build_project.sh Release client     # Build client only
-./build_project.sh Release server     # Build server only
-./build_project.sh Release test       # Build and run all tests
-./build_project.sh Release validate   # Validate project structure
+./scripts/build_project.sh                    # Build everything (Release)
+./scripts/build_project.sh Release engine     # Build engine only
+./scripts/build_project.sh Release client     # Build client only
+./scripts/build_project.sh Release server     # Build server only
+./scripts/build_project.sh Release test       # Build and run all tests
+./scripts/build_project.sh Release validate   # Validate project structure
 ```
 
-See `build_project.sh --help` or the script header for all targets.
+See `scripts/build_project.sh --help` or the script header for all targets.
