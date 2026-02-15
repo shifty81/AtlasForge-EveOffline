@@ -62,6 +62,14 @@ add_library(AtlasEngine STATIC
     graphvm/ReplayCapture.cpp
     graphvm/ReplayDiff.cpp
     graphvm/DeterminismValidator.cpp
+    ai/AIExecutionModel.cpp
+    ai/AIVisualization.cpp
+    net/AIReplication.cpp
+    plugin/PluginScanner.cpp
+    plugin/PluginPermission.cpp
+    plugin/ModManifest.cpp
+    plugin/ModOverlay.cpp
+    plugin/ModSignalPolicy.cpp
 )
 
 target_include_directories(AtlasEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

@@ -455,6 +455,83 @@ void test_determinism_not_found();
 void test_determinism_hash_snapshot();
 void test_determinism_clear();
 
+// AI Execution Model tests
+void test_ai_exec_init();
+void test_ai_exec_authority();
+void test_ai_exec_submit();
+void test_ai_exec_submit_rejected();
+void test_ai_exec_results();
+void test_ai_exec_receive_result();
+void test_ai_exec_shutdown();
+void test_ai_exec_clear();
+
+// AI Replication tests
+void test_ai_repl_queue_state();
+void test_ai_repl_flush_state();
+void test_ai_repl_queue_signal();
+void test_ai_repl_queue_memory();
+void test_ai_repl_apply_state();
+void test_ai_repl_apply_signal();
+void test_ai_repl_apply_memory();
+void test_ai_repl_clear();
+
+// AI Visualization tests
+void test_ai_viz_update_entity();
+void test_ai_viz_has_entity();
+void test_ai_viz_get_active();
+void test_ai_viz_stale_detection();
+void test_ai_viz_purge_stale();
+void test_ai_viz_entity_count();
+void test_ai_viz_clear();
+void test_ai_viz_missing_entity();
+
+// Plugin Scanner tests
+void test_scanner_valid();
+void test_scanner_missing_required();
+void test_scanner_forbidden_found();
+void test_scanner_empty_binary();
+void test_scanner_missing_symbols_query();
+void test_scanner_found_forbidden_query();
+void test_scanner_clear();
+
+// Plugin Permission tests
+void test_perm_register();
+void test_perm_has_permission();
+void test_perm_missing_permission();
+void test_perm_validate_manifest();
+void test_perm_validate_exceeds();
+void test_perm_get_permissions();
+void test_perm_clear();
+
+// Mod Manifest tests
+void test_mod_parse();
+void test_mod_validate_valid();
+void test_mod_validate_empty_name();
+void test_mod_validate_empty_version();
+void test_mod_register();
+void test_mod_sorted();
+void test_mod_dependencies_met();
+void test_mod_dependencies_missing();
+void test_mod_clear();
+
+// Mod Overlay tests
+void test_overlay_add_resolve();
+void test_overlay_highest_wins();
+void test_overlay_has_key();
+void test_overlay_get_owner();
+void test_overlay_get_overlays_for_key();
+void test_overlay_key_count();
+void test_overlay_clear();
+
+// Mod Signal Policy tests
+void test_signal_policy_allowed();
+void test_signal_policy_denied_namespace();
+void test_signal_policy_denied_core();
+void test_signal_policy_unregistered();
+void test_signal_policy_core_locked();
+void test_signal_policy_get_namespaces();
+void test_signal_policy_clear();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -966,6 +1043,91 @@ int main() {
     test_determinism_not_found();
     test_determinism_hash_snapshot();
     test_determinism_clear();
+
+    // AI Execution Model
+    std::cout << "\n--- AI Execution Model ---" << std::endl;
+    test_ai_exec_init();
+    test_ai_exec_authority();
+    test_ai_exec_submit();
+    test_ai_exec_submit_rejected();
+    test_ai_exec_results();
+    test_ai_exec_receive_result();
+    test_ai_exec_shutdown();
+    test_ai_exec_clear();
+
+    // AI Replication
+    std::cout << "\n--- AI Replication ---" << std::endl;
+    test_ai_repl_queue_state();
+    test_ai_repl_flush_state();
+    test_ai_repl_queue_signal();
+    test_ai_repl_queue_memory();
+    test_ai_repl_apply_state();
+    test_ai_repl_apply_signal();
+    test_ai_repl_apply_memory();
+    test_ai_repl_clear();
+
+    // AI Visualization
+    std::cout << "\n--- AI Visualization ---" << std::endl;
+    test_ai_viz_update_entity();
+    test_ai_viz_has_entity();
+    test_ai_viz_get_active();
+    test_ai_viz_stale_detection();
+    test_ai_viz_purge_stale();
+    test_ai_viz_entity_count();
+    test_ai_viz_clear();
+    test_ai_viz_missing_entity();
+
+    // Plugin Scanner
+    std::cout << "\n--- Plugin Scanner ---" << std::endl;
+    test_scanner_valid();
+    test_scanner_missing_required();
+    test_scanner_forbidden_found();
+    test_scanner_empty_binary();
+    test_scanner_missing_symbols_query();
+    test_scanner_found_forbidden_query();
+    test_scanner_clear();
+
+    // Plugin Permission
+    std::cout << "\n--- Plugin Permission ---" << std::endl;
+    test_perm_register();
+    test_perm_has_permission();
+    test_perm_missing_permission();
+    test_perm_validate_manifest();
+    test_perm_validate_exceeds();
+    test_perm_get_permissions();
+    test_perm_clear();
+
+    // Mod Manifest
+    std::cout << "\n--- Mod Manifest ---" << std::endl;
+    test_mod_parse();
+    test_mod_validate_valid();
+    test_mod_validate_empty_name();
+    test_mod_validate_empty_version();
+    test_mod_register();
+    test_mod_sorted();
+    test_mod_dependencies_met();
+    test_mod_dependencies_missing();
+    test_mod_clear();
+
+    // Mod Overlay
+    std::cout << "\n--- Mod Overlay ---" << std::endl;
+    test_overlay_add_resolve();
+    test_overlay_highest_wins();
+    test_overlay_has_key();
+    test_overlay_get_owner();
+    test_overlay_get_overlays_for_key();
+    test_overlay_key_count();
+    test_overlay_clear();
+
+    // Mod Signal Policy
+    std::cout << "\n--- Mod Signal Policy ---" << std::endl;
+    test_signal_policy_allowed();
+    test_signal_policy_denied_namespace();
+    test_signal_policy_denied_core();
+    test_signal_policy_unregistered();
+    test_signal_policy_core_locked();
+    test_signal_policy_get_namespaces();
+    test_signal_policy_clear();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;
