@@ -273,11 +273,10 @@ Before porting a project to another repo, run the validator:
 
 ### Shared Data Handling
 
-The `eveoffline` project references shared data at the repo root (`data/`)
-through its `data/manifest.json`. When porting to the Atlas repo:
-
-- Copy `data/` into the project folder, or
-- Ensure the Atlas repo has a compatible `data/` directory at its root
+The `eveoffline` project bundles all game data locally under its own `data/`
+directory. The `data/manifest.json` uses `"contentRoot": "."` so all paths
+resolve within the project folder. No external data references are needed —
+the project is fully self-contained and portable.
 
 ### Building After Porting
 

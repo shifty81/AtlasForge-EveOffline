@@ -48,10 +48,12 @@ eveoffline/
 
 ## Game Data
 
-Game data files (56+ JSON files) live at the **repository root** `data/` directory.
-They are shared by `cpp_client`, `cpp_server`, and this Atlas project. The project
-references them through `data/manifest.json`, which uses a `contentRoot` of
-`../../data` to resolve paths relative to the repository root.
+All game data files (76 JSON files) are **bundled inside this project** under the
+`data/` directory. The project is fully self-contained — you can copy this entire
+folder into any Atlas repo's `projects/` directory and it will work standalone.
+
+The `data/manifest.json` uses `"contentRoot": "."` to resolve all paths locally
+within the project folder.
 
 The manifest organizes data into categories:
 
@@ -120,8 +122,8 @@ The manifest organizes data into categories:
 
 ## Adding New Content
 
-1. **New data files**: Add the JSON file under the appropriate `data/` subdirectory at
-   the repository root, then add the filename to the relevant category in
+1. **New data files**: Add the JSON file under the appropriate `data/` subdirectory
+   within this project folder, then add the filename to the relevant category in
    `data/manifest.json`.
 2. **New world/tile graphs**: Place `.worldgraph` or `.tilegraph` files in `worlds/`.
 3. **New strategy graphs**: Place `.strategygraph` files in `strategy/`.

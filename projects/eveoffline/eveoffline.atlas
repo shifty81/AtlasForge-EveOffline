@@ -1,7 +1,7 @@
 {
   "schema": "atlas.project.v1",
   "name": "EVEOFFLINE",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "description": "PVE-only space simulator inspired by EVE Online, built on Atlas Engine",
   "modules": {
     "worldGraph": "worlds/galaxy.worldgraph",
