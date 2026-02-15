@@ -115,6 +115,44 @@ void test_command_clear();
 void test_command_last_executed();
 void test_command_multiple_undo_redo();
 
+// WorldGraph tests
+void test_worldgraph_add_nodes();
+void test_worldgraph_remove_node();
+void test_worldgraph_compile_empty();
+void test_worldgraph_compile_single_node();
+void test_worldgraph_compile_chain();
+void test_worldgraph_deterministic();
+void test_worldgraph_clamp_node();
+
+// Interaction tests
+void test_intent_registry_dispatch();
+void test_intent_registry_missing();
+void test_intent_registry_has_handler();
+void test_pattern_resolver();
+void test_pattern_resolver_no_match();
+void test_pattern_resolver_case_insensitive();
+
+// Voice Command tests
+void test_voice_register_command();
+void test_voice_match_command();
+void test_voice_no_match();
+void test_voice_get_by_context();
+
+// Plugin System tests
+void test_plugin_validate_valid();
+void test_plugin_validate_no_name();
+void test_plugin_validate_nondeterministic();
+void test_plugin_validate_incompatible_version();
+void test_plugin_registry_register();
+void test_plugin_registry_find();
+void test_plugin_registry_unregister();
+void test_plugin_registry_get_by_type();
+
+// Heightfield tests
+void test_heightfield_at();
+void test_heightfield_mesh_generation();
+void test_heightfield_mesh_lod();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -248,6 +286,49 @@ int main() {
     test_command_clear();
     test_command_last_executed();
     test_command_multiple_undo_redo();
+
+    // WorldGraph
+    std::cout << "\n--- World Graph ---" << std::endl;
+    test_worldgraph_add_nodes();
+    test_worldgraph_remove_node();
+    test_worldgraph_compile_empty();
+    test_worldgraph_compile_single_node();
+    test_worldgraph_compile_chain();
+    test_worldgraph_deterministic();
+    test_worldgraph_clamp_node();
+
+    // Interaction
+    std::cout << "\n--- Interaction System ---" << std::endl;
+    test_intent_registry_dispatch();
+    test_intent_registry_missing();
+    test_intent_registry_has_handler();
+    test_pattern_resolver();
+    test_pattern_resolver_no_match();
+    test_pattern_resolver_case_insensitive();
+
+    // Voice Commands
+    std::cout << "\n--- Voice Commands ---" << std::endl;
+    test_voice_register_command();
+    test_voice_match_command();
+    test_voice_no_match();
+    test_voice_get_by_context();
+
+    // Plugin System
+    std::cout << "\n--- Plugin System ---" << std::endl;
+    test_plugin_validate_valid();
+    test_plugin_validate_no_name();
+    test_plugin_validate_nondeterministic();
+    test_plugin_validate_incompatible_version();
+    test_plugin_registry_register();
+    test_plugin_registry_find();
+    test_plugin_registry_unregister();
+    test_plugin_registry_get_by_type();
+
+    // Heightfield
+    std::cout << "\n--- Heightfield Mesher ---" << std::endl;
+    test_heightfield_at();
+    test_heightfield_mesh_generation();
+    test_heightfield_mesh_lod();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

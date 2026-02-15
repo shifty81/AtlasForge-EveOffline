@@ -16,6 +16,11 @@ add_executable(AtlasTests
     test_galaxy.cpp
     test_project.cpp
     test_command.cpp
+    test_worldgraph.cpp
+    test_interaction.cpp
+    test_voice.cpp
+    test_plugin.cpp
+    test_heightfield.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
 )
 
