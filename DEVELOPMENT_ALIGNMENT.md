@@ -46,6 +46,9 @@ project. It currently provides:
 | UIGraph | ✅ Complete | `engine/ui/` |
 | GameFlowGraph | ✅ Complete | `engine/flow/` |
 | Schema Validator | ✅ Complete | `engine/schema/` |
+| Graph Commands | ✅ Complete | `engine/command/` |
+| RenderGraph | ✅ Complete | `engine/render/` |
+| ShaderGraph | ✅ Complete | `engine/shader/` |
 | Camera / World Modes | 🟡 Header-only | `engine/camera/` |
 | Editor (panels, UI) | ✅ Complete | `editor/` |
 | Runtime CLI | ✅ Complete | `runtime/` |
@@ -69,8 +72,8 @@ project. It currently provides:
 | WeaponGraph | Weapon construction | ✅ Implemented |
 | UIGraph | UI composition | ✅ Implemented |
 | GameFlowGraph | Game flow state machine | ✅ Implemented |
-| RenderGraph | GPU execution | 📋 Planned |
-| ShaderGraph | Materials | 📋 Planned |
+| RenderGraph | GPU execution | ✅ Implemented |
+| ShaderGraph | Materials | ✅ Implemented |
 
 ### AI Architecture Required
 
@@ -122,7 +125,7 @@ These items align the project with the core architecture:
 Extend the graph system to cover all required types:
 
 - [x] Graph serialization format (JSON builder/reader)
-- [ ] Graph diff + undo support via Command system
+- [x] Graph diff + undo support via Command system
 - [x] ReadAISignal node for StrategyGraph
 - [x] EmitAction node for StrategyGraph
 - [x] AI Memory storage with tick-based decay
@@ -140,6 +143,8 @@ Extend the graph system to cover all required types:
 - [x] Schema Validator for graph schema enforcement
 - [x] EVE Offline project restructure (Plugin.toml, data manifest, AI config)
 - [x] Arena2D reference project (multi-project scalability proof)
+- [x] RenderGraph for GPU render pass scheduling
+- [x] ShaderGraph for material/shader composition
 
 ### Phase C — Editor Tooling
 
