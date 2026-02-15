@@ -38,7 +38,8 @@ Atlas/
 │   ├── plugin/       # Plugin validation, registry, and sandboxing
 │   ├── rules/        # Server rules system (live parameter tuning)
 │   ├── render/       # RenderGraph — GPU render pass scheduling
-│   └── shader/       # ShaderGraph — shader/material composition
+│   ├── shader/       # ShaderGraph — shader/material composition
+│   └── nodeeditor/   # Visual node graph editor model
 │
 ├── editor/           # Atlas Editor (authoring tool)
 │   ├── panels/       # Inspector panels (ECS, console, network, project picker,
@@ -285,6 +286,28 @@ Atlas/
 - Shaders are graphs that compile to data — not text-first
 - Deterministic evaluation for hot-reload and caching
 
+### Node Editor Model (`engine/nodeeditor/`)
+- Game-agnostic visual node graph canvas model
+- **NodeDesc**: Node positioning, sizing, pin descriptors, category
+- **LinkDesc**: Pin-to-pin connections
+- **CanvasState**: Pan offset and zoom level
+- Hit testing for nodes and pins
+- Selection management (multi-select, clear, query)
+- Pin position calculation for link rendering
+
+### Graph Diff (`engine/graphvm/`)
+- **GraphSnapshot**: Lightweight graph representation (node IDs + edge pairs)
+- **ComputeGraphDiff**: Structural diff between two snapshots
+- Reports added/removed nodes and edges
+- Used for AI-authored change previews and undo visualization
+
+### Graph Timeline (`engine/graphvm/`)
+- **GraphTimeline**: Records graph snapshots over time for replay/scrubbing
+- **TimelineFrame**: Snapshot + tick + label
+- Forward/backward stepping, seek-to-tick, seek-to-index
+- Diff-to-next and diff-from-previous for change visualization
+- Tick range queries for timeline UI rendering
+
 ## Runtime Modes
 
 | Mode   | Rendering | Networking | Asset Write | Graph Edit |
@@ -368,8 +391,10 @@ See [Project Guidelines](docs/PROJECT_GUIDELINES.md) for complete rules.
 | Network Inspector | Network state debugging |
 | **Project Picker** | Project selection and recent projects |
 | **World Graph Editor** | Visual WorldGraph authoring and preview |
+| **Node Graph Editor** | Generic visual node graph authoring (any graph type) |
 | **Voice Commands** | Voice command testing and monitoring |
 | **Interaction Debugger** | AI interaction logging and analysis |
+| **AI Inspector** | AI signals, memory, and relationship debugging |
 | Game Packager | Build configuration and packaging |
 
 ## Build System

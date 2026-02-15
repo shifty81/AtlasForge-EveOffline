@@ -49,8 +49,13 @@ project. It currently provides:
 | Graph Commands | ✅ Complete | `engine/command/` |
 | RenderGraph | ✅ Complete | `engine/render/` |
 | ShaderGraph | ✅ Complete | `engine/shader/` |
+| Node Editor Model | ✅ Complete | `engine/nodeeditor/` |
+| Graph Diff | ✅ Complete | `engine/graphvm/` |
+| Graph Timeline | ✅ Complete | `engine/graphvm/` |
 | Camera / World Modes | 🟡 Header-only | `engine/camera/` |
 | Editor (panels, UI) | ✅ Complete | `editor/` |
+| Node Graph Editor Panel | ✅ Complete | `editor/panels/` |
+| AI Inspector Panel | ✅ Complete | `editor/panels/` |
 | Runtime CLI | ✅ Complete | `runtime/` |
 
 ---
@@ -98,7 +103,8 @@ project. It currently provides:
 | Voice Commands | ✅ Complete |
 | Interaction Debugger | ✅ Complete |
 | Game Packager | ✅ Complete |
-| AI Inspector | 📋 Planned (1112.md) |
+| Node Graph Editor | ✅ Complete |
+| AI Inspector | ✅ Complete |
 | AI Prompt Debugger | 📋 Planned (1112.md) |
 
 ---
@@ -150,12 +156,12 @@ Extend the graph system to cover all required types:
 
 Build the editor into a real authoring environment:
 
-- [ ] Visual node graph editor (canvas, pins, links)
-- [ ] AI Inspector panel (signals, memory, graphs)
+- [x] Visual node graph editor (canvas, pins, links)
+- [x] AI Inspector panel (signals, memory, graphs)
 - [ ] AI Prompt Debugger panel (context + response)
-- [ ] Graph replay timeline scrubber
-- [ ] Graph diff preview (for AI-authored changes)
-- [ ] Undoable AI edits through Command system
+- [x] Graph replay timeline scrubber
+- [x] Graph diff preview (for AI-authored changes)
+- [x] Undoable AI edits through Command system
 
 ### Phase D — LLM + AI Integration
 

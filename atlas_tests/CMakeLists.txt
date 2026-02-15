@@ -41,7 +41,13 @@ add_executable(AtlasTests
     test_graph_commands.cpp
     test_rendergraph.cpp
     test_shadergraph.cpp
+    test_node_editor_model.cpp
+    test_ai_inspector.cpp
+    test_graph_diff.cpp
+    test_graph_timeline.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
+    ${CMAKE_SOURCE_DIR}/editor/panels/NodeGraphEditorPanel.cpp
+    ${CMAKE_SOURCE_DIR}/editor/panels/AIInspectorPanel.cpp
 )
 
 target_link_libraries(AtlasTests AtlasEngine)
