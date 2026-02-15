@@ -38,11 +38,14 @@ The **Atlas Engine** underneath is game-agnostic and designed for extraction int
   ✅ Phase 4  Social                    Editor project loading       ┌──────────────────────┐
      Corps, contracts, chat             Sandboxing policy            │  🎯 NEXT MILESTONE   │
   ✅ Phase 5  3D Graphics                                            │                      │
-     OpenGL, PBR, particles          🔧 Documentation                │  Vertical Slice      │
-  ✅ Phase 6  Tech II                   README overhaul               │  One full star       │
-     HAC, Recon, Logistics              Development alignment         │  system, playable    │
-  ✅ Phase 7  Industry                  Architecture updates          │  loop, AI-driven     │
-     Mining, PI, wormholes                                            └──────────────────────┘
+     OpenGL, PBR, particles                                          │  Vertical Slice      │
+  ✅ Phase 6  Tech II                                                │  One full star       │
+     HAC, Recon, Logistics                                           │  system, playable    │
+  ✅ Phase 7  Industry                                               │  loop, AI-driven     │
+     Mining, PI, wormholes                                           └──────────────────────┘
+  ✅ Documentation
+     Repo cleanup, archive,
+     README & docs update
 ```
 
 > **[Full Roadmap →](docs/ROADMAP.md)** · **[Development Alignment →](DEVELOPMENT_ALIGNMENT.md)**
@@ -84,7 +87,9 @@ Atlas/
 ├── cpp_server/             ← EVEOFFLINE dedicated server
 ├── data/                   ← Moddable game content (JSON)
 ├── tools/                  ← Modding utilities
-└── docs/                   ← Documentation (40+ files)
+├── scripts/                ← Build scripts
+├── docs/                   ← Active documentation
+└── archive/                ← Historical docs & legacy code
 ```
 
 > **[Architecture →](ARCHITECTURE.md)** · **[Integration Guide →](ATLAS_INTEGRATION.md)** · **[Project Guidelines →](docs/PROJECT_GUIDELINES.md)**
@@ -190,11 +195,13 @@ data/skills/    137 skill definitions        data/market/     Economy and pricin
 
 | Topic | Links |
 |-------|-------|
-| **Getting Started** | [Tutorial](docs/TUTORIAL.md) · [Build Guides](docs/guides/) |
+| **Getting Started** | [Tutorial](docs/TUTORIAL.md) · [Build Guides](docs/guides/) · [C++ Client Quickstart](docs/development/CPP_CLIENT_QUICKSTART.md) |
 | **Engine** | [Architecture](ARCHITECTURE.md) · [Integration](ATLAS_INTEGRATION.md) · [Sandboxing](SANDBOXING.md) |
-| **Development** | [Alignment Goals](DEVELOPMENT_ALIGNMENT.md) · [Roadmap](docs/ROADMAP.md) · [Contributing](docs/CONTRIBUTING.md) |
+| **Development** | [Alignment Goals](DEVELOPMENT_ALIGNMENT.md) · [Roadmap](docs/ROADMAP.md) · [Contributing](docs/CONTRIBUTING.md) · [CI/CD](docs/development/CI_CD.md) |
 | **Design** | [Project Context](PROJECT_CONTEXT.md) · [Simulation Philosophy](ATLAS_SIMULATION_PHILOSOPHY.md) · [Naming](ATLAS_NAMING_CONVENTIONS.md) |
+| **UI & Client** | [Atlas UI](docs/atlas-ui/) · [C++ Client](docs/cpp_client/) · [Game Mechanics](docs/game_mechanics/) |
 | **Schemas** | [Project Schema](schemas/atlas.project.v1.json) · [WorldGraph](schemas/atlas.worldgraph.v1.json) · [StrategyGraph](schemas/atlas.strategygraph.v1.json) |
+| **Archive** | [Historical docs & legacy code](archive/) |
 
 ---
 
