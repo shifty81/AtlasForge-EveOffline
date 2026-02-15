@@ -303,6 +303,18 @@ void test_json_reader_parse();
 void test_json_reader_array();
 void test_json_roundtrip();
 
+// Graph Commands tests
+void test_graph_cmd_add_node();
+void test_graph_cmd_add_node_undo();
+void test_graph_cmd_add_node_redo();
+void test_graph_cmd_remove_node();
+void test_graph_cmd_remove_node_undo();
+void test_graph_cmd_add_edge();
+void test_graph_cmd_add_edge_undo();
+void test_graph_cmd_remove_edge();
+void test_graph_cmd_remove_edge_undo();
+void test_graph_cmd_sequence();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -646,6 +658,19 @@ int main() {
     test_json_reader_parse();
     test_json_reader_array();
     test_json_roundtrip();
+
+    // Graph Commands
+    std::cout << "\n--- Graph Commands ---" << std::endl;
+    test_graph_cmd_add_node();
+    test_graph_cmd_add_node_undo();
+    test_graph_cmd_add_node_redo();
+    test_graph_cmd_remove_node();
+    test_graph_cmd_remove_node_undo();
+    test_graph_cmd_add_edge();
+    test_graph_cmd_add_edge_undo();
+    test_graph_cmd_remove_edge();
+    test_graph_cmd_remove_edge_undo();
+    test_graph_cmd_sequence();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;
