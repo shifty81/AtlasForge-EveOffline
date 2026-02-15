@@ -206,6 +206,15 @@ void test_relationship_has();
 void test_relationship_remove();
 void test_relationship_clear();
 
+// TileGraph tests
+void test_tilegraph_add_nodes();
+void test_tilegraph_remove_node();
+void test_tilegraph_compile_empty();
+void test_tilegraph_compile_single_node();
+void test_tilegraph_compile_chain();
+void test_tilegraph_execute();
+void test_tilegraph_deterministic();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -441,6 +450,16 @@ int main() {
     test_heightfield_at();
     test_heightfield_mesh_generation();
     test_heightfield_mesh_lod();
+
+    // Tile Graph
+    std::cout << "\n--- Tile Graph ---" << std::endl;
+    test_tilegraph_add_nodes();
+    test_tilegraph_remove_node();
+    test_tilegraph_compile_empty();
+    test_tilegraph_compile_single_node();
+    test_tilegraph_compile_chain();
+    test_tilegraph_execute();
+    test_tilegraph_deterministic();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

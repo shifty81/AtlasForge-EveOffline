@@ -28,6 +28,8 @@ add_library(AtlasEngine STATIC
     ai/AISignalRegistry.cpp
     ai/AIMemory.cpp
     ai/RelationshipModel.cpp
+    tile/TileGraph.cpp
+    tile/TileNodes.cpp
 )
 
 target_include_directories(AtlasEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
