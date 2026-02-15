@@ -40,6 +40,7 @@ add_executable(AtlasTests
     test_graph_cache.cpp
     test_graph_commands.cpp
     test_rendergraph.cpp
+    test_shadergraph.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
 )
 

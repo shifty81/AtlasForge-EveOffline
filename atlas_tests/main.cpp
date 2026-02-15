@@ -324,6 +324,16 @@ void test_rendergraph_compile_chain();
 void test_rendergraph_execute();
 void test_rendergraph_deterministic();
 
+// ShaderGraph tests
+void test_shadergraph_add_nodes();
+void test_shadergraph_remove_node();
+void test_shadergraph_compile_empty();
+void test_shadergraph_compile_single_node();
+void test_shadergraph_compile_chain();
+void test_shadergraph_execute();
+void test_shadergraph_lerp_node();
+void test_shadergraph_deterministic();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -690,6 +700,17 @@ int main() {
     test_rendergraph_compile_chain();
     test_rendergraph_execute();
     test_rendergraph_deterministic();
+
+    // Shader Graph
+    std::cout << "\n--- Shader Graph ---" << std::endl;
+    test_shadergraph_add_nodes();
+    test_shadergraph_remove_node();
+    test_shadergraph_compile_empty();
+    test_shadergraph_compile_single_node();
+    test_shadergraph_compile_chain();
+    test_shadergraph_execute();
+    test_shadergraph_lerp_node();
+    test_shadergraph_deterministic();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;
