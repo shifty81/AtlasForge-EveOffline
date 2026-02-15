@@ -64,12 +64,24 @@ add_executable(AtlasTests
     test_mod_signal_policy.cpp
     test_ecs_inspector.cpp
     test_net_inspector.cpp
+    test_interaction_debug_panel.cpp
+    test_voice_command_panel.cpp
+    test_worldgraph_panel.cpp
+    test_project_picker_panel.cpp
+    test_editor_layout.cpp
+    test_game_packager_panel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/NodeGraphEditorPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/AIInspectorPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/AIPromptDebugPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ECSInspectorPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/NetInspectorPanel.cpp
+    ${CMAKE_SOURCE_DIR}/editor/panels/InteractionDebugPanel.cpp
+    ${CMAKE_SOURCE_DIR}/editor/panels/VoiceCommandPanel.cpp
+    ${CMAKE_SOURCE_DIR}/editor/panels/WorldGraphPanel.cpp
+    ${CMAKE_SOURCE_DIR}/editor/panels/ProjectPickerPanel.cpp
+    ${CMAKE_SOURCE_DIR}/editor/ui/EditorLayout.cpp
+    ${CMAKE_SOURCE_DIR}/editor/tools/GamePackagerPanel.cpp
 )
 
 target_link_libraries(AtlasTests AtlasEngine)

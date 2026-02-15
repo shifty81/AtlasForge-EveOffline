@@ -546,6 +546,50 @@ void test_net_inspector_client_mode();
 void test_net_inspector_peer_list();
 void test_net_inspector_draw_calls_refresh();
 
+// Interaction Debug Panel tests
+void test_interaction_debug_empty();
+void test_interaction_debug_log_entry();
+void test_interaction_debug_multiple_entries();
+void test_interaction_debug_clear_log();
+void test_interaction_debug_panel_name();
+void test_interaction_debug_visibility();
+
+// Voice Command Panel tests
+void test_voice_panel_create();
+void test_voice_panel_listen_toggle();
+void test_voice_panel_process_match();
+void test_voice_panel_process_no_match();
+void test_voice_panel_pipeline_voice_to_intent();
+void test_voice_panel_visibility();
+
+// WorldGraph Panel tests
+void test_worldgraph_panel_create();
+void test_worldgraph_panel_set_graph();
+void test_worldgraph_panel_select_node();
+void test_worldgraph_panel_compile_no_graph();
+void test_worldgraph_panel_compile_with_graph();
+void test_worldgraph_panel_preview_no_graph();
+void test_worldgraph_panel_visibility();
+
+// Project Picker Panel tests
+void test_project_picker_create();
+void test_project_picker_add_recent();
+void test_project_picker_no_duplicate_recent();
+void test_project_picker_open_missing_file();
+void test_project_picker_visibility();
+
+// Editor Layout tests
+void test_editor_layout_register_panel();
+void test_editor_layout_draw_leaf();
+void test_editor_layout_draw_split();
+void test_editor_layout_hidden_panel();
+void test_editor_layout_nested_split();
+
+// Game Packager Panel tests
+void test_game_packager_name();
+void test_game_packager_default_settings();
+void test_game_packager_visibility();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -1158,6 +1202,56 @@ int main() {
     test_net_inspector_client_mode();
     test_net_inspector_peer_list();
     test_net_inspector_draw_calls_refresh();
+
+    // Interaction Debug Panel
+    std::cout << "\n--- Interaction Debug Panel ---" << std::endl;
+    test_interaction_debug_empty();
+    test_interaction_debug_log_entry();
+    test_interaction_debug_multiple_entries();
+    test_interaction_debug_clear_log();
+    test_interaction_debug_panel_name();
+    test_interaction_debug_visibility();
+
+    // Voice Command Panel
+    std::cout << "\n--- Voice Command Panel ---" << std::endl;
+    test_voice_panel_create();
+    test_voice_panel_listen_toggle();
+    test_voice_panel_process_match();
+    test_voice_panel_process_no_match();
+    test_voice_panel_pipeline_voice_to_intent();
+    test_voice_panel_visibility();
+
+    // WorldGraph Panel
+    std::cout << "\n--- WorldGraph Panel ---" << std::endl;
+    test_worldgraph_panel_create();
+    test_worldgraph_panel_set_graph();
+    test_worldgraph_panel_select_node();
+    test_worldgraph_panel_compile_no_graph();
+    test_worldgraph_panel_compile_with_graph();
+    test_worldgraph_panel_preview_no_graph();
+    test_worldgraph_panel_visibility();
+
+    // Project Picker Panel
+    std::cout << "\n--- Project Picker Panel ---" << std::endl;
+    test_project_picker_create();
+    test_project_picker_add_recent();
+    test_project_picker_no_duplicate_recent();
+    test_project_picker_open_missing_file();
+    test_project_picker_visibility();
+
+    // Editor Layout
+    std::cout << "\n--- Editor Layout ---" << std::endl;
+    test_editor_layout_register_panel();
+    test_editor_layout_draw_leaf();
+    test_editor_layout_draw_split();
+    test_editor_layout_hidden_panel();
+    test_editor_layout_nested_split();
+
+    // Game Packager Panel
+    std::cout << "\n--- Game Packager Panel ---" << std::endl;
+    test_game_packager_name();
+    test_game_packager_default_settings();
+    test_game_packager_visibility();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;
