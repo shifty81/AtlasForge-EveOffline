@@ -74,7 +74,7 @@ Atlas/
 │
 ├── editor/                 ← Atlas Editor (authoring tool)
 ├── runtime/                ← Atlas Runtime (standalone exe)
-├── atlas_tests/            ← Engine unit tests (69 tests)
+├── atlas_tests/            ← Engine unit tests (97 tests)
 ├── schemas/                ← Versioned project schemas
 ├── projects/               ← Game projects (.atlas files)
 │   ├── eveoffline/            EVEOFFLINE reference project
