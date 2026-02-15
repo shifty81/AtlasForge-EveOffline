@@ -8,6 +8,7 @@ add_executable(AtlasEditor
     panels/WorldGraphPanel.cpp
     panels/VoiceCommandPanel.cpp
     panels/InteractionDebugPanel.cpp
+    panels/AIPromptDebugPanel.cpp
     tools/GamePackagerPanel.cpp
 )
 

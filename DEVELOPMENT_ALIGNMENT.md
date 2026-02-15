@@ -52,6 +52,10 @@ project. It currently provides:
 | Node Editor Model | ✅ Complete | `engine/nodeeditor/` |
 | Graph Diff | ✅ Complete | `engine/graphvm/` |
 | Graph Timeline | ✅ Complete | `engine/graphvm/` |
+| LLM Context Builder | ✅ Complete | `engine/ai/` |
+| LLM Request Types | ✅ Complete | `engine/ai/` |
+| LLM Response Validator | ✅ Complete | `engine/ai/` |
+| LLM Cache | ✅ Complete | `engine/ai/` |
 | Camera / World Modes | 🟡 Header-only | `engine/camera/` |
 | Editor (panels, UI) | ✅ Complete | `editor/` |
 | Node Graph Editor Panel | ✅ Complete | `editor/panels/` |
@@ -89,7 +93,7 @@ project. It currently provides:
 | StrategyGraph | Action decisions | ✅ Implemented |
 | AI Memory + Decay | Persistent NPC memory | ✅ Implemented |
 | Relationship Model | Entity relationships | ✅ Implemented |
-| LLM Context Builder | LLM integration | 📋 Planned |
+| LLM Context Builder | LLM integration | ✅ Implemented |
 
 ### Editor Panels Required
 
@@ -105,7 +109,7 @@ project. It currently provides:
 | Game Packager | ✅ Complete |
 | Node Graph Editor | ✅ Complete |
 | AI Inspector | ✅ Complete |
-| AI Prompt Debugger | 📋 Planned (1112.md) |
+| AI Prompt Debugger | ✅ Complete |
 
 ---
 
@@ -158,7 +162,7 @@ Build the editor into a real authoring environment:
 
 - [x] Visual node graph editor (canvas, pins, links)
 - [x] AI Inspector panel (signals, memory, graphs)
-- [ ] AI Prompt Debugger panel (context + response)
+- [x] AI Prompt Debugger panel (context + response)
 - [x] Graph replay timeline scrubber
 - [x] Graph diff preview (for AI-authored changes)
 - [x] Undoable AI edits through Command system
@@ -167,10 +171,10 @@ Build the editor into a real authoring environment:
 
 Safe AI-assisted authoring:
 
-- [ ] AtlasLLMContextBuilder (context stack assembly)
-- [ ] LLM request type enforcement
-- [ ] Response schema validation
-- [ ] Deterministic cache storage (seeded, hashed, versioned)
+- [x] AtlasLLMContextBuilder (context stack assembly)
+- [x] LLM request type enforcement
+- [x] Response schema validation
+- [x] Deterministic cache storage (seeded, hashed, versioned)
 - [ ] AI graph authoring sandbox (diff-only, human-approved)
 
 ### Phase E — Multiplayer & Replay

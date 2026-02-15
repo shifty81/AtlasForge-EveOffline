@@ -375,6 +375,47 @@ void test_timeline_tick_range();
 void test_timeline_clear();
 void test_timeline_get_frame_at_tick();
 
+// LLM Context Builder tests
+void test_llm_context_builder_reset();
+void test_llm_context_builder_add_layers();
+void test_llm_context_builder_build_prompt();
+void test_llm_context_builder_schema_content();
+void test_llm_context_builder_empty_prompt();
+
+// LLM Request Types tests
+void test_llm_request_type_allow();
+void test_llm_request_type_defaults();
+void test_llm_request_type_clear();
+void test_llm_request_type_unknown_tool();
+
+// LLM Response Validator tests
+void test_llm_response_valid_structure();
+void test_llm_response_empty();
+void test_llm_response_not_json_object();
+void test_llm_response_graph_target_valid();
+void test_llm_response_graph_target_invalid();
+void test_llm_response_safety_pass();
+void test_llm_response_safety_fail();
+void test_llm_response_full_validate();
+void test_llm_response_validator_clear();
+
+// LLM Cache tests
+void test_llm_cache_store_and_lookup();
+void test_llm_cache_has();
+void test_llm_cache_evict_before();
+void test_llm_cache_clear();
+void test_llm_cache_deterministic_key();
+void test_llm_cache_overwrite();
+
+// AI Prompt Debugger tests
+void test_ai_prompt_debug_create();
+void test_ai_prompt_debug_set_sources();
+void test_ai_prompt_debug_layer_count();
+void test_ai_prompt_debug_raw_prompt();
+void test_ai_prompt_debug_response();
+void test_ai_prompt_debug_validate();
+void test_ai_prompt_debug_visibility();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -797,6 +838,52 @@ int main() {
     test_timeline_tick_range();
     test_timeline_clear();
     test_timeline_get_frame_at_tick();
+
+    // LLM Context Builder
+    std::cout << "\n--- LLM Context Builder ---" << std::endl;
+    test_llm_context_builder_reset();
+    test_llm_context_builder_add_layers();
+    test_llm_context_builder_build_prompt();
+    test_llm_context_builder_schema_content();
+    test_llm_context_builder_empty_prompt();
+
+    // LLM Request Types
+    std::cout << "\n--- LLM Request Types ---" << std::endl;
+    test_llm_request_type_allow();
+    test_llm_request_type_defaults();
+    test_llm_request_type_clear();
+    test_llm_request_type_unknown_tool();
+
+    // LLM Response Validator
+    std::cout << "\n--- LLM Response Validator ---" << std::endl;
+    test_llm_response_valid_structure();
+    test_llm_response_empty();
+    test_llm_response_not_json_object();
+    test_llm_response_graph_target_valid();
+    test_llm_response_graph_target_invalid();
+    test_llm_response_safety_pass();
+    test_llm_response_safety_fail();
+    test_llm_response_full_validate();
+    test_llm_response_validator_clear();
+
+    // LLM Cache
+    std::cout << "\n--- LLM Cache ---" << std::endl;
+    test_llm_cache_store_and_lookup();
+    test_llm_cache_has();
+    test_llm_cache_evict_before();
+    test_llm_cache_clear();
+    test_llm_cache_deterministic_key();
+    test_llm_cache_overwrite();
+
+    // AI Prompt Debugger
+    std::cout << "\n--- AI Prompt Debugger ---" << std::endl;
+    test_ai_prompt_debug_create();
+    test_ai_prompt_debug_set_sources();
+    test_ai_prompt_debug_layer_count();
+    test_ai_prompt_debug_raw_prompt();
+    test_ai_prompt_debug_response();
+    test_ai_prompt_debug_validate();
+    test_ai_prompt_debug_visibility();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

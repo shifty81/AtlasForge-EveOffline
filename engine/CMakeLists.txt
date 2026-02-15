@@ -54,6 +54,10 @@ add_library(AtlasEngine STATIC
     nodeeditor/NodeEditorModel.cpp
     graphvm/GraphDiff.cpp
     graphvm/GraphTimeline.cpp
+    ai/LLMContextBuilder.cpp
+    ai/LLMRequestTypes.cpp
+    ai/LLMResponseValidator.cpp
+    ai/LLMCache.cpp
 )
 
 target_include_directories(AtlasEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

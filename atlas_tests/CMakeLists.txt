@@ -45,9 +45,15 @@ add_executable(AtlasTests
     test_ai_inspector.cpp
     test_graph_diff.cpp
     test_graph_timeline.cpp
+    test_llm_context_builder.cpp
+    test_llm_request_types.cpp
+    test_llm_response_validator.cpp
+    test_llm_cache.cpp
+    test_ai_prompt_debug.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/NodeGraphEditorPanel.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/AIInspectorPanel.cpp
+    ${CMAKE_SOURCE_DIR}/editor/panels/AIPromptDebugPanel.cpp
 )
 
 target_link_libraries(AtlasTests AtlasEngine)
