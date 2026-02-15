@@ -73,10 +73,20 @@ build-engine: ## Build Atlas Engine library only
 	@mkdir -p build
 	cd build && cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_ATLAS_ENGINE=ON -DBUILD_CLIENT=OFF -DBUILD_SERVER=OFF -DBUILD_ATLAS_TESTS=OFF && cmake --build . --config Release --target AtlasEngine -j$$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
 
+.PHONY: build-editor
+build-editor: ## Build Atlas Editor executable
+	@mkdir -p build
+	cd build && cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_ATLAS_ENGINE=ON -DBUILD_ATLAS_EDITOR=ON -DBUILD_CLIENT=OFF -DBUILD_SERVER=OFF -DBUILD_ATLAS_TESTS=OFF && cmake --build . --config Release --target AtlasEditor -j$$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
+
 .PHONY: build-runtime
 build-runtime: ## Build Atlas Runtime executable
 	@mkdir -p build
 	cd build && cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_ATLAS_ENGINE=ON -DBUILD_ATLAS_RUNTIME=ON -DBUILD_CLIENT=OFF -DBUILD_SERVER=OFF -DBUILD_ATLAS_TESTS=OFF && cmake --build . --config Release --target AtlasRuntime -j$$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
+
+.PHONY: build-tests
+build-tests: ## Build Atlas Engine tests without running them
+	@mkdir -p build
+	cd build && cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_ATLAS_ENGINE=ON -DBUILD_ATLAS_TESTS=ON -DBUILD_CLIENT=OFF -DBUILD_SERVER=OFF && cmake --build . --config Release --target AtlasTests -j$$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
 
 .PHONY: test
 test: test-server test-engine ## Run all tests
