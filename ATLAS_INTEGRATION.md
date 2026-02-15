@@ -69,13 +69,32 @@ EVEOFFLINE/
 │   ├── assets/             #   Asset registry, binary format, hot reload
 │   ├── net/                #   Networking (CS + P2P + lockstep/rollback)
 │   ├── sim/                #   Tick scheduler, deterministic simulation
-│   └── world/              #   World layouts (cube-sphere, voxel grid)
+│   ├── world/              #   World layouts, WorldGraph, heightfield meshing
+│   ├── project/            #   Project loading and validation
+│   ├── command/            #   Undo/redo command system
+│   ├── interaction/        #   Unified intent/utterance system
+│   ├── voice/              #   Voice command registry
+│   └── plugin/             #   Plugin validation and registry
 │
 ├── editor/                 # ★ Atlas Editor (will move to Atlas repo)
 │   ├── ui/                 #   Docking, layout, panel system
-│   ├── panels/             #   ECS Inspector, Net Inspector, Console
+│   ├── panels/             #   ECS Inspector, Console, Project Picker,
+│   │                       #   World Graph Editor, Voice Commands,
+│   │                       #   Interaction Debugger, Net Inspector
 │   ├── tools/              #   Game Packager, Asset Cooker
 │   └── ai/                 #   AI Aggregator for asset generation
+│
+├── projects/               # ★ Atlas project files
+│   ├── eveoffline/         #   EVEOFFLINE game as Atlas project
+│   │   ├── eveoffline.atlas
+│   │   ├── worlds/
+│   │   └── strategy/
+│   └── atlas-sample/       #   Minimal sample project
+│
+├── schemas/                # Versioned schemas
+│   ├── atlas.project.v1.json
+│   ├── atlas.worldgraph.v1.json
+│   └── atlas.strategygraph.v1.json
 │
 ├── atlas_tests/            # ★ Atlas Engine unit tests
 │
@@ -171,6 +190,28 @@ make build
 - Perlin noise and fractal Brownian motion (FBM) for procedural generation
 - World streaming with load/unload radius and disk caching
 - Galaxy generation with spiral arm structure and deterministic seeding
+- **WorldGraph**: DAG-based world generation graph system
+  - Typed ports and values (Float, HeightField, Seed, Mask, etc.)
+  - Topological sort compilation with cycle and type-mismatch detection
+  - Concrete nodes: Seed, Noise (FBM), Blend, Clamp, Constant
+- **HeightfieldMesher**: Heightfield-to-mesh pipeline with LOD support
+
+### Interaction System (`engine/interaction/`)
+- Unified utterance/intent pipeline for voice, AI, console, and scripting
+- Pattern-based intent resolver with case-insensitive matching
+- Intent registry with named handlers for dispatching actions
+- Supports: Command, Conversation, Debug, and Narrative interaction modes
+
+### Voice Commands (`engine/voice/`)
+- Voice command registry mapping phrases to intents
+- Context-aware filtering (game, editor, both)
+- Bridge between speech-to-text and the intent system
+
+### Plugin System (`engine/plugin/`)
+- Plugin descriptor with version compatibility and determinism flags
+- Plugin validator enforcing engine compatibility
+- Plugin registry for managing loaded extensions
+- Plugin types: graph-extension, editor-panel, asset-importer
 
 ## Syncing with Atlas Repository
 
