@@ -1923,6 +1923,48 @@ public:
     COMPONENT_TYPE(FleetNorm)
 };
 
+// ==================== Phase 2: Local Reputation Component ====================
+
+/**
+ * @brief Per-system local reputation for an entity.
+ *
+ * Each star system maintains an independent reputation score for the entity.
+ * Reputation decays toward zero over time unless reinforced by actions.
+ */
+class LocalReputation : public ecs::Component {
+public:
+    /// system_name → reputation value (clamped to -10 .. +10)
+    std::map<std::string, float> system_reputations;
+
+    /// Decay rate toward zero per second (positive value).
+    float decay_rate = 0.01f;
+
+    COMPONENT_TYPE(LocalReputation)
+};
+
+// ==================== Phase 2: NPC Archetype Component ====================
+
+/**
+ * @brief NPC archetype defining role, risk profile, and intent preferences.
+ *
+ * Archetypes: Trader, Pirate, Patrol, Miner, Hauler, Industrialist.
+ * Each archetype biases the NPC intent system toward role-appropriate behaviors.
+ */
+class NPCArchetype : public ecs::Component {
+public:
+    enum class Archetype { Trader, Pirate, Patrol, Miner, Hauler, Industrialist };
+
+    Archetype archetype = Archetype::Trader;
+
+    /// Base risk tolerance (0 = risk-averse, 1 = reckless).
+    float risk_tolerance = 0.5f;
+
+    /// Preferred intent when no environmental pressure exists.
+    NPCIntent::Intent default_intent = NPCIntent::Intent::Idle;
+
+    COMPONENT_TYPE(NPCArchetype)
+};
+
 // ==================== Phase 2: Star System State Component ====================
 
 class StarSystemState : public ecs::Component {
