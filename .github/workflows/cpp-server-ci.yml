@@ -6,12 +6,16 @@ on:
     paths:
       - 'cpp_server/**'
       - 'data/**'
+      - 'engine/**'
+      - 'CMakeLists.txt'
       - '.github/workflows/cpp-server-ci.yml'
   pull_request:
     branches: [ main, develop ]
     paths:
       - 'cpp_server/**'
       - 'data/**'
+      - 'engine/**'
+      - 'CMakeLists.txt'
       - '.github/workflows/cpp-server-ci.yml'
   workflow_dispatch:
 
