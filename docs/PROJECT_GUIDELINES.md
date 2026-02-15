@@ -170,7 +170,6 @@ These rules exist to protect long-term scalability.
 
 ## Related Documents
 
-- [Architecture](../ARCHITECTURE.md) — Engine architecture overview
-- [Atlas Integration](../ATLAS_INTEGRATION.md) — Engine/game relationship
-- [Atlas Naming Conventions](../ATLAS_NAMING_CONVENTIONS.md) — Code style rules
-- [Atlas Simulation Philosophy](../ATLAS_SIMULATION_PHILOSOPHY.md) — Simulation design
+- [Atlas Engine Repository](https://github.com/shifty81/Atlas) — Engine architecture and documentation
+- [Atlas Naming Conventions](https://github.com/shifty81/Atlas/blob/main/docs/ATLAS_NAMING_CONVENTIONS.md) — Code style rules
+- [Atlas Simulation Philosophy](https://github.com/shifty81/Atlas/blob/main/docs/ATLAS_SIMULATION_PHILOSOPHY.md) — Simulation design

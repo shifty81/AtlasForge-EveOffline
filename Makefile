@@ -1,4 +1,4 @@
-# Atlas - Makefile
+# EVEOFFLINE - Makefile
 # Provides easy commands for common development tasks
 
 # Detect OS
@@ -15,19 +15,19 @@ endif
 
 .PHONY: help
 help: ## Show this help message
-	@echo "Atlas - Development Commands"
-	@echo "============================"
+	@echo "EVEOFFLINE - Development Commands"
+	@echo "=================================="
 	@echo ""
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
 	@echo ""
 
 .PHONY: build
-build: ## Build all targets (engine, editor, runtime, client, server, tests)
-	./scripts/build.sh Release
+build: ## Build all targets (client and server)
+	./scripts/build_project.sh Release all
 
 .PHONY: build-debug
 build-debug: ## Build all targets in Debug mode
-	./scripts/build.sh Debug
+	./scripts/build_project.sh Debug all
 
 .PHONY: build-client
 build-client: ## Build C++ client only
@@ -64,38 +64,11 @@ docs: ## Show documentation location
 	@echo ""
 	@echo "  docs/guides/       - Build & setup guides"
 	@echo "  docs/cpp_client/   - C++ client documentation"
-	@echo "  docs/sessions/     - Development session notes"
 	@echo ""
 	@ls -1 docs/*.md 2>/dev/null || true
 
-.PHONY: build-engine
-build-engine: ## Build Atlas Engine library only
-	@mkdir -p build
-	cd build && cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_ATLAS_ENGINE=ON -DBUILD_CLIENT=OFF -DBUILD_SERVER=OFF -DBUILD_ATLAS_TESTS=OFF && cmake --build . --config Release --target AtlasEngine -j$$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
-
-.PHONY: build-editor
-build-editor: ## Build Atlas Editor executable
-	@mkdir -p build
-	cd build && cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_ATLAS_ENGINE=ON -DBUILD_ATLAS_EDITOR=ON -DBUILD_CLIENT=OFF -DBUILD_SERVER=OFF -DBUILD_ATLAS_TESTS=OFF && cmake --build . --config Release --target AtlasEditor -j$$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
-
-.PHONY: build-runtime
-build-runtime: ## Build Atlas Runtime executable
-	@mkdir -p build
-	cd build && cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_ATLAS_ENGINE=ON -DBUILD_ATLAS_RUNTIME=ON -DBUILD_CLIENT=OFF -DBUILD_SERVER=OFF -DBUILD_ATLAS_TESTS=OFF && cmake --build . --config Release --target AtlasRuntime -j$$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
-
-.PHONY: build-tests
-build-tests: ## Build Atlas Engine tests without running them
-	@mkdir -p build
-	cd build && cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_ATLAS_ENGINE=ON -DBUILD_ATLAS_TESTS=ON -DBUILD_CLIENT=OFF -DBUILD_SERVER=OFF && cmake --build . --config Release --target AtlasTests -j$$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
-
 .PHONY: test
-test: test-server test-engine ## Run all tests
-
-.PHONY: test-engine
-test-engine: ## Build and run Atlas Engine tests
-	@mkdir -p build
-	cd build && cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_ATLAS_ENGINE=ON -DBUILD_ATLAS_TESTS=ON -DBUILD_CLIENT=OFF -DBUILD_SERVER=OFF && cmake --build . --config Release --target AtlasTests -j$$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
-	cd build && ./atlas_tests/AtlasTests
+test: test-server ## Run all tests
 
 .PHONY: test-server
 test-server: ## Build and run C++ server tests
@@ -107,5 +80,5 @@ test-server: ## Build and run C++ server tests
 all: clean build ## Clean and build everything
 
 .PHONY: validate
-validate: ## Validate all project structures for portability
-	./scripts/validate_project.sh
+validate: ## Validate project structure for portability
+	./scripts/validate_project.sh projects/eveoffline

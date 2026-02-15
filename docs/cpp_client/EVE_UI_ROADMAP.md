@@ -10,7 +10,7 @@
 
 This document outlines the comprehensive plan to implement the Atlas UI system in the C++ OpenGL client. The UI features dense information displays, extensive customization, and sophisticated interaction patterns.
 
-> **Note**: UI framework was renamed from "Photon" to "Atlas" and sidebar from "Neocom" to "Sidebar" to establish an original naming convention. See [ATLAS_NAMING_CONVENTIONS.md](../../ATLAS_NAMING_CONVENTIONS.md).
+> **Note**: UI framework was renamed from "Photon" to "Atlas" and sidebar from "Neocom" to "Sidebar" to establish an original naming convention. See [Atlas Naming Conventions](https://github.com/shifty81/Atlas/blob/main/docs/ATLAS_NAMING_CONVENTIONS.md).
 
 ## Current Status (Phase 4.10 In Progress)
 
@@ -36,7 +36,7 @@ This document outlines the comprehensive plan to implement the Atlas UI system i
   - ✅ Layout Manager — JSON save/load for panel positions, sizes, visibility, opacity
   - ✅ Default presets — default, combat, mining layout presets
   - ✅ Per-panel opacity support
-  - ✅ Naming convention — all UI components renamed to original names (see [ATLAS_NAMING_CONVENTIONS.md](../../ATLAS_NAMING_CONVENTIONS.md))
+  - ✅ Naming convention — all UI components renamed to original names (see [Atlas Naming Conventions](https://github.com/shifty81/Atlas/blob/main/docs/ATLAS_NAMING_CONVENTIONS.md))
   - ✅ Overview tab filtering — Combat/Mining/Custom tabs filter entities by type ✅ (Feb 11, 2026)
   - ✅ UI scale controls — Global UI scale factor (0.5×–2.0×) ✅ (Feb 11, 2026)
   - ✅ Color scheme switching — Default, Classic, Colorblind-safe themes ✅ (Feb 11, 2026)

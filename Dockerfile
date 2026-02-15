@@ -1,4 +1,4 @@
-# EVE OFFLINE - Dedicated Server Dockerfile
+# EVEOFFLINE - Dedicated Server Dockerfile
 # Multi-stage build for minimal runtime image
 
 # --- Build stage ---
@@ -11,23 +11,15 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /build
 
-# Copy engine and server source, plus data
-COPY engine/ engine/
+# Copy server source and data
 COPY cpp_server/ cpp_server/
 COPY data/ data/
-COPY CMakeLists.txt CMakeLists.txt
 
-# Build engine and server via root CMake
-RUN mkdir -p build \
-    && cd build \
+# Build server via its own CMake
+RUN mkdir -p cpp_server/build \
+    && cd cpp_server/build \
     && cmake .. \
         -DCMAKE_BUILD_TYPE=Release \
-        -DBUILD_ATLAS_ENGINE=ON \
-        -DBUILD_ATLAS_EDITOR=OFF \
-        -DBUILD_ATLAS_RUNTIME=OFF \
-        -DBUILD_ATLAS_TESTS=OFF \
-        -DBUILD_CLIENT=OFF \
-        -DBUILD_SERVER=ON \
         -DUSE_STEAM_SDK=OFF \
     && cmake --build . --config Release -j$(nproc)
 
@@ -43,8 +35,8 @@ RUN useradd -m -s /bin/bash eveserver
 WORKDIR /opt/eveoffline
 
 # Copy built server binary and config
-COPY --from=builder /build/build/cpp_server/bin/eve_dedicated_server .
-COPY --from=builder /build/build/cpp_server/bin/config/ config/
+COPY --from=builder /build/cpp_server/build/bin/eve_dedicated_server .
+COPY --from=builder /build/cpp_server/build/bin/config/ config/
 COPY data/ data/
 
 RUN chown -R eveserver:eveserver /opt/eveoffline

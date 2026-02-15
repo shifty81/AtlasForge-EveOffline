@@ -1,22 +1,18 @@
 @echo off
-REM Atlas — Project Build Script (Windows)
-REM Builds engine, dev client, and server according to Atlas project guidelines.
+REM EVEOFFLINE — Project Build Script (Windows)
+REM Builds game client and server.
 REM
 REM Usage:
 REM   build_project.bat                    # Build everything (Release)
 REM   build_project.bat Debug              # Build everything (Debug)
-REM   build_project.bat Release engine     # Build engine only
 REM   build_project.bat Release client     # Build client only
 REM   build_project.bat Release server     # Build server only
 REM   build_project.bat Release test       # Build and run all tests
 REM
 REM Targets:
-REM   all      — Engine + Client + Server (default)
-REM   engine   — Atlas Engine static library
-REM   client   — EVE-Offline game client (OpenGL)
-REM   server   — EVE-Offline dedicated server
-REM   editor   — Atlas Editor
-REM   runtime  — Atlas Runtime
+REM   all      — Client + Server (default)
+REM   client   — EVEOFFLINE game client (OpenGL)
+REM   server   — EVEOFFLINE dedicated server
 REM   test     — Build and run all tests
 REM   validate — Validate project structure only
 
@@ -31,11 +27,9 @@ if "%BUILD_TYPE%"=="" set "BUILD_TYPE=Release"
 set "TARGET=%~2"
 if "%TARGET%"=="" set "TARGET=all"
 
-set "BUILD_DIR=build"
-
 echo.
 echo ================================================
-echo   Atlas — Project Build (%BUILD_TYPE% / %TARGET%)
+echo   EVEOFFLINE — Project Build (%BUILD_TYPE% / %TARGET%)
 echo ================================================
 echo.
 
@@ -51,46 +45,40 @@ if %ERRORLEVEL% neq 0 (
 REM ── Target dispatch ──────────────────────────────────────────
 
 if /i "%TARGET%"=="all" goto :build_all
-if /i "%TARGET%"=="engine" goto :build_engine
 if /i "%TARGET%"=="client" goto :build_client
 if /i "%TARGET%"=="server" goto :build_server
-if /i "%TARGET%"=="editor" goto :build_editor
-if /i "%TARGET%"=="runtime" goto :build_runtime
 if /i "%TARGET%"=="test" goto :build_test
 if /i "%TARGET%"=="validate" goto :validate
 
 echo Unknown target: %TARGET%
 echo.
-echo Available targets: all, engine, client, server, editor, runtime, test, validate
+echo Available targets: all, client, server, test, validate
 exit /b 1
 
 :build_all
-echo Building ALL targets (Engine + Client + Server)...
-if not exist "%BUILD_DIR%" mkdir "%BUILD_DIR%"
-cd "%BUILD_DIR%"
-cmake .. -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DBUILD_ATLAS_ENGINE=ON -DBUILD_ATLAS_EDITOR=ON -DBUILD_ATLAS_RUNTIME=ON -DBUILD_ATLAS_TESTS=ON -DBUILD_CLIENT=ON -DBUILD_SERVER=ON
+echo Building ALL targets (Client + Server)...
+if not exist "cpp_client\build" mkdir "cpp_client\build"
+cd "cpp_client\build"
+cmake .. -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DUSE_SYSTEM_LIBS=ON
+if %ERRORLEVEL% neq 0 goto :cmake_fail
+cmake --build . --config %BUILD_TYPE%
+if %ERRORLEVEL% neq 0 goto :build_fail
+cd /d "%SCRIPT_DIR%\.."
+
+if not exist "cpp_server\build" mkdir "cpp_server\build"
+cd "cpp_server\build"
+cmake .. -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DUSE_STEAM_SDK=OFF
 if %ERRORLEVEL% neq 0 goto :cmake_fail
 cmake --build . --config %BUILD_TYPE%
 if %ERRORLEVEL% neq 0 goto :build_fail
 cd /d "%SCRIPT_DIR%\.."
 goto :success
 
-:build_engine
-echo Building Atlas Engine...
-if not exist "%BUILD_DIR%" mkdir "%BUILD_DIR%"
-cd "%BUILD_DIR%"
-cmake .. -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DBUILD_ATLAS_ENGINE=ON -DBUILD_CLIENT=OFF -DBUILD_SERVER=OFF -DBUILD_ATLAS_TESTS=OFF -DBUILD_ATLAS_EDITOR=OFF -DBUILD_ATLAS_RUNTIME=OFF
-if %ERRORLEVEL% neq 0 goto :cmake_fail
-cmake --build . --config %BUILD_TYPE% --target AtlasEngine
-if %ERRORLEVEL% neq 0 goto :build_fail
-cd /d "%SCRIPT_DIR%\.."
-goto :success
-
 :build_client
-echo Building Dev Client...
-if not exist "%BUILD_DIR%" mkdir "%BUILD_DIR%"
-cd "%BUILD_DIR%"
-cmake .. -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DBUILD_ATLAS_ENGINE=ON -DBUILD_CLIENT=ON -DBUILD_SERVER=OFF -DBUILD_ATLAS_TESTS=OFF -DBUILD_ATLAS_EDITOR=OFF -DBUILD_ATLAS_RUNTIME=OFF
+echo Building Game Client...
+if not exist "cpp_client\build" mkdir "cpp_client\build"
+cd "cpp_client\build"
+cmake .. -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DUSE_SYSTEM_LIBS=ON
 if %ERRORLEVEL% neq 0 goto :cmake_fail
 cmake --build . --config %BUILD_TYPE%
 if %ERRORLEVEL% neq 0 goto :build_fail
@@ -99,51 +87,17 @@ goto :success
 
 :build_server
 echo Building Dedicated Server...
-if not exist "%BUILD_DIR%" mkdir "%BUILD_DIR%"
-cd "%BUILD_DIR%"
-cmake .. -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DBUILD_ATLAS_ENGINE=ON -DBUILD_SERVER=ON -DBUILD_CLIENT=OFF -DBUILD_ATLAS_TESTS=OFF -DBUILD_ATLAS_EDITOR=OFF -DBUILD_ATLAS_RUNTIME=OFF
+if not exist "cpp_server\build" mkdir "cpp_server\build"
+cd "cpp_server\build"
+cmake .. -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DUSE_STEAM_SDK=OFF
 if %ERRORLEVEL% neq 0 goto :cmake_fail
 cmake --build . --config %BUILD_TYPE%
-if %ERRORLEVEL% neq 0 goto :build_fail
-cd /d "%SCRIPT_DIR%\.."
-goto :success
-
-:build_editor
-echo Building Atlas Editor...
-if not exist "%BUILD_DIR%" mkdir "%BUILD_DIR%"
-cd "%BUILD_DIR%"
-cmake .. -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DBUILD_ATLAS_ENGINE=ON -DBUILD_ATLAS_EDITOR=ON -DBUILD_CLIENT=OFF -DBUILD_SERVER=OFF -DBUILD_ATLAS_TESTS=OFF -DBUILD_ATLAS_RUNTIME=OFF
-if %ERRORLEVEL% neq 0 goto :cmake_fail
-cmake --build . --config %BUILD_TYPE% --target AtlasEditor
-if %ERRORLEVEL% neq 0 goto :build_fail
-cd /d "%SCRIPT_DIR%\.."
-goto :success
-
-:build_runtime
-echo Building Atlas Runtime...
-if not exist "%BUILD_DIR%" mkdir "%BUILD_DIR%"
-cd "%BUILD_DIR%"
-cmake .. -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DBUILD_ATLAS_ENGINE=ON -DBUILD_ATLAS_RUNTIME=ON -DBUILD_CLIENT=OFF -DBUILD_SERVER=OFF -DBUILD_ATLAS_TESTS=OFF -DBUILD_ATLAS_EDITOR=OFF
-if %ERRORLEVEL% neq 0 goto :cmake_fail
-cmake --build . --config %BUILD_TYPE% --target AtlasRuntime
 if %ERRORLEVEL% neq 0 goto :build_fail
 cd /d "%SCRIPT_DIR%\.."
 goto :success
 
 :build_test
 echo Building and Running Tests...
-if not exist "%BUILD_DIR%" mkdir "%BUILD_DIR%"
-cd "%BUILD_DIR%"
-cmake .. -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DBUILD_ATLAS_ENGINE=ON -DBUILD_ATLAS_TESTS=ON -DBUILD_CLIENT=OFF -DBUILD_SERVER=ON
-if %ERRORLEVEL% neq 0 goto :cmake_fail
-cmake --build . --config %BUILD_TYPE%
-if %ERRORLEVEL% neq 0 goto :build_fail
-cd /d "%SCRIPT_DIR%\.."
-echo.
-echo Running engine tests...
-if exist "%BUILD_DIR%\atlas_tests\%BUILD_TYPE%\AtlasTests.exe" (
-    "%BUILD_DIR%\atlas_tests\%BUILD_TYPE%\AtlasTests.exe"
-)
 echo.
 echo Running server tests...
 if not exist "cpp_server\build" mkdir "cpp_server\build"
@@ -157,13 +111,11 @@ cd /d "%SCRIPT_DIR%\.."
 goto :success
 
 :validate
-echo Validating Projects...
+echo Validating Project...
 set "valid=0"
-for /d %%D in (projects\*) do (
+for /d %%D in (projects\eveoffline) do (
     echo Validating project: %%D
-    set "atlas_found=0"
     if exist "%%D\*.atlas" (
-        set "atlas_found=1"
         echo   OK .atlas manifest found
     ) else (
         echo   X Missing .atlas manifest file
@@ -175,7 +127,7 @@ for /d %%D in (projects\*) do (
     echo.
 )
 if !valid!==0 (
-    echo ALL PROJECTS VALID
+    echo PROJECT VALID
 ) else (
     echo VALIDATION FAILED
     exit /b 1

@@ -1,22 +1,18 @@
 #!/bin/bash
-# Atlas — Project Build Script
-# Builds engine, dev client, and server according to Atlas project guidelines.
+# EVEOFFLINE — Project Build Script
+# Builds game client and server.
 #
 # Usage:
 #   ./build_project.sh                    # Build everything (Release)
 #   ./build_project.sh Debug              # Build everything (Debug)
-#   ./build_project.sh Release engine     # Build engine only
 #   ./build_project.sh Release client     # Build client only
 #   ./build_project.sh Release server     # Build server only
 #   ./build_project.sh Release test       # Build and run all tests
 #
 # Targets:
-#   all      — Engine + Client + Server (default)
-#   engine   — Atlas Engine static library
-#   client   — EVE-Offline game client (OpenGL)
-#   server   — EVE-Offline dedicated server
-#   editor   — Atlas Editor
-#   runtime  — Atlas Runtime
+#   all      — Client + Server (default)
+#   client   — EVEOFFLINE game client (OpenGL)
+#   server   — EVEOFFLINE dedicated server
 #   test     — Build and run all tests
 #   validate — Validate project structure only
 
@@ -53,7 +49,7 @@ check_tool() {
 
 # ── Dependency checks ─────────────────────────────────────────
 
-banner "Atlas — Project Build ($BUILD_TYPE / $TARGET)"
+banner "EVEOFFLINE — Project Build ($BUILD_TYPE / $TARGET)"
 
 check_tool cmake "Please install CMake from https://cmake.org/download/"
 
@@ -116,58 +112,42 @@ validate_project() {
     return 0
 }
 
-# ── CMake configure ────────────────────────────────────────────
+# ── Build target ───────────────────────────────────────────────
 
-configure_cmake() {
-    local engine_flag="$1"
-    local editor_flag="$2"
-    local runtime_flag="$3"
-    local tests_flag="$4"
-    local client_flag="$5"
-    local server_flag="$6"
+build_client() {
+    mkdir -p cpp_client/build
+    cd cpp_client/build
 
-    mkdir -p "$BUILD_DIR"
-    cd "$BUILD_DIR"
+    echo "Configuring client CMake ($BUILD_TYPE)..."
+    cmake .. -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DUSE_SYSTEM_LIBS=ON
 
-    echo "Configuring CMake ($BUILD_TYPE)..."
-    cmake .. -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
-        -DBUILD_ATLAS_ENGINE="$engine_flag" \
-        -DBUILD_ATLAS_EDITOR="$editor_flag" \
-        -DBUILD_ATLAS_RUNTIME="$runtime_flag" \
-        -DBUILD_ATLAS_TESTS="$tests_flag" \
-        -DBUILD_CLIENT="$client_flag" \
-        -DBUILD_SERVER="$server_flag" \
-        -DUSE_SYSTEM_LIBS=ON
+    echo "Building client..."
+    cmake --build . --config "$BUILD_TYPE" -j"$NPROC"
 
-    if [ $? -ne 0 ]; then
-        banner "CMAKE CONFIGURATION FAILED"
-        echo "Install dependencies:"
-        echo "  Ubuntu/Debian: sudo apt-get install libgl1-mesa-dev libglew-dev libglfw3-dev libglm-dev nlohmann-json3-dev libopenal-dev"
-        echo "  macOS: brew install glfw glm glew nlohmann-json openal-soft"
+    if [ $? -eq 0 ]; then
+        echo "  ✓ Client build succeeded"
+    else
+        banner "CLIENT BUILD FAILED"
         exit 1
     fi
 
     cd "$PROJECT_DIR"
 }
 
-# ── Build target ───────────────────────────────────────────────
+build_server() {
+    mkdir -p cpp_server/build
+    cd cpp_server/build
 
-build_target() {
-    local target_name="$1"
+    echo "Configuring server CMake ($BUILD_TYPE)..."
+    cmake .. -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DUSE_STEAM_SDK=OFF
 
-    cd "$BUILD_DIR"
-
-    echo "Building${target_name:+ $target_name}..."
-    if [ -n "$target_name" ]; then
-        cmake --build . --config "$BUILD_TYPE" --target "$target_name" -- -j"$NPROC"
-    else
-        cmake --build . --config "$BUILD_TYPE" -- -j"$NPROC"
-    fi
+    echo "Building server..."
+    cmake --build . --config "$BUILD_TYPE" -j"$NPROC"
 
     if [ $? -eq 0 ]; then
-        echo "  ✓ Build succeeded${target_name:+ ($target_name)}"
+        echo "  ✓ Server build succeeded"
     else
-        banner "BUILD FAILED${target_name:+ ($target_name)}"
+        banner "SERVER BUILD FAILED"
         exit 1
     fi
 
@@ -178,49 +158,21 @@ build_target() {
 
 case "$TARGET" in
     all)
-        banner "Building ALL targets (Engine + Client + Server)"
-        configure_cmake ON ON ON ON ON ON
-        build_target ""
-        ;;
-    engine)
-        banner "Building Atlas Engine"
-        configure_cmake ON OFF OFF OFF OFF OFF
-        build_target "AtlasEngine"
+        banner "Building ALL targets (Client + Server)"
+        build_client
+        build_server
         ;;
     client)
-        banner "Building Dev Client"
-        configure_cmake ON OFF OFF OFF ON OFF
-        build_target ""
+        banner "Building Game Client"
+        build_client
         ;;
     server)
         banner "Building Dedicated Server"
-        configure_cmake ON OFF OFF OFF OFF ON
-        build_target ""
-        ;;
-    editor)
-        banner "Building Atlas Editor"
-        configure_cmake ON ON OFF OFF OFF OFF
-        build_target "AtlasEditor"
-        ;;
-    runtime)
-        banner "Building Atlas Runtime"
-        configure_cmake ON OFF ON OFF OFF OFF
-        build_target "AtlasRuntime"
+        build_server
         ;;
     test)
         banner "Building and Running Tests"
-        configure_cmake ON OFF OFF ON OFF ON
-        build_target ""
 
-        echo ""
-        echo "Running engine tests..."
-        cd "$BUILD_DIR"
-        if [ -f atlas_tests/AtlasTests ]; then
-            ./atlas_tests/AtlasTests
-        fi
-        cd "$PROJECT_DIR"
-
-        echo ""
         echo "Running server tests..."
         mkdir -p cpp_server/build
         cd cpp_server/build
@@ -232,16 +184,10 @@ case "$TARGET" in
         cd "$PROJECT_DIR"
         ;;
     validate)
-        banner "Validating Projects"
-        valid=0
-        for project_dir in projects/*/; do
-            if [ -d "$project_dir" ]; then
-                validate_project "$project_dir" || valid=1
-                echo ""
-            fi
-        done
-        if [ "$valid" -eq 0 ]; then
-            banner "ALL PROJECTS VALID"
+        banner "Validating Project"
+        validate_project "projects/eveoffline"
+        if [ $? -eq 0 ]; then
+            banner "PROJECT VALID"
         else
             banner "VALIDATION FAILED"
             exit 1
@@ -251,7 +197,7 @@ case "$TARGET" in
     *)
         echo "Unknown target: $TARGET"
         echo ""
-        echo "Available targets: all, engine, client, server, editor, runtime, test, validate"
+        echo "Available targets: all, client, server, test, validate"
         exit 1
         ;;
 esac
@@ -264,12 +210,6 @@ echo "Build type: $BUILD_TYPE"
 echo "Target:     $TARGET"
 echo ""
 
-if [ -d "$BUILD_DIR/bin" ]; then
-    echo "Executables:"
-    find "$BUILD_DIR/bin" -type f \( -perm -u+x -o -name "*.exe" \) 2>/dev/null | head -10
-fi
-
-echo ""
 echo "Next steps:"
 echo "  ./scripts/build_project.sh $BUILD_TYPE validate   # Validate project structure"
 echo "  ./scripts/build_project.sh $BUILD_TYPE test        # Run all tests"
