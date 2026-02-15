@@ -13,6 +13,7 @@ This is the EVEOFFLINE game project structured as an Atlas Engine project.
 ```
 eveoffline/
 ├── eveoffline.atlas                    # Project manifest (atlas.project.v1)
+├── Plugin.toml                         # Plugin descriptor for engine registration
 ├── worlds/                             # WorldGraph and TileGraph files
 │   ├── galaxy.worldgraph               # Galaxy generation graph
 │   └── station_interior.tilegraph      # Station interior tile generation
@@ -21,11 +22,26 @@ eveoffline/
 ├── conversations/                      # Conversation graphs
 │   └── captain_greeting.conversation   # Captain greeting dialogue
 ├── ai/                                 # AI configuration and behavior graphs
-│   └── npc_config.json                 # NPC AI signal and memory config
+│   ├── npc_config.json                 # NPC AI signal and memory config
+│   ├── combat.behaviorgraph            # NPC combat behavior graph
+│   ├── trade.behaviorgraph             # NPC trade behavior graph
+│   └── patrol.behaviorgraph            # NPC patrol behavior graph
 ├── data/                               # Game data manifest
 │   └── manifest.json                   # References content at repo root data/
 ├── config/                             # Runtime configuration
 │   └── runtime.json                    # Server rules, tick rate, network mode
+├── Code/                               # Game-specific initialization code
+│   ├── GameInit.h                      # Entry point header
+│   ├── GameInit.cpp                    # Entry point implementation
+│   └── Adapters/                       # Engine-game adapter layer
+│       ├── ECSAdapter.h                # ECS component/system registration
+│       └── ECSAdapter.cpp
+├── Schemas/                            # Project-specific data schemas
+│   ├── eveoffline.ship.v1.json         # Ship data validation schema
+│   ├── eveoffline.module.v1.json       # Module data validation schema
+│   └── eveoffline.npc.v1.json          # NPC data validation schema
+├── Tests/                              # Project validation tests
+│   └── test_project_structure.cpp      # Validates project completeness
 ├── assets/                             # Models, textures, audio
 └── README.md
 ```
@@ -76,6 +92,15 @@ The manifest organizes data into categories:
 - **captain_greeting.conversation** — Sample dialogue tree for captain interactions,
   demonstrating Dialogue, PlayerChoice, and branching nodes.
 
+## Behavior Graphs
+
+- **combat.behaviorgraph** — NPC combat AI using threat assessment, utility scoring
+  (threat weight 0.7, health weight 0.3), emotion updates, and action selection.
+- **trade.behaviorgraph** — NPC trade AI with market assessment and profit-weighted
+  utility scoring (threat weight 0.2, health/profit weight 0.8).
+- **patrol.behaviorgraph** — NPC patrol AI with balanced threat/health scoring (0.5/0.5),
+  emotion-driven confidence, and alert level output.
+
 ## AI Configuration
 
 `ai/npc_config.json` defines:
@@ -102,5 +127,17 @@ The manifest organizes data into categories:
 4. **New conversations**: Place `.conversation` files in `conversations/`.
 5. **New behavior graphs**: Place `.behaviorgraph` files in `ai/`.
 6. **New server rules**: Add entries to `config/runtime.json` under `serverRules`.
+7. **New data schemas**: Place `eveoffline.*.v1.json` files in `Schemas/`.
+8. **New game code**: Add source files under `Code/` (entry point) or
+   `Code/Adapters/` (engine-game bridges).
 
 All game data is loaded by Atlas Engine via the project manifest.
+
+## Validation
+
+Run the project validation test to verify structure completeness:
+
+```bash
+g++ -std=c++17 Tests/test_project_structure.cpp -o test_project_structure
+./test_project_structure .
+```
