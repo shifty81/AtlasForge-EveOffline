@@ -47,6 +47,10 @@ add_library(AtlasEngine STATIC
     flow/GameFlowNodes.cpp
     schema/SchemaValidator.cpp
     graphvm/GraphCache.cpp
+    render/RenderGraph.cpp
+    render/RenderNodes.cpp
+    shader/ShaderGraph.cpp
+    shader/ShaderNodes.cpp
 )
 
 target_include_directories(AtlasEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

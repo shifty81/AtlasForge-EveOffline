@@ -213,6 +213,26 @@ make build
 - Plugin registry for managing loaded extensions
 - Plugin types: graph-extension, editor-panel, asset-importer
 
+### Graph Commands (`engine/command/`)
+- Undoable graph mutations via templated Command classes
+- AddNodeCommand, RemoveNodeCommand, AddEdgeCommand, RemoveEdgeCommand
+- Works with any graph type (SoundGraph, WorldGraph, RenderGraph, etc.)
+- Integrates with CommandHistory for full undo/redo support
+
+### RenderGraph (`engine/render/`)
+- DAG-based GPU render pass scheduling
+- Typed ports: Texture, Buffer, Float, PassConfig, DrawList
+- Concrete nodes: ClearPass, GeometryPass, PostProcess, Present
+- Deterministic pass ordering via topological sort
+- Compile/Execute pipeline matching all other graph types
+
+### ShaderGraph (`engine/shader/`)
+- DAG-based shader/material composition
+- Typed ports: Float, Vec2, Vec3, Vec4, Texture, Bool
+- Concrete nodes: Multiply, Lerp, BaseColor, UVCoord
+- Shaders as graphs — compile to data, not text
+- Deterministic evaluation for caching and hot-reload
+
 ## Syncing with Atlas Repository
 
 The `engine/` and `editor/` directories in this repo mirror the Atlas repo structure. To sync changes:

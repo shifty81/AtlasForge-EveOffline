@@ -303,6 +303,37 @@ void test_json_reader_parse();
 void test_json_reader_array();
 void test_json_roundtrip();
 
+// Graph Commands tests
+void test_graph_cmd_add_node();
+void test_graph_cmd_add_node_undo();
+void test_graph_cmd_add_node_redo();
+void test_graph_cmd_remove_node();
+void test_graph_cmd_remove_node_undo();
+void test_graph_cmd_add_edge();
+void test_graph_cmd_add_edge_undo();
+void test_graph_cmd_remove_edge();
+void test_graph_cmd_remove_edge_undo();
+void test_graph_cmd_sequence();
+
+// RenderGraph tests
+void test_rendergraph_add_nodes();
+void test_rendergraph_remove_node();
+void test_rendergraph_compile_empty();
+void test_rendergraph_compile_single_node();
+void test_rendergraph_compile_chain();
+void test_rendergraph_execute();
+void test_rendergraph_deterministic();
+
+// ShaderGraph tests
+void test_shadergraph_add_nodes();
+void test_shadergraph_remove_node();
+void test_shadergraph_compile_empty();
+void test_shadergraph_compile_single_node();
+void test_shadergraph_compile_chain();
+void test_shadergraph_execute();
+void test_shadergraph_lerp_node();
+void test_shadergraph_deterministic();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -646,6 +677,40 @@ int main() {
     test_json_reader_parse();
     test_json_reader_array();
     test_json_roundtrip();
+
+    // Graph Commands
+    std::cout << "\n--- Graph Commands ---" << std::endl;
+    test_graph_cmd_add_node();
+    test_graph_cmd_add_node_undo();
+    test_graph_cmd_add_node_redo();
+    test_graph_cmd_remove_node();
+    test_graph_cmd_remove_node_undo();
+    test_graph_cmd_add_edge();
+    test_graph_cmd_add_edge_undo();
+    test_graph_cmd_remove_edge();
+    test_graph_cmd_remove_edge_undo();
+    test_graph_cmd_sequence();
+
+    // Render Graph
+    std::cout << "\n--- Render Graph ---" << std::endl;
+    test_rendergraph_add_nodes();
+    test_rendergraph_remove_node();
+    test_rendergraph_compile_empty();
+    test_rendergraph_compile_single_node();
+    test_rendergraph_compile_chain();
+    test_rendergraph_execute();
+    test_rendergraph_deterministic();
+
+    // Shader Graph
+    std::cout << "\n--- Shader Graph ---" << std::endl;
+    test_shadergraph_add_nodes();
+    test_shadergraph_remove_node();
+    test_shadergraph_compile_empty();
+    test_shadergraph_compile_single_node();
+    test_shadergraph_compile_chain();
+    test_shadergraph_execute();
+    test_shadergraph_lerp_node();
+    test_shadergraph_deterministic();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;

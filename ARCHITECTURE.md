@@ -36,7 +36,9 @@ Atlas/
 │   ├── interaction/  # Unified intent/utterance system (voice, AI, console)
 │   ├── voice/        # Voice command registry and matching
 │   ├── plugin/       # Plugin validation, registry, and sandboxing
-│   └── rules/        # Server rules system (live parameter tuning)
+│   ├── rules/        # Server rules system (live parameter tuning)
+│   ├── render/       # RenderGraph — GPU render pass scheduling
+│   └── shader/       # ShaderGraph — shader/material composition
 │
 ├── editor/           # Atlas Editor (authoring tool)
 │   ├── panels/       # Inspector panels (ECS, console, network, project picker,
@@ -260,6 +262,29 @@ Atlas/
 - Gameplay logic must never depend on projection
 - Camera defines perception, not simulation
 
+### Graph Commands (`engine/command/`)
+- **AddNodeCommand**: Undoable graph node addition (templated, works with any graph type)
+- **RemoveNodeCommand**: Undoable graph node removal with factory-based restoration
+- **AddEdgeCommand**: Undoable edge creation between graph nodes
+- **RemoveEdgeCommand**: Undoable edge removal
+- All commands integrate with `CommandHistory` for full undo/redo support
+
+### RenderGraph (`engine/render/`)
+- DAG-based GPU render pass scheduling graph
+- **RenderPinType**: Texture, Buffer, Float, PassConfig, DrawList
+- **RenderNode**: Abstract render pass node with typed ports and evaluation
+- Concrete nodes: ClearPass, GeometryPass, PostProcess, Present
+- Deterministic pass ordering via topological sort
+- Headless mode skips RenderGraph execution entirely
+
+### ShaderGraph (`engine/shader/`)
+- DAG-based shader/material composition graph
+- **ShaderPinType**: Float, Vec2, Vec3, Vec4, Texture, Bool
+- **ShaderNode**: Abstract shader node with typed ports and evaluation
+- Concrete nodes: Multiply (Math), Lerp (Math), BaseColor (Material), UVCoord (Geometry)
+- Shaders are graphs that compile to data — not text-first
+- Deterministic evaluation for hot-reload and caching
+
 ## Runtime Modes
 
 | Mode   | Rendering | Networking | Asset Write | Graph Edit |
@@ -292,6 +317,8 @@ Projects are defined by a single `project.atlas` JSON file conforming to
 - **ConversationGraph** files (`.conversation`) conform to `schemas/atlas.conversation.v1.json`
 - **TileGraph** files (`.tilegraph`) for 2D procedural generation
 - **BehaviorGraph** files (`.behaviorgraph`) for AI behavior authoring
+- **RenderGraph** files (`.rendergraph`) for GPU render pass scheduling
+- **ShaderGraph** files (`.shadergraph`) for shader/material composition
 
 ### Project Directory
 
