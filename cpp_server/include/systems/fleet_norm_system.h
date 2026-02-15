@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ecs/entity.h"
-#include <string>
 
 namespace atlas {
 

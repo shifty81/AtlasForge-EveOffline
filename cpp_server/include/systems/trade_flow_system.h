@@ -2,7 +2,6 @@
 
 #include "ecs/entity.h"
 #include <string>
-#include <vector>
 
 namespace atlas {
 

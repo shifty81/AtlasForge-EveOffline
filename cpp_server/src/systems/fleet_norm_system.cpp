@@ -28,7 +28,7 @@ float FleetNormSystem::getNormStability(ecs::Entity* fleet) {
 
     int total = norm->violations + norm->reinforcements;
     if (total == 0) return 0.0f;
-    return static_cast<float>(norm->reinforcements) / static_cast<float>(std::max(total, 1));
+    return static_cast<float>(norm->reinforcements) / static_cast<float>(total);
 }
 
 void FleetNormSystem::updateRiskAppetite(ecs::Entity* fleet, float recent_outcomes) {
