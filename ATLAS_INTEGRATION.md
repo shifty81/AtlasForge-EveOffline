@@ -167,6 +167,10 @@ make build
 - Cube-sphere layout for planetary surfaces
 - Voxel grid layout for block worlds
 - LOD support, chunk neighbor queries, streaming hints
+- Terrain mesh generation with height functions and normal computation
+- Perlin noise and fractal Brownian motion (FBM) for procedural generation
+- World streaming with load/unload radius and disk caching
+- Galaxy generation with spiral arm structure and deterministic seeding
 
 ## Syncing with Atlas Repository
 
