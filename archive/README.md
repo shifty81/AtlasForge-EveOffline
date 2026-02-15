@@ -1,6 +1,10 @@
 # Archive
 
-This directory contains legacy and deprecated files from the Atlas project's earlier development stages. All code and documents here are kept for historical reference only.
+This directory contains legacy, deprecated, and completed files from the Atlas project's
+development history. Everything here is kept for historical reference only — the active
+codebase and current documentation live in the repository root and `docs/`.
+
+---
 
 ## Contents
 
@@ -30,16 +34,88 @@ been incorporated into the active codebase and current documentation.
 - `WORK_COMPLETED.md` — Phase 3 systems completion summary
 
 ### `sessions/` — Development Session Summaries
-Session notes from specific development work sessions. These are historical records
-of individual sessions, not authoritative references.
+Historical session notes from development work. Not authoritative references.
 
+**Original session summaries:**
 - `SESSION_SUMMARY.md` — Phase 5 development session (Feb 2, 2026)
 - `SESSION_SUMMARY_CONTINUE_NEXT_STEPS_FEB2026.md` — Repository analysis session (Feb 11, 2026)
 - `SESSION_SUMMARY_GUI_PHASE7.md` — GUI Phase 7 rendering session (Feb 11, 2026)
 - `SESSION_SUMMARY_NEXT_TASKS.md` — Phase review session (Feb 7, 2026)
 
-> **Note:** Additional session files are in `docs/sessions/` and track ongoing
-> development activity across all phases.
+**`docs_sessions/` — Completed phase session logs (moved from `docs/sessions/`):**
+
+All 37 session files covering Phases 2–7 have been archived here. These document
+completed development sessions including:
+
+- C++ client, ECS, OpenGL, and network implementation sessions
+- Phase 2–7 completion records (rendering, UI, audio, mining, Tech II, etc.)
+- Build automation, deferred rendering, shadow mapping, post-processing sessions
+- Procedural generation, model loading, and integrated hosting sessions
+- Planning and review sessions (Feb 2026)
+
+### `development/` — Completed Phase Development Docs
+Phase-specific implementation documentation for work that has been completed and
+merged into the codebase. Moved from `docs/development/`.
+
+- `PHASE5_*.md` (6 files) — Phase 5 enhancements, polish, UI/UX, visual features
+- `PHASE6_*.md` (2 files) — Phase 6 content expansion and ship models
+- `PHASE7_*.md` (4 files) — Phase 7 mining, ice, planetary interaction, research
+- `CLIENT_INTEGRATION_SUMMARY.md` — Client integration completion
+- `CLIENT_UPDATES.md` — Python client updates (superseded by C++ client)
+- `CHAT_LOG.md` — Development chat log
+- `INTEGRATED_MULTIPLAYER_HOSTING.md` — Embedded server hosting
+- `IMPLEMENTATION_DETAILS.md` — GUI implementation guide
+- `NAME_GENERATOR.md` — Random name generation
+- `PLAYER_STRUCTURES.md` — Player-owned structures
+- `VISUAL_FEATURES_GUIDE.md` — Visual features reference
+- `VISUAL_GAMEPLAY_ENHANCEMENTS.md` — Visual enhancements
+
+### `features/` — Completed Feature Summaries
+Feature documentation for systems that are fully implemented. Moved from `docs/features/`.
+
+- `FEATURE_IMPLEMENTATION_SUMMARY.md` — Feature implementation guide
+- `PHASE3_SYSTEMS.md` — Manufacturing, market, exploration
+- `PHASE4_FEATURES.md` — Corporation and social systems
+- `UI_IMPLEMENTATION_SUMMARY.md` — EVE Online UI implementation
+- `NEW_FEATURES.md` — Module fitting and game systems
+- `EXTENDED_CONTENT_SUMMARY.md` — Content pack summary
+- `EVE_UI_ENHANCEMENTS.md` — EVE Photon UI documentation
+- `VISUAL_CAPABILITIES.md` — Visual and GUI capabilities
+- `LANGUAGE_AND_3D_OPTIONS.md` — Python vs C++ discussion (decided: C++)
+
+### `design/` — Completed Design Documents
+Design specifications for decisions that have been made and implemented.
+Moved from `docs/design/`.
+
+- `CPP_CLIENT_ARCHITECTURE.md` — C++ client architecture (implemented)
+- `CPP_MIGRATION_ROADMAP.md` — C++ migration plan (completed)
+- `EVE_MECHANICS.md` — EVE Online mechanics reference
+- `EVE_UI_STYLE_REFERENCE.md` — Photon UI design reference
+- `EVE_UNIVERSE_LAYOUT.md` — Universe layout and travel mechanics
+- `PHASE5_3D_SPECIFICATION.md` — Phase 5 3D specification
+- `PHASE5_SUMMARY.md` — Phase 5 summary
+- `UI_FRAMEWORK_EVALUATION.md` — UI framework analysis (decided: custom Atlas UI)
+
+### `research/` — Completed Research
+Research and analysis documents. Moved from `docs/research/`.
+
+- `ASTROX_RESEARCH.md` — Astrox Imperium technical research
+- `OBJ_MODEL_ANALYSIS.md` — Analysis of 311 OBJ ship models
+
+### `getting-started/` — Superseded Getting Started Guides
+- `QUICK_START_PHASE3.md` — Python-based Phase 3 quickstart (superseded by C++ guides)
+
+### `testing_assets/` — Legacy Test Assets
+3D model archives, texture packs, and development notes originally in `testing/`.
+
+- `24-textures.zip` — Texture pack
+- `99-intergalactic_spaceship-obj.rar` — Spaceship OBJ models
+- `BlenderSpaceshipGenerator.zip` — Blender spaceship generator
+- `CruiserBattleshipModulePack.zip` — Cruiser/battleship module pack
+- `ModularShipModulePack.zip` — Modular ship module pack
+- `qy0sx26192io-VulcanDkyrClass.zip` — Vulcan Dkyr class models
+- `ideas and improvements.txt` — Informal development notes
+- `serverbuildissues.txt` — Server build troubleshooting notes
 
 ### `python/` — Legacy Python Prototype
 The original Python implementation before the project migrated to C++.
@@ -52,7 +128,7 @@ The original Python implementation before the project migrated to C++.
 - `demos/` — Demo and showcase scripts
 - Build scripts and dependencies
 
-### `design_docs/` — Merged Design Documents
+### `design_docs/` — Original Design Documents
 Original brainstorming and design specification files that have been fully merged
 into the engine and codebase. Kept for historical reference.
 - `1111.txt` — Initial ChatGPT design session (Atlas purpose, architecture)
@@ -73,9 +149,20 @@ into the engine and codebase. Kept for historical reference.
 - `SESSION_SUMMARY.md` — Development session summary
 - `QUICKSTART_VISUALS.md` — Visual quick-start guide (superseded by main README)
 
+---
+
 ## Active Code
 
-The active Atlas implementation is in:
-- `cpp_client/` — C++ OpenGL game client with Atlas UI
-- `cpp_server/` — C++ dedicated game server
-- `data/` — Game data (JSON configs)
+The active Atlas implementation lives in the repository root:
+- `engine/` — Atlas Engine (C++20, game-agnostic, 17+ modules)
+- `editor/` — Atlas Editor (authoring tool)
+- `runtime/` — Atlas Runtime (standalone executable)
+- `cpp_client/` — EVEOFFLINE game client (C++ / OpenGL)
+- `cpp_server/` — EVEOFFLINE dedicated server
+- `atlas_tests/` — Engine unit tests
+- `data/` — Moddable game content (JSON)
+- `schemas/` — Versioned project schemas
+- `projects/` — Game projects (.atlas files)
+- `tools/` — Modding utilities
+- `scripts/` — Build scripts
+- `docs/` — Active documentation

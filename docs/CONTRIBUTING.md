@@ -29,7 +29,7 @@ Before creating bug reports, please check the existing issues to avoid duplicate
 - **Clear title and description**
 - **Steps to reproduce** the issue
 - **Expected behavior** vs actual behavior
-- **Environment details** (OS, Python version, etc.)
+- **Environment details** (OS, compiler version, etc.)
 - **Screenshots** if applicable
 
 ### 💡 Suggesting Features
@@ -107,22 +107,23 @@ See [Priority Areas](#priority-areas) for where help is most needed.
 
 ```bash
 # Fork the repository on GitHub, then:
-git clone https://github.com/YOUR_USERNAME/EVEOFFLINE.git
-cd EVEOFFLINE
+git clone https://github.com/YOUR_USERNAME/Atlas-EveOffline.git
+cd Atlas-EveOffline
 ```
 
 ### 2. Set Up Development Environment
 
 ```bash
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+# Linux/macOS — install deps and build
+sudo apt-get install build-essential cmake libgl1-mesa-dev libglew-dev \
+  libglfw3-dev libglm-dev nlohmann-json3-dev libopenal-dev libfreetype-dev
+./scripts/build_project.sh
 
-# Install dependencies
-pip install -r requirements.txt
+# Windows — see docs/guides/VS2022_SETUP_GUIDE.md
+scripts\build_project.bat Release all
 
 # Run tests to verify setup
-python run_tests.py
+./scripts/build_project.sh Release test
 ```
 
 ### 3. Create a Branch
@@ -147,14 +148,20 @@ git checkout -b fix/bug-description
 ### 2. Test Your Changes
 
 ```bash
-# Run all tests
-python run_tests.py
+# Build and run all tests
+./scripts/build_project.sh Release test
 
-# Run specific test file
-python tests/test_engine.py
+# Build specific targets
+./scripts/build_project.sh Release engine     # Engine only
+./scripts/build_project.sh Release client     # Client only
+./scripts/build_project.sh Release server     # Server only
 
-# Test your feature manually
-python demo.py  # or appropriate demo script
+# Validate project structure
+./scripts/build_project.sh Release validate
+
+# Or use Make shortcuts
+make build
+make test
 ```
 
 ### 3. Update Documentation
@@ -167,28 +174,28 @@ python demo.py  # or appropriate demo script
 
 ## Style Guidelines
 
-### Python Code
+### C++ Code
 
-Follow PEP 8 style guide:
+Follow the [Atlas Naming Conventions](../ATLAS_NAMING_CONVENTIONS.md):
 
-```python
-# Use 4 spaces for indentation
-# Use snake_case for functions and variables
-# Use PascalCase for classes
-# Maximum line length: 100 characters
+```cpp
+// Use PascalCase for classes, types, and components
+// Use PascalCase + "System" suffix for ECS systems
+// Use snake_case for file names
+// Use camelCase for local variables and function parameters
+// Use UPPER_SNAKE_CASE for constants and enums
 
-def calculate_damage(base_damage: float, multiplier: float) -> float:
-    """
-    Calculate final damage with multiplier.
-    
-    Args:
-        base_damage: Base damage value
-        multiplier: Damage multiplier
-        
-    Returns:
-        Final damage amount
-    """
-    return base_damage * multiplier
+class HealthComponent {
+public:
+    float currentHP = 100.0f;
+    float maxHP = 100.0f;
+};
+
+class DamageSystem {
+public:
+    /// Apply damage to an entity with the given damage type.
+    void applyDamage(Entity target, float amount, DamageType type);
+};
 ```
 
 ### JSON Data Files
@@ -259,7 +266,7 @@ Fixed stuff
 
 ### 1. Before Submitting
 
-- [ ] Tests pass: `python run_tests.py`
+- [ ] Tests pass: `./scripts/build_project.sh Release test`
 - [ ] Code follows style guidelines
 - [ ] Documentation updated
 - [ ] Commit messages are clear
@@ -296,14 +303,15 @@ Help is especially welcome in these areas:
 
 ### 🔥 High Priority
 
-1. **3D Graphics Implementation**
-   - Experience with Unreal Engine 5, Unity, or OpenGL
-   - See [docs/features/LANGUAGE_AND_3D_OPTIONS.md](docs/features/LANGUAGE_AND_3D_OPTIONS.md)
+1. **Engine Migration**
+   - StrategyGraph and ConversationGraph module completion
+   - AI Signal Registry integration
+   - Server Rules system
 
-2. **Additional Ships & Content**
-   - More ship definitions (Tech II, Battleships)
-   - More modules and variations
-   - New missions and storylines
+2. **Vertical Slice Polish**
+   - One full star system, playable loop, AI-driven
+   - Combat, mining, and economy in a single system
+   - Performance profiling and optimization
 
 3. **Testing & Bug Reports**
    - Test existing features
@@ -312,15 +320,15 @@ Help is especially welcome in these areas:
 
 ### 📊 Medium Priority
 
-1. **Corporation System**
-   - Corporation management features
-   - Roles and permissions
-   - Corp hangars and wallets
-
-2. **UI/UX Improvements**
-   - Enhanced pygame GUI
+1. **UI/UX Improvements**
+   - Atlas UI widget enhancements
    - Better visual feedback
    - Improved HUD elements
+
+2. **Additional Content**
+   - More ship definitions and variations
+   - More modules and fittings
+   - New missions and storylines
 
 3. **Performance Optimization**
    - Profiling and optimization
@@ -329,10 +337,10 @@ Help is especially welcome in these areas:
 
 ### 📝 Low Priority
 
-1. **Advanced Features** (Phase 7 in roadmap)
-   - Mining improvements
-   - Planetary interaction
-   - Wormhole space
+1. **Future Phases** (Phase 8+)
+   - Cinematic warp effects
+   - Fleet AI behaviors
+   - Tactical overlay
 
 2. **Additional Content**
    - More NPC varieties
