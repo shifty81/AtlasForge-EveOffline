@@ -153,6 +153,25 @@ void test_heightfield_at();
 void test_heightfield_mesh_generation();
 void test_heightfield_mesh_lod();
 
+// StrategyGraph tests
+void test_strategygraph_add_nodes();
+void test_strategygraph_remove_node();
+void test_strategygraph_compile_empty();
+void test_strategygraph_compile_single_node();
+void test_strategygraph_compile_chain();
+void test_strategygraph_execute();
+void test_strategygraph_deterministic();
+void test_strategygraph_objective_score();
+
+// Server Rules tests
+void test_server_rules_register();
+void test_server_rules_get_value();
+void test_server_rules_set_multiplier();
+void test_server_rules_clamp_multiplier();
+void test_server_rules_missing_rule();
+void test_server_rules_hot_reload_flag();
+void test_server_rules_clear();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -216,6 +235,27 @@ int main() {
     test_terrain_heightmap_mesh();
     test_terrain_normals_computed();
     test_terrain_resolution_one();
+
+    // StrategyGraph
+    std::cout << "\n--- Strategy Graph ---" << std::endl;
+    test_strategygraph_add_nodes();
+    test_strategygraph_remove_node();
+    test_strategygraph_compile_empty();
+    test_strategygraph_compile_single_node();
+    test_strategygraph_compile_chain();
+    test_strategygraph_execute();
+    test_strategygraph_deterministic();
+    test_strategygraph_objective_score();
+
+    // Server Rules
+    std::cout << "\n--- Server Rules ---" << std::endl;
+    test_server_rules_register();
+    test_server_rules_get_value();
+    test_server_rules_set_multiplier();
+    test_server_rules_clamp_multiplier();
+    test_server_rules_missing_rule();
+    test_server_rules_hot_reload_flag();
+    test_server_rules_clear();
 
     // Noise
     std::cout << "\n--- Noise Generator ---" << std::endl;
