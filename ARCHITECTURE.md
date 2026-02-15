@@ -20,6 +20,9 @@ Atlas/
 │   ├── sim/          # Tick scheduler, deterministic simulation
 │   ├── world/        # Procedural world generation, WorldGraph, heightfield meshing
 │   ├── strategygraph/# Strategy decision graphs (influence, threat, scoring)
+│   ├── conversation/ # Dialogue + memory graphs (ConversationGraph)
+│   ├── ai/           # AI signal registry (namespaced numeric inputs)
+│   ├── camera/       # World modes and camera projection policies
 │   ├── project/      # Project loading and validation (.atlas files)
 │   ├── command/      # Undo/redo command system
 │   ├── interaction/  # Unified intent/utterance system (voice, AI, console)
@@ -148,6 +151,27 @@ Atlas/
 - Clamped to declared min/max bounds
 - Hot-reloadable rules apply at tick boundaries
 - Replay-aware: rules affecting replay are explicitly marked
+
+### Conversation Graphs (`engine/conversation/`)
+- DAG-based dialogue and memory graph with compile/execute pipeline
+- **ConversationPinType**: Dialogue, Choice, Memory, Relationship, Signal
+- **ConversationNode**: Abstract node base with typed ports and evaluation
+- Concrete nodes: Dialogue, PlayerChoice, MemoryWrite, RelationshipDelta
+- ConversationGraphs emit state — they never execute actions or access ECS
+- Authority model: ConversationGraph → emits state → AISignals → StrategyGraph → decides
+
+### AI Signals (`engine/ai/`)
+- **AISignalRegistry**: Singleton registry for namespaced numeric AI inputs
+- Signals are registered with namespace + name (e.g. `faction.morale`)
+- Read/write with tick tracking for temporal awareness
+- Used as inputs to StrategyGraph decision nodes
+- Mods may register namespaced signals but may not override core signals
+
+### Camera / World Modes (`engine/camera/`)
+- **WorldMode**: SideScroller2D, TopDown2D, TopDownOrbit2_5D, Isometric2_5D
+- **CameraProjectionPolicy**: Mode-specific projection parameters
+- Gameplay logic must never depend on projection
+- Camera defines perception, not simulation
 
 ## Runtime Modes
 

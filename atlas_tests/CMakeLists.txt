@@ -23,6 +23,8 @@ add_executable(AtlasTests
     test_heightfield.cpp
     test_strategygraph.cpp
     test_server_rules.cpp
+    test_conversation.cpp
+    test_ai_signals.cpp
     ${CMAKE_SOURCE_DIR}/editor/panels/ConsolePanel.cpp
 )
 

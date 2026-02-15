@@ -172,6 +172,22 @@ void test_server_rules_missing_rule();
 void test_server_rules_hot_reload_flag();
 void test_server_rules_clear();
 
+// ConversationGraph tests
+void test_conversation_add_nodes();
+void test_conversation_remove_node();
+void test_conversation_compile_empty();
+void test_conversation_dialogue_node();
+void test_conversation_chain();
+void test_conversation_relationship_delta();
+void test_conversation_player_choice();
+
+// AI Signal tests
+void test_ai_signal_register();
+void test_ai_signal_read_write();
+void test_ai_signal_missing();
+void test_ai_signal_namespace();
+void test_ai_signal_clear();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -256,6 +272,24 @@ int main() {
     test_server_rules_missing_rule();
     test_server_rules_hot_reload_flag();
     test_server_rules_clear();
+
+    // ConversationGraph
+    std::cout << "\n--- Conversation Graph ---" << std::endl;
+    test_conversation_add_nodes();
+    test_conversation_remove_node();
+    test_conversation_compile_empty();
+    test_conversation_dialogue_node();
+    test_conversation_chain();
+    test_conversation_relationship_delta();
+    test_conversation_player_choice();
+
+    // AI Signals
+    std::cout << "\n--- AI Signals ---" << std::endl;
+    test_ai_signal_register();
+    test_ai_signal_read_write();
+    test_ai_signal_missing();
+    test_ai_signal_namespace();
+    test_ai_signal_clear();
 
     // Noise
     std::cout << "\n--- Noise Generator ---" << std::endl;
